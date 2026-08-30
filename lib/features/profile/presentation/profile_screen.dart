@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
+import 'package:meditouch/features/auth/data/auth_repository.dart';
+import 'package:meditouch/features/auth/domain/user_model.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -12,6 +14,16 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final topInset = MediaQuery.paddingOf(context).top;
+    final userAsync = ref.watch(currentUserProvider);
+    final user = userAsync.valueOrNull;
+
+    final name = (user?.name != null && user!.name.isNotEmpty) ? user.name : 'Patient User';
+    final email = (user?.email != null && user!.email!.isNotEmpty) ? user.email! : 'Not provided';
+    final phone = (user?.phone != null && user!.phone!.isNotEmpty) ? user.phone! : 'Not provided';
+    final gender = (user?.gender != null && user!.gender!.isNotEmpty) ? user.gender! : 'Not specified';
+    final bloodGroup = (user?.bloodGroup != null && user!.bloodGroup!.isNotEmpty) ? user.bloodGroup! : 'Not specified';
+    final address = (user?.defaultAddress != null && user!.defaultAddress!.isNotEmpty) ? user.defaultAddress! : 'Not provided';
+    final postalCode = (user?.postalCode != null && user!.postalCode!.isNotEmpty) ? user.postalCode! : 'Not specified';
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -39,7 +51,7 @@ class ProfileScreen extends ConsumerWidget {
         padding: EdgeInsets.fromLTRB(16, topInset + 72, 16, 40),
         children: [
           // 1. Hero Profile Island Card
-          _buildHeroProfileCard(context, isDark),
+          _buildHeroProfileCard(context, user, isDark),
           const SizedBox(height: 24),
 
           // 2. Personal Information Section
@@ -53,7 +65,7 @@ class ProfileScreen extends ConsumerWidget {
                   icon: LucideIcons.user,
                   iconBgColor: const Color(0xFF007AFF),
                   label: 'Full Name',
-                  value: 'Patient User',
+                  value: name,
                   isDark: isDark,
                 ),
                 _buildIndentedDivider(isDark),
@@ -61,7 +73,7 @@ class ProfileScreen extends ConsumerWidget {
                   icon: LucideIcons.phone,
                   iconBgColor: const Color(0xFF34C759),
                   label: 'Phone Number',
-                  value: '+880 1712-345678',
+                  value: phone,
                   isDark: isDark,
                 ),
                 _buildIndentedDivider(isDark),
@@ -69,7 +81,7 @@ class ProfileScreen extends ConsumerWidget {
                   icon: LucideIcons.mail,
                   iconBgColor: const Color(0xFF5856D6),
                   label: 'Email',
-                  value: 'patient@meditouch.health',
+                  value: email,
                   isDark: isDark,
                 ),
                 _buildIndentedDivider(isDark),
@@ -77,7 +89,7 @@ class ProfileScreen extends ConsumerWidget {
                   icon: LucideIcons.users,
                   iconBgColor: const Color(0xFFFF9500),
                   label: 'Gender',
-                  value: 'Not specified',
+                  value: gender,
                   isDark: isDark,
                 ),
                 _buildIndentedDivider(isDark),
@@ -85,7 +97,7 @@ class ProfileScreen extends ConsumerWidget {
                   icon: LucideIcons.droplet,
                   iconBgColor: const Color(0xFFFF3B30),
                   label: 'Blood Group',
-                  value: 'O+',
+                  value: bloodGroup,
                   isDark: isDark,
                 ),
               ],
@@ -104,7 +116,7 @@ class ProfileScreen extends ConsumerWidget {
                   icon: LucideIcons.mapPin,
                   iconBgColor: const Color(0xFF30B0C7),
                   label: 'Default Address',
-                  value: 'Dhaka, Bangladesh',
+                  value: address,
                   isDark: isDark,
                 ),
                 _buildIndentedDivider(isDark),
@@ -112,34 +124,7 @@ class ProfileScreen extends ConsumerWidget {
                   icon: LucideIcons.mailbox,
                   iconBgColor: const Color(0xFFAF52DE),
                   label: 'Postal Code',
-                  value: '1212',
-                  isDark: isDark,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // 4. Medical Summary Section
-          _buildSectionLabel('MEDICAL RECORDS & SUMMARY', isDark),
-          const SizedBox(height: 6),
-          _buildGroupContainer(
-            isDark: isDark,
-            child: Column(
-              children: [
-                _IOSProfileFieldTile(
-                  icon: LucideIcons.heartPulse,
-                  iconBgColor: const Color(0xFFFF2D55),
-                  label: 'Primary Condition',
-                  value: 'General Wellness',
-                  isDark: isDark,
-                ),
-                _buildIndentedDivider(isDark),
-                _IOSProfileFieldTile(
-                  icon: LucideIcons.shieldAlert,
-                  iconBgColor: const Color(0xFFFF9F0A),
-                  label: 'Known Allergies',
-                  value: 'None Recorded',
+                  value: postalCode,
                   isDark: isDark,
                 ),
               ],
@@ -147,7 +132,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 28),
 
-          // 5. Edit Profile Button
+          // 4. Edit Profile Button
           Container(
             height: 50,
             decoration: BoxDecoration(
@@ -190,7 +175,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
 
-          // 6. Security Footer Branding
+          // 5. Security Footer Branding
           Center(
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -216,7 +201,14 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeroProfileCard(BuildContext context, bool isDark) {
+  Widget _buildHeroProfileCard(BuildContext context, UserModel? user, bool isDark) {
+    final displayName = (user?.name != null && user!.name.isNotEmpty) ? user.name : 'Patient User';
+    final displayEmail = (user?.email != null && user!.email!.isNotEmpty)
+        ? user.email!
+        : (user?.phone != null && user!.phone!.isNotEmpty ? user.phone! : 'No contact info provided');
+    final hasBlood = user?.bloodGroup != null && user!.bloodGroup!.isNotEmpty;
+    final hasAddress = user?.defaultAddress != null && user!.defaultAddress!.isNotEmpty;
+
     return _buildGroupContainer(
       isDark: isDark,
       child: Padding(
@@ -247,12 +239,27 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: const Center(
-                    child: Icon(
-                      LucideIcons.user,
-                      color: Colors.white,
-                      size: 34,
-                    ),
+                  child: Center(
+                    child: (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty)
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(38),
+                            child: Image.network(
+                              user.avatarUrl!,
+                              width: 76,
+                              height: 76,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Icon(
+                                LucideIcons.user,
+                                color: Colors.white,
+                                size: 34,
+                              ),
+                            ),
+                          )
+                        : const Icon(
+                            LucideIcons.user,
+                            color: Colors.white,
+                            size: 34,
+                          ),
                   ),
                 ),
                 Positioned(
@@ -304,11 +311,15 @@ class ProfileScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Patient User',
-                  style: GoogleFonts.youngSerif(
-                    fontSize: 20,
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                Flexible(
+                  child: Text(
+                    displayName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.youngSerif(
+                      fontSize: 20,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -327,7 +338,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ),
                   child: Text(
-                    'VERIFIED',
+                    user?.role ?? 'PATIENT',
                     style: GoogleFonts.inter(
                       fontSize: 8.5,
                       fontWeight: FontWeight.w800,
@@ -342,35 +353,38 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 3),
 
-            // Email
+            // Email / Phone subtitle
             Text(
-              'patient@meditouch.health',
+              displayEmail,
               style: GoogleFonts.inter(
                 fontSize: 12.5,
                 color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Quick Stats Capsule Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildStatPill(
-                  icon: LucideIcons.droplet,
-                  iconColor: const Color(0xFFFF3B30),
-                  label: 'Blood: O+',
-                  isDark: isDark,
-                ),
-                const SizedBox(width: 8),
-                _buildStatPill(
-                  icon: LucideIcons.mapPin,
-                  iconColor: const Color(0xFF30B0C7),
-                  label: 'Dhaka, BD',
-                  isDark: isDark,
-                ),
-              ],
-            ),
+            if (hasBlood || hasAddress) ...[
+              const SizedBox(height: 16),
+              // Quick Stats Capsule Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (hasBlood)
+                    _buildStatPill(
+                      icon: LucideIcons.droplet,
+                      iconColor: const Color(0xFFFF3B30),
+                      label: 'Blood: ${user!.bloodGroup}',
+                      isDark: isDark,
+                    ),
+                  if (hasBlood && hasAddress) const SizedBox(width: 8),
+                  if (hasAddress)
+                    _buildStatPill(
+                      icon: LucideIcons.mapPin,
+                      iconColor: const Color(0xFF30B0C7),
+                      label: user!.defaultAddress!,
+                      isDark: isDark,
+                    ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
