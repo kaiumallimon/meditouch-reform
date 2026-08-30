@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meditouch/app/app.dart';
 
@@ -15,13 +17,12 @@ void main() {
       ),
     );
 
-    // Initial frame loads the enhanced SplashScreen with branding
-    expect(find.text('MediTouch'), findsOneWidget);
-    expect(find.text('AI-Powered Healthcare & Pharmacy'), findsOneWidget);
-    expect(find.text('Verified Healthcare & Telemedicine Platform'), findsOneWidget);
+    // Initial frame loads the clean SplashScreen with centered logo and cupertino spinner
+    expect(find.byType(SvgPicture), findsOneWidget);
+    expect(find.byType(CupertinoActivityIndicator), findsOneWidget);
 
-    // Fast-forward past animation and Future.delayed (2400ms)
-    await tester.pump(const Duration(milliseconds: 2600));
+    // Fast-forward past animation and Future.delayed (2200ms)
+    await tester.pump(const Duration(milliseconds: 2400));
     await tester.pumpAndSettle();
 
     // Navigated to LoginScreen
