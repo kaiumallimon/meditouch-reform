@@ -281,7 +281,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                               onRefresh: () => notifier.loadMedicines(),
                               child: ListView(
                                 controller: _scrollController,
-                                padding: const EdgeInsets.fromLTRB(10, 10, 10, 24),
+                                padding: const EdgeInsets.fromLTRB(10, 10, 10, 88),
                                 children: [
                                   // Stats & Pagination Summary Header
                                   Padding(

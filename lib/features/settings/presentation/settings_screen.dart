@@ -30,7 +30,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 88),
           children: [
             // 1. Profile Account Card (Top Tile linking to ProfileScreen)
             Material(
