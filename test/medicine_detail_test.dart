@@ -3,14 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:meditouch/core/router/app_router.dart';
 import 'package:meditouch/features/pharmacy/medicines/data/pharmacy_repository.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_detail_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/medicine_detail_screen.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/medicines_screen.dart';
-import 'package:meditouch/features/pharmacy/medicines/presentation/providers/medicine_detail_provider.dart';
-import 'package:meditouch/features/pharmacy/medicines/presentation/providers/pharmacy_provider.dart';
 
 class FakePharmacyRepository implements PharmacyRepository {
   @override

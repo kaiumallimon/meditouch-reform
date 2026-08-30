@@ -148,6 +148,9 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
                     (sec) => _buildMonographCard(sec, isDark),
                   ),
                   const SizedBox(height: 20),
+                ] else ...[
+                  _buildNoMonographCard(med, isDark),
+                  const SizedBox(height: 20),
                 ],
 
                 // 4. Generic Alternatives (if available)
@@ -1226,6 +1229,151 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
     );
   }
 
+  // Fallback card when clinical monograph is not yet indexed in database
+  Widget _buildNoMonographCard(MedicineDetailModel med, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.09)
+              : const Color(0xFFE5E5EA),
+          width: 0.8,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.primaryDark.withValues(alpha: 0.15)
+                      : AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  LucideIcons.stethoscope,
+                  size: 16,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Clinical Prescribing Summary',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      'General pharmacological profile',
+                      style: GoogleFonts.inter(
+                        fontSize: 10.5,
+                        color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          _buildSummaryRow('Active Substance', med.genericName.isNotEmpty ? med.genericName : 'Not specified', isDark),
+          _buildSummaryRow('Form & Strength', '${med.dosageForm}${med.strength != null && med.strength!.isNotEmpty ? " • ${med.strength}" : ""}', isDark),
+          _buildSummaryRow('Therapeutic Category', med.categoryName ?? med.dosageForm, isDark),
+          _buildSummaryRow('Prescription Status', med.rxRequired ? 'Prescription Required (Rx)' : 'Over The Counter (OTC)', isDark),
+          if (med.manufacturerName != null && med.manufacturerName!.isNotEmpty)
+            _buildSummaryRow('Manufacturer', med.manufacturerName!, isDark),
+
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF9F9FB),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE5E5EA),
+                width: 0.6,
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  LucideIcons.info,
+                  size: 14,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Full monograph details are being indexed for ${med.medicineName}. Always take medications as directed by your physician.',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      height: 1.4,
+                      color: isDark ? const Color(0xFFB0B0B5) : const Color(0xFF555558),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(String label, String value, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 130,
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w500,
+                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.inter(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   IconData _getSectionIcon(String id) {
     switch (id) {
       case 'indications':
@@ -1246,6 +1394,12 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
         return LucideIcons.heartPulse;
       case 'overdose':
         return LucideIcons.syringe;
+      case 'therapeutic_class':
+        return LucideIcons.layers;
+      case 'description':
+        return LucideIcons.info;
+      case 'storage':
+        return LucideIcons.archive;
       case 'faq':
         return LucideIcons.circleHelp;
       default:

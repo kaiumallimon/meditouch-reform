@@ -229,35 +229,67 @@ class MedicineDetailModel {
 
   static List<MonographSectionModel> _buildMonographSections(Map<String, String> details) {
     final List<MonographSectionModel> list = [];
+    final Set<String> matchedKeys = {};
 
-    void addSection(String id, String label, String tag, List<String> possibleKeys, {bool isFaq = false}) {
-      for (final key in possibleKeys) {
-        final content = details[key];
-        if (content != null && content.isNotEmpty) {
-          list.add(
-            MonographSectionModel(
-              id: id,
-              label: label,
-              tag: tag,
-              content: content,
-              faqItems: isFaq ? FaqItemModel.parseFaqContent(content) : null,
-            ),
-          );
-          break;
+    // Key matcher helper
+    String? getContentFor(List<String> candidateKeys) {
+      for (final candidate in candidateKeys) {
+        final candidateNorm = candidate.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+        for (final entry in details.entries) {
+          final entryNorm = entry.key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+          if (entryNorm == candidateNorm && entry.value.trim().isNotEmpty) {
+            matchedKeys.add(entry.key);
+            return entry.value.trim();
+          }
         }
+      }
+      return null;
+    }
+
+    void addSection(String id, String label, String tag, List<String> candidateKeys, {bool isFaq = false}) {
+      final content = getContentFor(candidateKeys);
+      if (content != null && content.isNotEmpty) {
+        list.add(
+          MonographSectionModel(
+            id: id,
+            label: label,
+            tag: tag,
+            content: content,
+            faqItems: isFaq ? FaqItemModel.parseFaqContent(content) : null,
+          ),
+        );
       }
     }
 
-    addSection('indications', 'Indications & Uses', 'Prescribing Info', ['Indications', 'Indication']);
-    addSection('dosage', 'Dosage & Administration', 'Clinical Dosage', ['Dosage And Administration', 'Dosage', 'Administration']);
-    addSection('pharmacology', 'Pharmacology & Mechanism', 'Mode of Action', ['Pharmacology', 'Mode Of Action', 'Mode of Action']);
-    addSection('side_effects', 'Side Effects & Adverse Reactions', 'Safety & Tolerance', ['Side Effects', 'Adverse Effects', 'Side effects']);
-    addSection('precautions', 'Precautions & Warnings', 'Special Caution', ['Precautions And Warnings', 'Precautions', 'Warnings']);
-    addSection('contraindications', 'Contraindications', 'Do Not Prescribe', ['Contraindications', 'Contraindication']);
-    addSection('pregnancy', 'Pregnancy & Lactation', 'Maternal Health', ['Pregnancy And Lactation', 'Pregnancy', 'Lactation']);
-    addSection('interactions', 'Drug & Food Interactions', 'Concurrent Meds', ['Interaction', 'Interactions', 'Drug Interactions']);
-    addSection('overdose', 'Overdose & Special Populations', 'Emergency & Geriatrics', ['Overdose Effects', 'Use In Special Populations', 'Overdose']);
+    addSection('indications', 'Indications & Uses', 'Prescribing Info', ['Indications', 'Indication', 'Uses', 'Indications & Uses']);
+    addSection('dosage', 'Dosage & Administration', 'Clinical Dosage', ['Dosage And Administration', 'Dosage', 'Administration', 'Dosage & Administration', 'Dosage and administration']);
+    addSection('pharmacology', 'Pharmacology & Mechanism', 'Mode of Action', ['Pharmacology', 'Mode Of Action', 'Mode of Action', 'Mechanism of Action']);
+    addSection('side_effects', 'Side Effects & Adverse Reactions', 'Safety & Tolerance', ['Side Effects', 'Adverse Effects', 'Side effects', 'Adverse Reactions']);
+    addSection('precautions', 'Precautions & Warnings', 'Special Caution', ['Precautions And Warnings', 'Precautions', 'Warnings', 'Precautions & Warnings']);
+    addSection('contraindications', 'Contraindications', 'Do Not Prescribe', ['Contraindications', 'Contraindication', 'Contra-indications']);
+    addSection('pregnancy', 'Pregnancy & Lactation', 'Maternal Health', ['Pregnancy And Lactation', 'Pregnancy & Lactation', 'Pregnancy', 'Lactation']);
+    addSection('interactions', 'Drug & Food Interactions', 'Concurrent Meds', ['Interaction', 'Interactions', 'Drug Interactions', 'Drug interactions']);
+    addSection('overdose', 'Overdose & Special Populations', 'Emergency & Geriatrics', ['Overdose Effects', 'Use In Special Populations', 'Overdose', 'Special Populations']);
+    addSection('therapeutic_class', 'Therapeutic Class', 'Classification', ['Therapeutic Class', 'Drug Classes', 'Therapeutic Classification']);
+    addSection('description', 'Description & Composition', 'Product Overview', ['Description', 'Composition', 'Description & Composition']);
+    addSection('storage', 'Storage & Handling', 'Storage Guidelines', ['Storage Conditions', 'Storage', 'Storage conditions']);
     addSection('faq', 'Frequently Asked Questions', 'FAQ', ['Faq', 'FAQ', 'Frequently Asked Questions'], isFaq: true);
+
+    // Also include any other remaining monograph keys that weren't matched
+    details.forEach((key, val) {
+      if (!matchedKeys.contains(key) &&
+          !key.toLowerCase().contains('meta') &&
+          val.trim().isNotEmpty) {
+        list.add(
+          MonographSectionModel(
+            id: key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '_'),
+            label: key,
+            tag: 'Monograph Info',
+            content: val.trim(),
+          ),
+        );
+      }
+    });
 
     return list;
   }
