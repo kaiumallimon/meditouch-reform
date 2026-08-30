@@ -21,12 +21,19 @@ class HomeScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: IOS26AppBar(
-        leading: SvgPicture.asset(
-          AppAssets.logoSvg,
-          width: 32,
-          height: 32,
-          fit: BoxFit.contain,
-        ),
+        leading: isDark
+            ? Image.asset(
+                AppAssets.logoDarkPng,
+                width: 44,
+                height: 44,
+                fit: BoxFit.contain,
+              )
+            : SvgPicture.asset(
+                AppAssets.logoSvg,
+                width: 32,
+                height: 32,
+                fit: BoxFit.contain,
+              ),
         title: 'MediTouch',
         actions: [
           IOS26AppBarAction(

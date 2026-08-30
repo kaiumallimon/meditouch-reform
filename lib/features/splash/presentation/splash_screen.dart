@@ -108,12 +108,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   opacity: _fadeAnimation,
                   child: ScaleTransition(
                     scale: _scaleAnimation,
-                    child: SvgPicture.asset(
-                      AppAssets.logoSvg,
-                      width: 150,
-                      height: 100,
-                      fit: BoxFit.contain,
-                    ),
+                    child: isDark
+                        ? Image.asset(
+                            AppAssets.logoDarkPng,
+                            width: 220,
+                            height: 140,
+                            fit: BoxFit.contain,
+                          )
+                        : SvgPicture.asset(
+                            AppAssets.logoSvg,
+                            width: 150,
+                            height: 100,
+                            fit: BoxFit.contain,
+                          ),
                   ),
                 ),
               ),

@@ -94,18 +94,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF3EEFE), // Soft primary purple tint
-              AppColors.background, // #FAF8F5
-            ],
-            stops: [0.0, 0.45],
-          ),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkBackground : AppColors.background,
+          gradient: isDark
+              ? const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1E172F), // Soft deep primary tint
+                    AppColors.darkBackground, // #121214
+                  ],
+                  stops: [0.0, 0.45],
+                )
+              : const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFF3EEFE), // Soft primary purple tint
+                    AppColors.background, // #FAF8F5
+                  ],
+                  stops: [0.0, 0.45],
+                ),
         ),
         child: SafeArea(
           child: Center(
@@ -118,12 +132,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   // Top Clean Vector Logo
                   Center(
-                    child: SvgPicture.asset(
-                      AppAssets.logoSvg,
-                      width: 140,
-                      height: 75,
-                      fit: BoxFit.contain,
-                    ),
+                    child: isDark
+                        ? Image.asset(
+                            AppAssets.logoDarkPng,
+                            width: 200,
+                            height: 110,
+                            fit: BoxFit.contain,
+                          )
+                        : SvgPicture.asset(
+                            AppAssets.logoSvg,
+                            width: 140,
+                            height: 75,
+                            fit: BoxFit.contain,
+                          ),
                   ),
                   const SizedBox(height: 24),
 
@@ -135,7 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         fontSize: 28,
                         fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
-                        color: AppColors.textPrimary,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                       ),
                     ),
                   ),
@@ -147,7 +168,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.textSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                         height: 1.4,
                       ),
                     ),

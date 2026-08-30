@@ -95,18 +95,32 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF3EEFE), // Soft primary purple tint
-              AppColors.background, // #FAF8F5
-            ],
-            stops: [0.0, 0.35],
-          ),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkBackground : AppColors.background,
+          gradient: isDark
+              ? const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1E172F), // Soft deep primary tint
+                    AppColors.darkBackground, // #121214
+                  ],
+                  stops: [0.0, 0.35],
+                )
+              : const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFF3EEFE), // Soft primary purple tint
+                    AppColors.background, // #FAF8F5
+                  ],
+                  stops: [0.0, 0.35],
+                ),
         ),
         child: SafeArea(
           child: Center(
@@ -119,12 +133,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                   // Top Clean Vector Logo
                   Center(
-                    child: SvgPicture.asset(
-                      AppAssets.logoSvg,
-                      width: 130,
-                      height: 70,
-                      fit: BoxFit.contain,
-                    ),
+                    child: isDark
+                        ? Image.asset(
+                            AppAssets.logoDarkPng,
+                            width: 190,
+                            height: 100,
+                            fit: BoxFit.contain,
+                          )
+                        : SvgPicture.asset(
+                            AppAssets.logoSvg,
+                            width: 130,
+                            height: 70,
+                            fit: BoxFit.contain,
+                          ),
                   ),
                   const SizedBox(height: 20),
 
@@ -136,19 +157,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         fontSize: 28,
                         fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
-                        color: AppColors.textPrimary,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                       ),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Center(
                     child: Text(
-                      'Sign up for verified telemedicine & pharmacy orders',
+                      'Sign up to get started with meditouch',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.textSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                         height: 1.4,
                       ),
                     ),
