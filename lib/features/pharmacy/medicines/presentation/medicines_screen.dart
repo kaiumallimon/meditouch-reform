@@ -55,6 +55,13 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     final state = ref.watch(pharmacyProvider);
     final notifier = ref.read(pharmacyProvider.notifier);
 
+    // Ensure selected category exists in the list for dropdown
+    final selectedCategoryValue = state.categories
+            .any((c) => c.toUpperCase() == state.selectedCategory.toUpperCase())
+        ? state.categories.firstWhere(
+            (c) => c.toUpperCase() == state.selectedCategory.toUpperCase())
+        : (state.categories.isNotEmpty ? state.categories.first : 'ALL');
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -81,7 +88,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Search Bar & Categories Filter
+            // Search Bar & Dropdown Filters
             Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -115,44 +122,116 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                   ),
                   const SizedBox(height: 8),
 
-                  // Categories Horizontal List
-                  SizedBox(
-                    height: 30,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: state.categories.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 6),
-                      itemBuilder: (context, index) {
-                        final cat = state.categories[index];
-                        final isSelected = state.selectedCategory.toUpperCase() == cat.toUpperCase();
+                  // Category & Sort Dropdowns Row
+                  Row(
+                    children: [
+                      // Category Dropdown
+                      Expanded(
+                        child: Container(
+                          height: 38,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: AppColors.background,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedCategoryValue,
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 18,
+                                color: AppColors.textSecondary,
+                              ),
+                              isExpanded: true,
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                              items: state.categories.map((cat) {
+                                final isAll = cat.toUpperCase() == 'ALL';
+                                return DropdownMenuItem<String>(
+                                  value: cat,
+                                  child: Text(
+                                    isAll ? 'All Categories' : cat,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      fontWeight: cat.toUpperCase() ==
+                                              state.selectedCategory.toUpperCase()
+                                          ? FontWeight.w700
+                                          : FontWeight.w500,
+                                      color: cat.toUpperCase() ==
+                                              state.selectedCategory.toUpperCase()
+                                          ? AppColors.primary
+                                          : AppColors.textPrimary,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                if (val != null) {
+                                  notifier.setCategory(val);
+                                  _scrollToTop();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
 
-                        return ChoiceChip(
-                          label: Text(
-                            cat.toUpperCase(),
+                      // Sort By Dropdown
+                      Container(
+                        height: 38,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: state.sortBy,
+                            icon: const Icon(
+                              Icons.sort_rounded,
+                              size: 16,
+                              color: AppColors.textSecondary,
+                            ),
                             style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                              color: isSelected ? Colors.white : AppColors.textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
                             ),
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'name_asc',
+                                child: Text('Name A-Z'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'name_desc',
+                                child: Text('Name Z-A'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'price_asc',
+                                child: Text('Price: Low'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'price_desc',
+                                child: Text('Price: High'),
+                              ),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                notifier.setSortBy(val);
+                                _scrollToTop();
+                              }
+                            },
                           ),
-                          selected: isSelected,
-                          selectedColor: AppColors.primary,
-                          backgroundColor: Colors.white,
-                          showCheckmark: false,
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                              color: isSelected ? AppColors.primary : AppColors.border,
-                            ),
-                          ),
-                          onSelected: (_) {
-                            notifier.setCategory(cat);
-                            _scrollToTop();
-                          },
-                        );
-                      },
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -383,7 +462,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Try searching with a different keyword or clear category filters.',
+              'Try searching with a different keyword or change active category.',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
             ),
