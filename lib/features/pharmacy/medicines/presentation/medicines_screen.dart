@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,63 +87,70 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           padding: EdgeInsets.fromLTRB(14, topInset + 72, 14, 100),
             children: [
-              // 1. iOS 26 Search Bar
-              Container(
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkSurface : Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : const Color(0xFFE5E5EA),
-                    width: 0.8,
-                  ),
-                  boxShadow: isDark
-                      ? null
-                      : [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) => notifier.onSearchChanged(val),
-                  style: GoogleFonts.inter(
-                    fontSize: 13.5,
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Search medicines, generics, brands...',
-                    hintStyle: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+              // 1. iOS 26 Liquid Glass Search Bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF1C1C1E).withValues(alpha: 0.75)
+                          : Colors.white.withValues(alpha: 0.88),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.12)
+                            : Colors.white.withValues(alpha: 0.95),
+                        width: 0.85,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    prefixIcon: Icon(
-                      LucideIcons.search,
-                      size: 18,
-                      color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (val) => notifier.onSearchChanged(val),
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search medicines, generics, brands...',
+                        hintStyle: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                        ),
+                        prefixIcon: Icon(
+                          LucideIcons.search,
+                          size: 16,
+                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(
+                                  LucideIcons.x,
+                                  size: 15,
+                                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  notifier.onSearchChanged('');
+                                },
+                              )
+                            : null,
+                        filled: false,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                      ),
                     ),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: Icon(
-                              LucideIcons.x,
-                              size: 16,
-                              color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-                            ),
-                            onPressed: () {
-                              _searchController.clear();
-                              notifier.onSearchChanged('');
-                            },
-                          )
-                        : null,
-                    filled: false,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
                   ),
                 ),
               ),
@@ -161,7 +169,6 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           final isSelected =
                               cat.toUpperCase() == state.selectedCategory.toUpperCase();
                           final isAll = cat.toUpperCase() == 'ALL';
-                          final activeColor = isDark ? AppColors.primaryDark : AppColors.primary;
 
                           return Padding(
                             padding: const EdgeInsets.only(right: 6),
@@ -172,38 +179,38 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                               },
                               borderRadius: BorderRadius.circular(20),
                               child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7.5),
+                                duration: const Duration(milliseconds: 180),
+                                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? activeColor
-                                      : (isDark ? AppColors.darkSurface : Colors.white),
+                                      ? (isDark ? Colors.white : Colors.black)
+                                      : (isDark
+                                          ? const Color(0xFF2C2C2E).withValues(alpha: 0.65)
+                                          : Colors.white.withValues(alpha: 0.85)),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                     color: isSelected
-                                        ? activeColor
+                                        ? (isDark ? Colors.white : Colors.black)
                                         : (isDark
-                                            ? Colors.white.withValues(alpha: 0.08)
+                                            ? Colors.white.withValues(alpha: 0.10)
                                             : const Color(0xFFE5E5EA)),
                                     width: 0.8,
                                   ),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: activeColor.withValues(alpha: isDark ? 0.35 : 0.25),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ]
-                                      : null,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
                                 child: Text(
                                   isAll ? 'All Items' : cat,
                                   style: GoogleFonts.inter(
-                                    fontSize: 11.5,
+                                    fontSize: 11,
                                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                     color: isSelected
-                                        ? Colors.white
+                                        ? (isDark ? Colors.black : Colors.white)
                                         : (isDark
                                             ? AppColors.darkTextPrimary
                                             : AppColors.textPrimary),
@@ -220,14 +227,16 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
                   // Sort Filter Pill Button
                   Container(
-                    height: 33,
+                    height: 32,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkSurface : Colors.white,
+                      color: isDark
+                          ? const Color(0xFF2C2C2E).withValues(alpha: 0.65)
+                          : Colors.white.withValues(alpha: 0.85),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark
-                            ? Colors.white.withValues(alpha: 0.08)
+                            ? Colors.white.withValues(alpha: 0.10)
                             : const Color(0xFFE5E5EA),
                         width: 0.8,
                       ),
@@ -237,12 +246,12 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                         value: state.sortBy,
                         icon: Icon(
                           LucideIcons.arrowUpDown,
-                          size: 14,
+                          size: 13,
                           color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
                         ),
                         dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
                         style: GoogleFonts.inter(
-                          fontSize: 11.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                         ),
@@ -326,7 +335,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.76,
+                      childAspectRatio: 0.72,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
@@ -633,123 +642,123 @@ class _IOS26MedicineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = isDark ? AppColors.primaryDark : AppColors.primary;
-
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
+              ? Colors.white.withValues(alpha: 0.09)
               : const Color(0xFFE5E5EA),
           width: 0.8,
         ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(22),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Image Canvas with iOS 26 Capsule Badges
+            // 1. Image Canvas with clean rounded inner island & badges
             Expanded(
               child: Stack(
                 children: [
                   Container(
+                    margin: const EdgeInsets.fromLTRB(6, 6, 6, 4),
                     width: double.infinity,
                     height: double.infinity,
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF141416) : const Color(0xFFF9F9F8),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    child: medicine.image != null && medicine.image!.isNotEmpty
-                        ? Image.network(
-                            medicine.image!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _buildFallbackIcon(),
-                          )
-                        : _buildFallbackIcon(),
+                    padding: const EdgeInsets.all(6),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: medicine.image != null && medicine.image!.isNotEmpty
+                          ? Image.network(
+                              medicine.image!,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => _buildFallbackIcon(),
+                            )
+                          : _buildFallbackIcon(),
+                    ),
                   ),
 
                   // Category Capsule Pill (Top-Left)
                   Positioned(
-                    top: 7,
-                    left: 7,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.darkSurfaceElevated
-                            : Colors.white.withValues(alpha: 0.94),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.1)
-                              : const Color(0xFFE5E5EA),
-                          width: 0.7,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 4.5,
-                            height: 4.5,
-                            decoration: BoxDecoration(
-                              color: activeColor,
-                              shape: BoxShape.circle,
+                    top: 10,
+                    left: 10,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.black.withValues(alpha: 0.65)
+                                : Colors.white.withValues(alpha: 0.90),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.12)
+                                  : const Color(0xFFE5E5EA),
+                              width: 0.6,
                             ),
                           ),
-                          const SizedBox(width: 3.5),
-                          Text(
+                          child: Text(
                             medicine.dosageForm.toUpperCase(),
                             style: GoogleFonts.inter(
-                              fontSize: 8,
+                              fontSize: 7.5,
                               fontWeight: FontWeight.w700,
                               color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                               letterSpacing: 0.2,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
 
                   // Rx / OTC Badge (Top-Right)
                   Positioned(
-                    top: 7,
-                    right: 7,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: medicine.rxRequired
-                            ? (isDark ? const Color(0xFF2C1518) : const Color(0xFFFEF2F2))
-                            : (isDark ? const Color(0xFF13281C) : const Color(0xFFECFDF5)),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: medicine.rxRequired
-                              ? (isDark ? const Color(0xFF5C2025) : const Color(0xFFFECACA))
-                              : (isDark ? const Color(0xFF1E5032) : const Color(0xFFA7F3D0)),
-                          width: 0.7,
-                        ),
-                      ),
-                      child: Text(
-                        medicine.rxRequired ? 'Rx' : 'OTC',
-                        style: GoogleFonts.inter(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w800,
-                          color: medicine.rxRequired
-                            ? (isDark ? const Color(0xFFFF6961) : const Color(0xFFDC2626))
-                            : (isDark ? const Color(0xFF30D158) : const Color(0xFF059669)),
-                          letterSpacing: 0.2,
+                    top: 10,
+                    right: 10,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6.5, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: medicine.rxRequired
+                                ? (isDark ? const Color(0xFF2C1518).withValues(alpha: 0.85) : const Color(0xFFFEF2F2))
+                                : (isDark ? const Color(0xFF13281C).withValues(alpha: 0.85) : const Color(0xFFECFDF5)),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: medicine.rxRequired
+                                  ? (isDark ? const Color(0xFF5C2025) : const Color(0xFFFECACA))
+                                  : (isDark ? const Color(0xFF1E5032) : const Color(0xFFA7F3D0)),
+                              width: 0.6,
+                            ),
+                          ),
+                          child: Text(
+                            medicine.rxRequired ? 'Rx' : 'OTC',
+                            style: GoogleFonts.inter(
+                              fontSize: 7.5,
+                              fontWeight: FontWeight.w800,
+                              color: medicine.rxRequired
+                                  ? (isDark ? const Color(0xFFFF6961) : const Color(0xFFDC2626))
+                                  : (isDark ? const Color(0xFF30D158) : const Color(0xFF059669)),
+                              letterSpacing: 0.2,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -760,7 +769,7 @@ class _IOS26MedicineCard extends StatelessWidget {
 
             // 2. Compact Info Details
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 7, 10, 9),
+              padding: const EdgeInsets.fromLTRB(10, 4, 10, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -774,7 +783,7 @@ class _IOS26MedicineCard extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                      height: 1.15,
+                      height: 1.2,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -791,7 +800,7 @@ class _IOS26MedicineCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
 
-                  // Price & Add To Cart Row
+                  // Price & Liquid Glass Add To Cart Button Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -804,7 +813,7 @@ class _IOS26MedicineCard extends StatelessWidget {
                             Text(
                               _formatCurrency(medicine.unitPrice),
                               style: GoogleFonts.inter(
-                                fontSize: 13,
+                                fontSize: 13.5,
                                 fontWeight: FontWeight.w700,
                                 color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                               ),
@@ -822,7 +831,7 @@ class _IOS26MedicineCard extends StatelessWidget {
                         ),
                       ),
 
-                      // iOS 26 Rounded Add to Cart Action
+                      // iOS 26 Liquid Glass Add to Cart Button
                       InkWell(
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -836,18 +845,26 @@ class _IOS26MedicineCard extends StatelessWidget {
                             ),
                           );
                         },
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(18),
                         child: Container(
-                          width: 30,
-                          height: 30,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
-                            color: activeColor,
-                            borderRadius: BorderRadius.circular(10),
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : const Color(0xFFF2F2F7),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.18)
+                                  : const Color(0xFFE5E5EA),
+                              width: 0.8,
+                            ),
                           ),
-                          child: const Icon(
-                            LucideIcons.shoppingBag,
-                            color: Colors.white,
-                            size: 14,
+                          child: Icon(
+                            LucideIcons.plus,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                            size: 16,
                           ),
                         ),
                       ),
