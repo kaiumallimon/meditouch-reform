@@ -89,29 +89,22 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
             children: [
               // 1. iOS 26 Liquid Glass Search Bar
               ClipRRect(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(16),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                   child: Container(
-                    height: 44,
+                    height: 42,
                     decoration: BoxDecoration(
                       color: isDark
-                          ? const Color(0xFF1C1C1E).withValues(alpha: 0.75)
-                          : Colors.white.withValues(alpha: 0.88),
-                      borderRadius: BorderRadius.circular(18),
+                          ? const Color(0xFF2C2C2E).withValues(alpha: 0.60)
+                          : Colors.white.withValues(alpha: 0.85),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.white.withValues(alpha: 0.95),
-                        width: 0.85,
+                            ? Colors.white.withValues(alpha: 0.14)
+                            : const Color(0xFFE5E5EA),
+                        width: 0.8,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: TextField(
                       controller: _searchController,
@@ -124,19 +117,19 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                         hintText: 'Search medicines, generics, brands...',
                         hintStyle: GoogleFonts.inter(
                           fontSize: 12.5,
-                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                          color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
                         ),
                         prefixIcon: Icon(
                           LucideIcons.search,
                           size: 16,
-                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                          color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
                         ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
                                 icon: Icon(
                                   LucideIcons.x,
-                                  size: 15,
-                                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  size: 14,
+                                  color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
                                 ),
                                 onPressed: () {
                                   _searchController.clear();
@@ -154,137 +147,84 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
 
-              // 2. iOS 26 Category Chips Carousel + Sort Button Row
-              Row(
-                children: [
-                  // Horizontal Category Pills
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      child: Row(
-                        children: state.categories.map((cat) {
-                          final isSelected =
-                              cat.toUpperCase() == state.selectedCategory.toUpperCase();
-                          final isAll = cat.toUpperCase() == 'ALL';
+              // 2. iOS 26 Full-Width Category Pills Carousel
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: state.categories.map((cat) {
+                    final isSelected =
+                        cat.toUpperCase() == state.selectedCategory.toUpperCase();
+                    final isAll = cat.toUpperCase() == 'ALL';
 
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 6),
-                            child: InkWell(
-                              onTap: () {
-                                notifier.setCategory(cat);
-                                _scrollToTop();
-                              },
-                              borderRadius: BorderRadius.circular(20),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 180),
-                                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? (isDark ? Colors.white : Colors.black)
-                                      : (isDark
-                                          ? const Color(0xFF2C2C2E).withValues(alpha: 0.65)
-                                          : Colors.white.withValues(alpha: 0.85)),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? (isDark ? Colors.white : Colors.black)
-                                        : (isDark
-                                            ? Colors.white.withValues(alpha: 0.10)
-                                            : const Color(0xFFE5E5EA)),
-                                    width: 0.8,
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: InkWell(
+                        onTap: () {
+                          notifier.setCategory(cat);
+                          _scrollToTop();
+                        },
+                        borderRadius: BorderRadius.circular(18),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6.5),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? (isDark
+                                    ? Colors.white.withValues(alpha: 0.18)
+                                    : AppColors.primary.withValues(alpha: 0.10))
+                                : (isDark
+                                    ? const Color(0xFF2C2C2E).withValues(alpha: 0.50)
+                                    : Colors.white.withValues(alpha: 0.85)),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: isSelected
+                                  ? (isDark
+                                      ? Colors.white.withValues(alpha: 0.35)
+                                      : AppColors.primary)
+                                  : (isDark
+                                      ? Colors.white.withValues(alpha: 0.08)
+                                      : const Color(0xFFE5E5EA)),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isSelected) ...[
+                                Container(
+                                  width: 5,
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                    color: isDark ? AppColors.primaryDark : AppColors.primary,
+                                    shape: BoxShape.circle,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
                                 ),
-                                child: Text(
-                                  isAll ? 'All Items' : cat,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                    color: isSelected
-                                        ? (isDark ? Colors.black : Colors.white)
-                                        : (isDark
-                                            ? AppColors.darkTextPrimary
-                                            : AppColors.textPrimary),
-                                  ),
+                                const SizedBox(width: 5),
+                              ],
+                              Text(
+                                isAll ? 'All Items' : cat,
+                                style: GoogleFonts.inter(
+                                  fontSize: 11.5,
+                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                  color: isSelected
+                                      ? (isDark ? Colors.white : AppColors.primary)
+                                      : (isDark
+                                          ? const Color(0xFF8E8E93)
+                                          : const Color(0xFF636366)),
                                 ),
                               ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Sort Filter Pill Button
-                  Container(
-                    height: 32,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF2C2C2E).withValues(alpha: 0.65)
-                          : Colors.white.withValues(alpha: 0.85),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.10)
-                            : const Color(0xFFE5E5EA),
-                        width: 0.8,
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: state.sortBy,
-                        icon: Icon(
-                          LucideIcons.arrowUpDown,
-                          size: 13,
-                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                            ],
+                          ),
                         ),
-                        dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                        ),
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'name_asc',
-                            child: Text('A-Z'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'name_desc',
-                            child: Text('Z-A'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'price_asc',
-                            child: Text('Price: Low'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'price_desc',
-                            child: Text('Price: High'),
-                          ),
-                        ],
-                        onChanged: (val) {
-                          if (val != null) {
-                            notifier.setSortBy(val);
-                            _scrollToTop();
-                          }
-                        },
                       ),
-                    ),
-                  ),
-                ],
+                    );
+                  }).toList(),
+                ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
 
               // 3. Main Content: Loading, Error, Empty, or 2-per-row Grid
               if (state.isLoading && state.medicines.isEmpty)
@@ -294,30 +234,67 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
               else if (state.medicines.isEmpty)
                 _buildEmptyView(isDark)
               else ...[
-                // Stats & Pagination Summary Header
+                // Stats & Liquid Glass Sort Row
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Text(
-                          'Showing ${((state.currentPage - 1) * state.limit) + 1}-${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
                       Text(
-                        'Page ${state.currentPage} of ${state.totalPages}',
+                        'Showing ${((state.currentPage - 1) * state.limit) + 1}–${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? AppColors.primaryDark : AppColors.primary,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                        ),
+                      ),
+
+                      // Liquid Glass Sort Pill
+                      Container(
+                        height: 28,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF2C2C2E).withValues(alpha: 0.60)
+                              : Colors.white.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : const Color(0xFFE5E5EA),
+                            width: 0.75,
+                          ),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: state.sortBy,
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: Icon(
+                                LucideIcons.arrowUpDown,
+                                size: 12,
+                                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                              ),
+                            ),
+                            dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
+                            style: GoogleFonts.inter(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                            ),
+                            items: const [
+                              DropdownMenuItem(value: 'name_asc', child: Text('A–Z')),
+                              DropdownMenuItem(value: 'name_desc', child: Text('Z–A')),
+                              DropdownMenuItem(value: 'price_asc', child: Text('Price: Low')),
+                              DropdownMenuItem(value: 'price_desc', child: Text('Price: High')),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                notifier.setSortBy(val);
+                                _scrollToTop();
+                              }
+                            },
+                          ),
                         ),
                       ),
                     ],
