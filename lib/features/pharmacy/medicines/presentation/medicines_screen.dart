@@ -249,7 +249,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                               onRefresh: () => notifier.loadMedicines(),
                               child: ListView(
                                 controller: _scrollController,
-                                padding: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.fromLTRB(10, 10, 10, 24),
                                 children: [
                                   // Stats & Pagination Summary Header
                                   Padding(
@@ -278,7 +278,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                   ),
                                   const SizedBox(height: 6),
 
-                                  // 2 Medicines Per Row Grid (Ultra-compact, tight spacing)
+                                  // 2 Medicines Per Row Grid
                                   GridView.builder(
                                     shrinkWrap: true,
                                     physics: const NeverScrollableScrollPhysics(),
@@ -294,11 +294,10 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                       return _MedicineCard(medicine: medicine);
                                     },
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 12),
 
-                                  // Redesigned Sleek Pagination Bar
+                                  // Clean Seamless Pagination Bar
                                   _buildPaginationBar(state, notifier),
-                                  const SizedBox(height: 16),
                                 ],
                               ),
                             ),
@@ -314,25 +313,12 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
     final pages = _getPaginationRange(state.currentPage, state.totalPages);
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEAE8E4)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Previous Button
+          // Previous Button (Squircle with border)
           InkWell(
             onTap: state.currentPage > 1
                 ? () {
@@ -340,44 +326,42 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                     _scrollToTop();
                   }
                 : null,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: state.currentPage > 1 ? Colors.white : const Color(0xFFF9F9F8),
-                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: state.currentPage > 1
-                      ? AppColors.border
-                      : AppColors.borderSubtle,
+                      ? const Color(0xFFE7E5E4)
+                      : const Color(0xFFF0EEEB),
                 ),
+                boxShadow: state.currentPage > 1
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ]
+                    : null,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.chevron_left_rounded,
-                    size: 15,
-                    color: state.currentPage > 1
-                        ? AppColors.textPrimary
-                        : AppColors.textMuted.withValues(alpha: 0.5),
-                  ),
-                  Text(
-                    'Prev',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: state.currentPage > 1
-                          ? AppColors.textPrimary
-                          : AppColors.textMuted.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ],
+              child: Center(
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 13,
+                  color: state.currentPage > 1
+                      ? AppColors.textPrimary
+                      : AppColors.textMuted.withValues(alpha: 0.35),
+                ),
               ),
             ),
           ),
+          const SizedBox(width: 8),
 
-          // Numbered Page Buttons
+          // Numbered Page Buttons (Directly on background)
           Flexible(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -385,14 +369,14 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: pages.map((p) {
                   if (p is String) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
                       child: Text(
-                        '...',
-                        style: GoogleFonts.inter(
+                        '•••',
+                        style: TextStyle(
                           fontSize: 11,
                           color: AppColors.textMuted,
-                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.2,
                         ),
                       ),
                     );
@@ -402,38 +386,46 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                   final isCurrent = pageNum == state.currentPage;
 
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
                     child: InkWell(
                       onTap: () {
                         notifier.goToPage(pageNum);
                         _scrollToTop();
                       },
-                      borderRadius: BorderRadius.circular(7),
+                      borderRadius: BorderRadius.circular(10),
                       child: Container(
-                        width: 28,
-                        height: 28,
+                        width: 36,
+                        height: 36,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: isCurrent ? AppColors.primary : Colors.white,
-                          borderRadius: BorderRadius.circular(7),
+                          borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: isCurrent ? AppColors.primary : AppColors.border,
+                            color: isCurrent
+                                ? AppColors.primary
+                                : const Color(0xFFE7E5E4),
                           ),
                           boxShadow: isCurrent
                               ? [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.25),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 1),
+                                    color: AppColors.primary.withValues(alpha: 0.28),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ]
-                              : null,
+                              : [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.02),
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
                         ),
                         child: Text(
                           '$pageNum',
                           style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                            fontSize: 12.5,
+                            fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w600,
                             color: isCurrent ? Colors.white : AppColors.textPrimary,
                           ),
                         ),
@@ -444,8 +436,9 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
               ),
             ),
           ),
+          const SizedBox(width: 8),
 
-          // Next Button
+          // Next Button (Squircle with border)
           InkWell(
             onTap: state.currentPage < state.totalPages
                 ? () {
@@ -453,41 +446,36 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                     _scrollToTop();
                   }
                 : null,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: state.currentPage < state.totalPages
-                    ? Colors.white
-                    : const Color(0xFFF9F9F8),
-                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: state.currentPage < state.totalPages
-                      ? AppColors.border
-                      : AppColors.borderSubtle,
+                      ? const Color(0xFFE7E5E4)
+                      : const Color(0xFFF0EEEB),
                 ),
+                boxShadow: state.currentPage < state.totalPages
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ]
+                    : null,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Next',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: state.currentPage < state.totalPages
-                          ? AppColors.textPrimary
-                          : AppColors.textMuted.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 15,
-                    color: state.currentPage < state.totalPages
-                        ? AppColors.textPrimary
-                        : AppColors.textMuted.withValues(alpha: 0.5),
-                  ),
-                ],
+              child: Center(
+                child: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 13,
+                  color: state.currentPage < state.totalPages
+                      ? AppColors.textPrimary
+                      : AppColors.textMuted.withValues(alpha: 0.35),
+                ),
               ),
             ),
           ),
@@ -592,7 +580,7 @@ class _MedicineCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFEAE8E4)),
         boxShadow: [
           BoxShadow(
@@ -614,10 +602,10 @@ class _MedicineCard extends StatelessWidget {
                   height: double.infinity,
                   decoration: const BoxDecoration(
                     color: Color(0xFFF9F9F8),
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(13)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                   ),
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                     child: medicine.image != null && medicine.image!.isNotEmpty
                         ? Image.network(
                             medicine.image!,
@@ -628,35 +616,43 @@ class _MedicineCard extends StatelessWidget {
                   ),
                 ),
 
-                // Category Pill (Top-Left)
+                // Fully Rounded Category Pill (Top-Left)
                 Positioned(
-                  top: 5,
-                  left: 5,
+                  top: 6,
+                  left: 6,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 3),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.95),
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: AppColors.borderSubtle),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFFE5E7EB)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 4,
-                          height: 4,
+                          width: 4.5,
+                          height: 4.5,
                           decoration: const BoxDecoration(
                             color: AppColors.primary,
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 3),
+                        const SizedBox(width: 3.5),
                         Text(
                           medicine.dosageForm.toUpperCase(),
                           style: GoogleFonts.inter(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
+                            letterSpacing: 0.2,
                           ),
                         ),
                       ],
@@ -664,17 +660,17 @@ class _MedicineCard extends StatelessWidget {
                   ),
                 ),
 
-                // Rx / OTC Badge (Top-Right)
+                // Fully Rounded Rx / OTC Badge (Top-Right)
                 Positioned(
-                  top: 5,
-                  right: 5,
+                  top: 6,
+                  right: 6,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
                       color: medicine.rxRequired
                           ? const Color(0xFFFEF2F2)
                           : const Color(0xFFECFDF5),
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: medicine.rxRequired
                             ? const Color(0xFFFECACA)
@@ -685,10 +681,11 @@ class _MedicineCard extends StatelessWidget {
                       medicine.rxRequired ? 'Rx' : 'OTC',
                       style: GoogleFonts.inter(
                         fontSize: 8,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: medicine.rxRequired
                             ? const Color(0xFFDC2626)
                             : const Color(0xFF059669),
+                        letterSpacing: 0.2,
                       ),
                     ),
                   ),
@@ -761,7 +758,7 @@ class _MedicineCard extends StatelessWidget {
                       ),
                     ),
 
-                    // Compact Add to Cart Button
+                    // Rounded Add to Cart Button
                     InkWell(
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -775,18 +772,18 @@ class _MedicineCard extends StatelessWidget {
                           ),
                         );
                       },
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(10),
                       child: Container(
-                        width: 28,
-                        height: 28,
+                        width: 30,
+                        height: 30,
                         decoration: BoxDecoration(
                           color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
-                          Icons.add_shopping_cart_rounded,
+                          Icons.shopping_bag_outlined,
                           color: Colors.white,
-                          size: 14,
+                          size: 15,
                         ),
                       ),
                     ),
