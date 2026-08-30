@@ -40,7 +40,8 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Verify Settings Screen Elements
     expect(find.text('Settings'), findsOneWidget);
