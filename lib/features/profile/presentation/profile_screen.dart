@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/storage/secure_storage.dart';
@@ -11,6 +12,22 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'My Profile & Settings',
+          style: GoogleFonts.youngSerif(
+            fontSize: 18,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_none_rounded),
+            tooltip: 'Notifications',
+            onPressed: () => context.push(RouteNames.notifications),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16.0),
@@ -24,23 +41,29 @@ class ProfileScreen extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 28,
                     backgroundColor: AppColors.primaryLight,
-                    child: const Icon(Icons.person, color: AppColors.primary, size: 32),
+                    child: Icon(Icons.person, color: AppColors.primary, size: 32),
                   ),
                   const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Patient Account',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary),
+                        style: GoogleFonts.youngSerif(
+                          fontSize: 15,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'patient@meditouch.com',
-                        style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                        'patient@meditouch.health',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: AppColors.textMuted,
+                        ),
                       ),
                     ],
                   ),
@@ -65,7 +88,7 @@ class ProfileScreen extends ConsumerWidget {
             ),
             _ProfileTile(
               icon: Icons.security_outlined,
-              title: 'Privacy & Security',
+              title: 'Privacy & Medical Records',
               onTap: () {},
             ),
             const SizedBox(height: 24),
@@ -78,7 +101,13 @@ class ProfileScreen extends ConsumerWidget {
                 }
               },
               icon: const Icon(Icons.logout, color: AppColors.error, size: 18),
-              label: const Text('Sign Out', style: TextStyle(color: AppColors.error)),
+              label: Text(
+                'Sign Out',
+                style: GoogleFonts.inter(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppColors.errorLight),
               ),
@@ -112,11 +141,17 @@ class _ProfileTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary, size: 22),
-        title: Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        title: Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
         trailing: const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 18),
         onTap: onTap,
       ),
     );
   }
 }
-
