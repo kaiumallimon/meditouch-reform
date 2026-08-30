@@ -240,14 +240,19 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Showing ${((state.currentPage - 1) * state.limit) + 1}–${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                      Expanded(
+                        child: Text(
+                          'Showing ${((state.currentPage - 1) * state.limit) + 1}-${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
 
                       // Liquid Glass Sort Pill
                       Container(
