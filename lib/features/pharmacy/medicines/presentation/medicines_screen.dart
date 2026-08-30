@@ -664,10 +664,21 @@ class _IOS26MedicineCard extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: medicine.image != null && medicine.image!.isNotEmpty
-                          ? Image.network(
-                              medicine.image!,
+                          ? CachedNetworkImage(
+                              imageUrl: medicine.image!,
                               fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => _buildFallbackIcon(),
+                              placeholder: (context, url) => Container(
+                                color: Colors.grey.shade50,
+                                child: Center(
+                                  child: CupertinoActivityIndicator(
+                                    radius: 8,
+                                    color: isDark ? AppColors.primaryDark : AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (_, __, ___) => _buildFallbackIcon(),
+                              fadeInDuration: const Duration(milliseconds: 300),
+                              fadeOutDuration: const Duration(milliseconds: 150),
                             )
                           : _buildFallbackIcon(),
                     ),
