@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -36,9 +37,9 @@ class ProfileScreen extends ConsumerWidget {
                         ? AppColors.darkSurfaceElevated
                         : AppColors.primaryLight,
                     child: Icon(
-                      Icons.person_rounded,
+                      LucideIcons.user,
                       color: isDark ? Colors.white : AppColors.primary,
-                      size: 48,
+                      size: 44,
                     ),
                   ),
                   Positioned(
@@ -55,8 +56,8 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ),
                       child: const Icon(
-                        Icons.camera_alt_rounded,
-                        size: 14,
+                        LucideIcons.camera,
+                        size: 13,
                         color: Colors.white,
                       ),
                     ),
@@ -127,7 +128,7 @@ class ProfileScreen extends ConsumerWidget {
                 foregroundColor: Colors.white,
                 side: isDark ? const BorderSide(color: AppColors.darkBorder) : null,
               ),
-              icon: const Icon(Icons.edit_outlined, size: 16),
+              icon: const Icon(LucideIcons.pencil, size: 15),
               label: const Text('Edit Profile Information'),
             ),
             const SizedBox(height: 16),

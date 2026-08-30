@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 
@@ -59,7 +60,7 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
             child: widget.child,
           ),
 
-          // 2. Pure Floating iOS 26 Glass Pill with Smooth Gliding Indicator
+          // 2. Pure Floating iOS 26 Glass Pill with Lucide Icons
           Positioned(
             left: 16,
             right: 16,
@@ -125,7 +126,7 @@ class _IOS26FloatingNavBar extends StatelessWidget {
 
               return Stack(
                 children: [
-                  // Smooth Gliding Frosted Glass Pill Capsule (Zero Drop Shadow)
+                  // Smooth Gliding Frosted Glass Pill Capsule
                   AnimatedPositioned(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.fastEaseInToSlowEaseOut,
@@ -143,13 +144,12 @@ class _IOS26FloatingNavBar extends StatelessWidget {
                     ),
                   ),
 
-                  // Navigation Tabs Row with Smooth Micro-interactions
+                  // Navigation Tabs Row with Lucide Icons
                   Row(
                     children: [
                       Expanded(
                         child: _IOS26NavItem(
-                          icon: Icons.home_outlined,
-                          selectedIcon: Icons.home_rounded,
+                          icon: LucideIcons.house,
                           label: 'Home',
                           isSelected: selectedIndex == 0,
                           activeColor: activeColor,
@@ -159,8 +159,7 @@ class _IOS26FloatingNavBar extends StatelessWidget {
                       ),
                       Expanded(
                         child: _IOS26NavItem(
-                          icon: Icons.medication_outlined,
-                          selectedIcon: Icons.medication_rounded,
+                          icon: LucideIcons.pill,
                           label: 'Pharmacy',
                           isSelected: selectedIndex == 1,
                           activeColor: activeColor,
@@ -170,8 +169,7 @@ class _IOS26FloatingNavBar extends StatelessWidget {
                       ),
                       Expanded(
                         child: _IOS26NavItem(
-                          icon: Icons.health_and_safety_outlined,
-                          selectedIcon: Icons.health_and_safety_rounded,
+                          icon: LucideIcons.stethoscope,
                           label: 'Doctors',
                           isSelected: selectedIndex == 2,
                           activeColor: activeColor,
@@ -181,8 +179,7 @@ class _IOS26FloatingNavBar extends StatelessWidget {
                       ),
                       Expanded(
                         child: _IOS26NavItem(
-                          icon: Icons.auto_awesome_outlined,
-                          selectedIcon: Icons.auto_awesome_rounded,
+                          icon: LucideIcons.sparkles,
                           label: 'AI Chat',
                           isSelected: selectedIndex == 3,
                           activeColor: activeColor,
@@ -192,8 +189,7 @@ class _IOS26FloatingNavBar extends StatelessWidget {
                       ),
                       Expanded(
                         child: _IOS26NavItem(
-                          icon: Icons.settings_outlined,
-                          selectedIcon: Icons.settings_rounded,
+                          icon: LucideIcons.settings,
                           label: 'Settings',
                           isSelected: selectedIndex == 4,
                           activeColor: activeColor,
@@ -215,7 +211,6 @@ class _IOS26FloatingNavBar extends StatelessWidget {
 
 class _IOS26NavItem extends StatelessWidget {
   final IconData icon;
-  final IconData selectedIcon;
   final String label;
   final bool isSelected;
   final Color activeColor;
@@ -224,7 +219,6 @@ class _IOS26NavItem extends StatelessWidget {
 
   const _IOS26NavItem({
     required this.icon,
-    required this.selectedIcon,
     required this.label,
     required this.isSelected,
     required this.activeColor,
@@ -245,18 +239,13 @@ class _IOS26NavItem extends StatelessWidget {
               scale: isSelected ? 1.08 : 1.0,
               duration: const Duration(milliseconds: 260),
               curve: Curves.easeOutBack,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
-                child: Icon(
-                  isSelected ? selectedIcon : icon,
-                  key: ValueKey(isSelected),
-                  size: 20,
-                  color: isSelected ? activeColor : inactiveColor,
-                ),
+              child: Icon(
+                icon,
+                size: 19,
+                color: isSelected ? activeColor : inactiveColor,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 2.5),
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOut,

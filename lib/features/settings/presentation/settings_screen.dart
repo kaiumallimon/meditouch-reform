@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/app/theme_provider.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
@@ -49,14 +50,14 @@ class SettingsScreen extends ConsumerWidget {
                   child: Row(
                     children: [
                       CircleAvatar(
-                        radius: 26,
+                        radius: 24,
                         backgroundColor: isDark
                             ? AppColors.darkSurfaceElevated
                             : AppColors.primaryLight,
                         child: Icon(
-                          Icons.person_rounded,
+                          LucideIcons.user,
                           color: isDark ? Colors.white : AppColors.primary,
-                          size: 28,
+                          size: 24,
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -87,11 +88,11 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                       ),
                       Icon(
-                        Icons.chevron_right_rounded,
+                        LucideIcons.chevronRight,
                         color: isDark
                             ? AppColors.darkTextMuted
                             : AppColors.textMuted,
-                        size: 20,
+                        size: 18,
                       ),
                     ],
                   ),
@@ -100,7 +101,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 22),
 
-            // 2. Appearance Section (iOS Dark Mode Switching - Zero Tint)
+            // 2. Appearance Section (iOS Dark Mode Switching)
             _SectionHeader(title: 'APPEARANCE & DISPLAY', isDark: isDark),
             const SizedBox(height: 8),
             Material(
@@ -124,13 +125,9 @@ class SettingsScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
-                        isDark
-                            ? Icons.dark_mode_rounded
-                            : Icons.light_mode_rounded,
-                        color: isDark
-                            ? Colors.white
-                            : AppColors.primary,
-                        size: 20,
+                        isDark ? LucideIcons.moon : LucideIcons.sun,
+                        color: isDark ? Colors.white : AppColors.primary,
+                        size: 18,
                       ),
                     ),
                     title: Text(
@@ -234,7 +231,7 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   _SettingsTile(
-                    icon: Icons.receipt_long_outlined,
+                    icon: LucideIcons.fileText,
                     title: 'Prescription Orders',
                     isDark: isDark,
                     onTap: () => context.push(RouteNames.orders),
@@ -244,7 +241,7 @@ class SettingsScreen extends ConsumerWidget {
                     color: isDark ? AppColors.darkBorderSubtle : AppColors.borderSubtle,
                   ),
                   _SettingsTile(
-                    icon: Icons.video_call_outlined,
+                    icon: LucideIcons.video,
                     title: 'Telemedicine Consultations',
                     isDark: isDark,
                     onTap: () => context.push(RouteNames.appointments),
@@ -254,7 +251,7 @@ class SettingsScreen extends ConsumerWidget {
                     color: isDark ? AppColors.darkBorderSubtle : AppColors.borderSubtle,
                   ),
                   _SettingsTile(
-                    icon: Icons.notifications_none_rounded,
+                    icon: LucideIcons.bell,
                     title: 'Notifications & Dosage Reminders',
                     isDark: isDark,
                     onTap: () => context.push(RouteNames.notifications),
@@ -279,7 +276,7 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   _SettingsTile(
-                    icon: Icons.lock_outline_rounded,
+                    icon: LucideIcons.shieldCheck,
                     title: 'Privacy & Data Protection',
                     isDark: isDark,
                     onTap: () {},
@@ -289,7 +286,7 @@ class SettingsScreen extends ConsumerWidget {
                     color: isDark ? AppColors.darkBorderSubtle : AppColors.borderSubtle,
                   ),
                   _SettingsTile(
-                    icon: Icons.info_outline_rounded,
+                    icon: LucideIcons.info,
                     title: 'About MediTouch v1.0',
                     isDark: isDark,
                     onTap: () {},
@@ -308,7 +305,7 @@ class SettingsScreen extends ConsumerWidget {
                   context.go(RouteNames.login);
                 }
               },
-              icon: const Icon(Icons.logout_rounded, color: AppColors.errorDark, size: 18),
+              icon: const Icon(LucideIcons.logOut, color: AppColors.errorDark, size: 17),
               label: Text(
                 'Sign Out',
                 style: GoogleFonts.inter(
@@ -378,7 +375,7 @@ class _SettingsTile extends StatelessWidget {
       leading: Icon(
         icon,
         color: isDark ? AppColors.darkTextSecondary : AppColors.primary,
-        size: 20,
+        size: 19,
       ),
       title: Text(
         title,
@@ -389,9 +386,9 @@ class _SettingsTile extends StatelessWidget {
         ),
       ),
       trailing: Icon(
-        Icons.chevron_right_rounded,
+        LucideIcons.chevronRight,
         color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-        size: 18,
+        size: 17,
       ),
       onTap: onTap,
     );

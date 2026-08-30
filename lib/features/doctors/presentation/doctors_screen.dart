@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 
@@ -24,7 +25,7 @@ class DoctorsScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_month_outlined),
+            icon: const Icon(LucideIcons.calendar, size: 20),
             tooltip: 'My Appointments',
             onPressed: () => context.push(RouteNames.appointments),
           ),
@@ -32,7 +33,7 @@ class DoctorsScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -50,8 +51,8 @@ class DoctorsScreen extends StatelessWidget {
                   filled: true,
                   fillColor: isDark ? AppColors.darkSurface : Colors.white,
                   prefixIcon: Icon(
-                    Icons.search,
-                    size: 20,
+                    LucideIcons.search,
+                    size: 18,
                     color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                   ),
                   border: OutlineInputBorder(
@@ -88,8 +89,8 @@ class DoctorsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
-                          Icons.health_and_safety_rounded,
-                          size: 40,
+                          LucideIcons.stethoscope,
+                          size: 38,
                           color: isDark ? AppColors.secondaryDark : AppColors.secondary,
                         ),
                       ),

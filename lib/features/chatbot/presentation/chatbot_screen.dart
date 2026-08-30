@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 
 class ChatbotScreen extends StatelessWidget {
@@ -48,7 +49,7 @@ class ChatbotScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_comment_outlined),
+            icon: const Icon(LucideIcons.messageSquarePlus, size: 20),
             tooltip: 'New Conversation',
             onPressed: () {},
           ),
@@ -73,9 +74,9 @@ class ChatbotScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
-                          Icons.auto_awesome,
+                          LucideIcons.sparkles,
                           color: isDark ? Colors.white : AppColors.primary,
-                          size: 36,
+                          size: 34,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -144,9 +145,9 @@ class ChatbotScreen extends StatelessWidget {
                     ),
                     child: IconButton(
                       icon: Icon(
-                        Icons.send_rounded,
+                        LucideIcons.send,
                         color: isDark ? Colors.black : Colors.white,
-                        size: 18,
+                        size: 16,
                       ),
                       onPressed: () {},
                     ),

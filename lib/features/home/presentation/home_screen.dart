@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_assets.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
@@ -21,8 +22,8 @@ class HomeScreen extends StatelessWidget {
           children: [
             SvgPicture.asset(
               AppAssets.logoSvg,
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
               fit: BoxFit.contain,
             ),
             const SizedBox(width: 8),
@@ -37,11 +38,11 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
+            icon: const Icon(LucideIcons.bell, size: 20),
             onPressed: () => context.push(RouteNames.notifications),
           ),
           IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined),
+            icon: const Icon(LucideIcons.shoppingBag, size: 20),
             onPressed: () => context.push(RouteNames.cart),
           ),
         ],
@@ -88,8 +89,8 @@ class HomeScreen extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.auto_awesome, color: Colors.white, size: 14),
-                            const SizedBox(width: 4),
+                            const Icon(LucideIcons.sparkles, color: Colors.white, size: 13),
+                            const SizedBox(width: 5),
                             Text(
                               'AI Clinical Assistant',
                               style: GoogleFonts.inter(
@@ -126,11 +127,11 @@ class HomeScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () => context.push(RouteNames.chatbot),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Colors.white,
+                      backgroundColor: Colors.white,
                       foregroundColor: isDark ? Colors.black : AppColors.primary,
                       elevation: 0,
                     ),
-                    icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16),
+                    icon: const Icon(LucideIcons.messageSquare, size: 16),
                     label: Text(
                       'Start AI Consultation',
                       style: GoogleFonts.inter(fontWeight: FontWeight.w600),
@@ -158,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                 _ServiceCard(
                   title: 'Order Medicine',
                   subtitle: 'Genuine OTC & Rx',
-                  icon: Icons.medication_rounded,
+                  icon: LucideIcons.pill,
                   color: isDark ? Colors.white : AppColors.primary,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.pharmacy),
@@ -166,7 +167,7 @@ class HomeScreen extends StatelessWidget {
                 _ServiceCard(
                   title: 'Book Doctor',
                   subtitle: 'BMDC Verified Docs',
-                  icon: Icons.video_call_rounded,
+                  icon: LucideIcons.stethoscope,
                   color: AppColors.success,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.doctors),
@@ -174,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                 _ServiceCard(
                   title: 'Appointments',
                   subtitle: 'Live Telemedicine',
-                  icon: Icons.calendar_month_rounded,
+                  icon: LucideIcons.calendar,
                   color: AppColors.info,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.appointments),
@@ -182,7 +183,7 @@ class HomeScreen extends StatelessWidget {
                 _ServiceCard(
                   title: 'Prescriptions',
                   subtitle: 'Order History & Docs',
-                  icon: Icons.receipt_long_rounded,
+                  icon: LucideIcons.fileText,
                   color: AppColors.warning,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.orders),
@@ -239,7 +240,7 @@ class _ServiceCard extends StatelessWidget {
                     : color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: isDark ? Colors.white : color, size: 22),
+              child: Icon(icon, color: isDark ? Colors.white : color, size: 20),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

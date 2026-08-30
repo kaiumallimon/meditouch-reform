@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
@@ -76,12 +77,12 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.receipt_long_outlined),
+            icon: const Icon(LucideIcons.fileText, size: 20),
             tooltip: 'Orders',
             onPressed: () => context.push(RouteNames.orders),
           ),
           IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined),
+            icon: const Icon(LucideIcons.shoppingBag, size: 20),
             tooltip: 'Cart',
             onPressed: () => context.push(RouteNames.cart),
           ),
@@ -111,15 +112,15 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                         color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                       ),
                       prefixIcon: Icon(
-                        Icons.search_rounded,
-                        size: 19,
+                        LucideIcons.search,
+                        size: 18,
                         color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                       ),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
                               icon: Icon(
-                                Icons.clear_rounded,
-                                size: 17,
+                                LucideIcons.x,
+                                size: 16,
                                 color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                               ),
                               onPressed: () {
@@ -166,8 +167,8 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                             child: DropdownButton<String>(
                               value: selectedCategoryValue,
                               icon: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 18,
+                                LucideIcons.chevronDown,
+                                size: 16,
                                 color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
                               ),
                               dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
@@ -226,8 +227,8 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           child: DropdownButton<String>(
                             value: state.sortBy,
                             icon: Icon(
-                              Icons.sort_rounded,
-                              size: 16,
+                              LucideIcons.arrowUpDown,
+                              size: 15,
                               color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
                             ),
                             dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
@@ -381,8 +382,8 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
               ),
               child: Center(
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 13,
+                  LucideIcons.chevronLeft,
+                  size: 15,
                   color: state.currentPage > 1
                       ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
                       : (isDark
@@ -495,8 +496,8 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
               ),
               child: Center(
                 child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 13,
+                  LucideIcons.chevronRight,
+                  size: 15,
                   color: state.currentPage < state.totalPages
                       ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
                       : (isDark
@@ -549,8 +550,8 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.search_off_rounded,
-              size: 48,
+              LucideIcons.searchX,
+              size: 44,
               color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
             ),
             const SizedBox(height: 10),
@@ -583,7 +584,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline_rounded, size: 44, color: AppColors.error),
+            const Icon(LucideIcons.circleAlert, size: 40, color: AppColors.error),
             const SizedBox(height: 10),
             Text(
               'Unable to Load Medicines',
@@ -801,7 +802,7 @@ class _MedicineCard extends StatelessWidget {
                       ),
                     ),
 
-                    // Rounded Add to Cart Button
+                    // Rounded Add to Cart Button (Lucide Shopping Bag)
                     InkWell(
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -824,9 +825,9 @@ class _MedicineCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
-                          Icons.shopping_bag_outlined,
+                          LucideIcons.shoppingBag,
                           color: Colors.white,
-                          size: 15,
+                          size: 14,
                         ),
                       ),
                     ),
@@ -843,7 +844,7 @@ class _MedicineCard extends StatelessWidget {
   Widget _buildFallbackIcon() {
     return Center(
       child: Icon(
-        Icons.medication_rounded,
+        LucideIcons.pill,
         size: 32,
         color: isDark ? const Color(0xFF48484A) : const Color(0xFFD6D3D1),
       ),
