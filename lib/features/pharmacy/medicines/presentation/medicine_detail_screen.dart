@@ -737,74 +737,77 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.09)
+              ? Colors.white.withValues(alpha: 0.10)
               : const Color(0xFFE5E5EA),
-          width: 0.8,
+          width: 0.9,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-          child: ExpansionTile(
-            initiallyExpanded: true,
-            tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            leading: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.primaryDark.withValues(alpha: 0.15)
-                    : AppColors.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Material(
+          color: Colors.transparent,
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              initiallyExpanded: true,
+              tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              leading: Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.primaryDark.withValues(alpha: 0.15)
+                      : AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  _getSectionIcon(sec.id),
+                  size: 16,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
+                ),
               ),
-              child: Icon(
-                _getSectionIcon(sec.id),
-                size: 16,
-                color: isDark ? AppColors.primaryDark : AppColors.primary,
+              title: Text(
+                sec.label,
+                style: GoogleFonts.inter(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                ),
               ),
-            ),
-            title: Text(
-              sec.label,
-              style: GoogleFonts.inter(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w700,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              subtitle: Text(
+                sec.tag,
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                ),
               ),
-            ),
-            subtitle: Text(
-              sec.tag,
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-              ),
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: sec.faqItems != null && sec.faqItems!.isNotEmpty
-                    ? _buildFaqAccordionList(sec.faqItems!, isDark)
-                    : Text(
-                        sec.content,
-                        style: GoogleFonts.inter(
-                          fontSize: 12.5,
-                          height: 1.55,
-                          color: isDark ? const Color(0xFFD1D1D6) : const Color(0xFF3C3C43),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: sec.faqItems != null && sec.faqItems!.isNotEmpty
+                      ? _buildFaqAccordionList(sec.faqItems!, isDark)
+                      : Text(
+                          sec.content,
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            height: 1.55,
+                            color: isDark ? const Color(0xFFD1D1D6) : const Color(0xFF3C3C43),
+                          ),
                         ),
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -822,7 +825,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF9F9FB),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.06)
@@ -830,57 +833,60 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
               width: 0.6,
             ),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: ExpansionTile(
-              initiallyExpanded: idx == 0,
-              tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-            leading: Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.primaryDark : AppColors.primary,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Center(
-                child: Text(
-                  'Q${idx + 1}',
-                  style: GoogleFonts.inter(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Material(
+              color: Colors.transparent,
+              child: ExpansionTile(
+                initiallyExpanded: idx == 0,
+                tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                leading: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.primaryDark : AppColors.primary,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ),
-              ),
-            ),
-            title: Text(
-              item.question,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              ),
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    item.answer,
-                    style: GoogleFonts.inter(
-                      fontSize: 11.5,
-                      height: 1.5,
-                      color: isDark ? const Color(0xFFB0B0B5) : const Color(0xFF555558),
+                  child: Center(
+                    child: Text(
+                      'Q${idx + 1}',
+                      style: GoogleFonts.inter(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
+                title: Text(
+                  item.question,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item.answer,
+                        style: GoogleFonts.inter(
+                          fontSize: 11.5,
+                          height: 1.5,
+                          color: isDark ? const Color(0xFFB0B0B5) : const Color(0xFF555558),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      );
-    }).toList(),
+        );
+      }).toList(),
     );
   }
 
@@ -923,19 +929,26 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
                     extra: alt,
                   );
                 },
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(18),
                 child: Container(
                   width: 160,
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.08)
+                          ? Colors.white.withValues(alpha: 0.10)
                           : const Color(0xFFE5E5EA),
-                      width: 0.8,
+                      width: 0.9,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

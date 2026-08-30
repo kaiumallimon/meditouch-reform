@@ -316,7 +316,8 @@ void main() {
 
       // Tap on the medicine card
       await tester.tap(find.text('Napa Extra'));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
 
       // Verify navigated to MedicineDetailScreen
       expect(find.text('Clinical Monograph & Details'), findsOneWidget);
