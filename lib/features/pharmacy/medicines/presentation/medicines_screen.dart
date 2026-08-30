@@ -89,257 +89,246 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Search Bar & Dropdown Filters
-            Container(
-              color: isDark ? AppColors.darkBackground : Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Column(
-                children: [
-                  // Search Input
-                  TextField(
-                    controller: _searchController,
-                    onChanged: (val) => notifier.onSearchChanged(val),
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+        bottom: false,
+        child: RefreshIndicator(
+          onRefresh: () => notifier.loadMedicines(),
+          child: ListView(
+            controller: _scrollController,
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 96),
+            children: [
+              // 1. Search Bar (Scrolling with page)
+              TextField(
+                controller: _searchController,
+                onChanged: (val) => notifier.onSearchChanged(val),
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Search medicines, generics, brands...',
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 12.5,
+                    color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                  ),
+                  prefixIcon: Icon(
+                    LucideIcons.search,
+                    size: 18,
+                    color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                  ),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(
+                            LucideIcons.x,
+                            size: 16,
+                            color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                          ),
+                          onPressed: () {
+                            _searchController.clear();
+                            notifier.onSearchChanged('');
+                          },
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: isDark ? AppColors.darkSurface : Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
                     ),
-                    decoration: InputDecoration(
-                      hintText: 'Search medicines, generics, brands...',
-                      hintStyle: GoogleFonts.inter(
-                        fontSize: 12.5,
-                        color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-                      ),
-                      prefixIcon: Icon(
-                        LucideIcons.search,
-                        size: 18,
-                        color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-                      ),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                LucideIcons.x,
-                                size: 16,
-                                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                notifier.onSearchChanged('');
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: isDark ? AppColors.darkSurface : AppColors.background,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      border: OutlineInputBorder(
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // 2. Category & Sort Dropdowns Row (Scrolling with page)
+              Row(
+                children: [
+                  // Category Dropdown
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkSurface : Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        border: Border.all(
                           color: isDark ? AppColors.darkBorder : AppColors.border,
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: isDark ? AppColors.darkBorder : AppColors.border,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: selectedCategoryValue,
+                          icon: Icon(
+                            LucideIcons.chevronDown,
+                            size: 16,
+                            color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
+                          ),
+                          dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
+                          isExpanded: true,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          ),
+                          items: state.categories.map((cat) {
+                            final isAll = cat.toUpperCase() == 'ALL';
+                            final isSelected =
+                                cat.toUpperCase() == state.selectedCategory.toUpperCase();
+
+                            return DropdownMenuItem<String>(
+                              value: cat,
+                              child: Text(
+                                isAll ? 'All Categories' : cat,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  color: isSelected
+                                      ? (isDark ? AppColors.primaryDark : AppColors.primary)
+                                      : (isDark
+                                          ? AppColors.darkTextPrimary
+                                          : AppColors.textPrimary),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              notifier.setCategory(val);
+                              _scrollToTop();
+                            }
+                          },
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(width: 8),
 
-                  // Category & Sort Dropdowns Row
-                  Row(
-                    children: [
-                      // Category Dropdown
-                      Expanded(
-                        child: Container(
-                          height: 38,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkSurface : AppColors.background,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isDark ? AppColors.darkBorder : AppColors.border,
-                            ),
+                  // Sort By Dropdown
+                  Container(
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkSurface : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark ? AppColors.darkBorder : AppColors.border,
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: state.sortBy,
+                        icon: Icon(
+                          LucideIcons.arrowUpDown,
+                          size: 15,
+                          color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
+                        ),
+                        dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'name_asc',
+                            child: Text('Name A-Z'),
                           ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: selectedCategoryValue,
-                              icon: Icon(
-                                LucideIcons.chevronDown,
-                                size: 16,
-                                color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
-                              ),
-                              dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
-                              isExpanded: true,
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                              ),
-                              items: state.categories.map((cat) {
-                                final isAll = cat.toUpperCase() == 'ALL';
-                                final isSelected =
-                                    cat.toUpperCase() == state.selectedCategory.toUpperCase();
+                          DropdownMenuItem(
+                            value: 'name_desc',
+                            child: Text('Name Z-A'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'price_asc',
+                            child: Text('Price: Low'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'price_desc',
+                            child: Text('Price: High'),
+                          ),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) {
+                            notifier.setSortBy(val);
+                            _scrollToTop();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
 
-                                return DropdownMenuItem<String>(
-                                  value: cat,
-                                  child: Text(
-                                    isAll ? 'All Categories' : cat,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12,
-                                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                      color: isSelected
-                                          ? (isDark ? AppColors.primaryDark : AppColors.primary)
-                                          : (isDark
-                                              ? AppColors.darkTextPrimary
-                                              : AppColors.textPrimary),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                if (val != null) {
-                                  notifier.setCategory(val);
-                                  _scrollToTop();
-                                }
-                              },
-                            ),
+              // 3. Main Content: Loading, Error, Empty, or Grid
+              if (state.isLoading && state.medicines.isEmpty)
+                _buildLoadingGrid(isDark)
+              else if (state.errorMessage != null && state.medicines.isEmpty)
+                _buildErrorView(state.errorMessage!, notifier, isDark)
+              else if (state.medicines.isEmpty)
+                _buildEmptyView(isDark)
+              else ...[
+                // Stats & Pagination Summary Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Showing ${((state.currentPage - 1) * state.limit) + 1}-${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-
-                      // Sort By Dropdown
-                      Container(
-                        height: 38,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: isDark ? AppColors.darkSurface : AppColors.background,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isDark ? AppColors.darkBorder : AppColors.border,
-                          ),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: state.sortBy,
-                            icon: Icon(
-                              LucideIcons.arrowUpDown,
-                              size: 15,
-                              color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
-                            ),
-                            dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                            ),
-                            items: const [
-                              DropdownMenuItem(
-                                value: 'name_asc',
-                                child: Text('Name A-Z'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'name_desc',
-                                child: Text('Name Z-A'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'price_asc',
-                                child: Text('Price: Low'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'price_desc',
-                                child: Text('Price: High'),
-                              ),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) {
-                                notifier.setSortBy(val);
-                                _scrollToTop();
-                              }
-                            },
-                          ),
+                      Text(
+                        'Page ${state.currentPage} of ${state.totalPages}',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppColors.primaryDark : AppColors.primary,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
+                const SizedBox(height: 8),
 
-            // Medicines Grid (2 per row) + Pagination
-            Expanded(
-              child: state.isLoading && state.medicines.isEmpty
-                  ? _buildLoadingGrid(isDark)
-                  : state.errorMessage != null && state.medicines.isEmpty
-                      ? _buildErrorView(state.errorMessage!, notifier, isDark)
-                      : state.medicines.isEmpty
-                          ? _buildEmptyView(isDark)
-                          : RefreshIndicator(
-                              onRefresh: () => notifier.loadMedicines(),
-                              child: ListView(
-                                controller: _scrollController,
-                                padding: const EdgeInsets.fromLTRB(10, 10, 10, 88),
-                                children: [
-                                  // Stats & Pagination Summary Header
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Showing ${((state.currentPage - 1) * state.limit) + 1}-${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.inter(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w500,
-                                              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Page ${state.currentPage} of ${state.totalPages}',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: isDark ? AppColors.primaryDark : AppColors.primary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
+                // 2 Medicines Per Row Grid
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.77,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: state.medicines.length,
+                  itemBuilder: (context, index) {
+                    final medicine = state.medicines[index];
+                    return _MedicineCard(medicine: medicine, isDark: isDark);
+                  },
+                ),
+                const SizedBox(height: 16),
 
-                                  // 2 Medicines Per Row Grid
-                                  GridView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      childAspectRatio: 0.78,
-                                      crossAxisSpacing: 8,
-                                      mainAxisSpacing: 8,
-                                    ),
-                                    itemCount: state.medicines.length,
-                                    itemBuilder: (context, index) {
-                                      final medicine = state.medicines[index];
-                                      return _MedicineCard(medicine: medicine, isDark: isDark);
-                                    },
-                                  ),
-                                  const SizedBox(height: 12),
-
-                                  // Clean Seamless Pagination Bar
-                                  _buildPaginationBar(state, notifier, isDark),
-                                ],
-                              ),
-                            ),
-            ),
-          ],
+                // Clean Seamless Pagination Bar
+                _buildPaginationBar(state, notifier, isDark),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -514,26 +503,28 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
   Widget _buildLoadingGrid(bool isDark) {
     return GridView.builder(
-      padding: const EdgeInsets.all(10),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.78,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+        childAspectRatio: 0.77,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
       itemCount: 6,
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkSurface : Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isDark ? AppColors.darkBorderSubtle : AppColors.borderSubtle,
             ),
           ),
           child: Center(
             child: CupertinoActivityIndicator(
-              radius: 10,
+              radius: 11,
               color: isDark ? AppColors.primaryDark : AppColors.primary,
             ),
           ),
@@ -543,72 +534,68 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
   }
 
   Widget _buildEmptyView(bool isDark) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              LucideIcons.searchX,
-              size: 44,
-              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            LucideIcons.searchX,
+            size: 44,
+            color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'No Medicines Found',
+            style: GoogleFonts.youngSerif(
+              fontSize: 17,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
             ),
-            const SizedBox(height: 10),
-            Text(
-              'No Medicines Found',
-              style: GoogleFonts.youngSerif(
-                fontSize: 17,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Try searching with a different keyword or change active category.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Try searching with a different keyword or change active category.',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildErrorView(String message, PharmacyNotifier notifier, bool isDark) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(LucideIcons.circleAlert, size: 40, color: AppColors.error),
-            const SizedBox(height: 10),
-            Text(
-              'Unable to Load Medicines',
-              style: GoogleFonts.youngSerif(
-                fontSize: 17,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(LucideIcons.circleAlert, size: 40, color: AppColors.error),
+          const SizedBox(height: 12),
+          Text(
+            'Unable to Load Medicines',
+            style: GoogleFonts.youngSerif(
+              fontSize: 17,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
             ),
-            const SizedBox(height: 4),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 11.5,
-                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-              ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 11.5,
+              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
             ),
-            const SizedBox(height: 14),
-            ElevatedButton(
-              onPressed: () => notifier.loadMedicines(),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 14),
+          ElevatedButton(
+            onPressed: () => notifier.loadMedicines(),
+            child: const Text('Retry'),
+          ),
+        ],
       ),
     );
   }
@@ -640,7 +627,7 @@ class _MedicineCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Prominent Top Image
+          // 1. Prominent Top Image Canvas
           Expanded(
             child: Stack(
               children: [
