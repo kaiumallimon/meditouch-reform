@@ -46,10 +46,25 @@ class MedicineModel {
         json['name']?.toString() ??
         '';
 
-    final rawPrice = json['unit_price'] ?? json['price'];
+    final rawPricesList = json['unit_prices'] as List<dynamic>?;
+    dynamic firstPackPrice;
+    String? firstPackUnit;
+    if (rawPricesList != null && rawPricesList.isNotEmpty) {
+      final firstPack = rawPricesList.first;
+      if (firstPack is Map) {
+        firstPackPrice = firstPack['price'];
+        firstPackUnit = firstPack['unit']?.toString();
+      }
+    }
+
+    final rawPrice = json['unit_price'] ?? json['price'] ?? firstPackPrice;
     final priceVal = rawPrice is num
         ? rawPrice.toDouble()
         : (rawPrice != null ? (double.tryParse(rawPrice.toString()) ?? 0.0) : 0.0);
+
+    final packSizeVal = json['pack_size']?.toString() ??
+        firstPackUnit ??
+        '1 Unit';
 
     final isRx = json['rx_required'] == true ||
         json['requires_prescription'] == true ||
@@ -77,7 +92,7 @@ class MedicineModel {
           json['manufacturer']?.toString() ??
           'Pharma',
       unitPrice: priceVal,
-      packSize: json['pack_size']?.toString() ?? '1 Unit',
+      packSize: packSizeVal,
       image: json['medicine_image']?.toString() ?? json['image']?.toString(),
       rxRequired: isRx,
       inStock: inStockVal,

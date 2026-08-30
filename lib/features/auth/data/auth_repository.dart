@@ -10,6 +10,15 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(client, storage);
 });
 
+final currentUserProvider = FutureProvider<UserModel?>((ref) async {
+  final storage = ref.watch(secureStorageServiceProvider);
+  final userJson = await storage.getUserProfile();
+  if (userJson != null) {
+    return UserModel.fromJson(userJson);
+  }
+  return null;
+});
+
 class AuthRepository {
   final ApiClient _client;
   final SecureStorageService _storage;

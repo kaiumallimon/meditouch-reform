@@ -683,13 +683,14 @@ class _IOS26MedicineCard extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    padding: const EdgeInsets.all(6),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       child: medicine.image != null && medicine.image!.isNotEmpty
                           ? CachedNetworkImage(
                               imageUrl: medicine.image!,
-                              fit: BoxFit.contain,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
                               placeholder: (context, url) => Container(
                                 color: Colors.grey.shade50,
                                 child: Center(

@@ -103,6 +103,19 @@ class FakePharmacyRepository implements PharmacyRepository {
           ],
         ),
       ],
+      relatedMedicines: const [
+        MedicineModel(
+          id: 'med_alt_1',
+          name: 'Ace Plus',
+          brand: 'Ace Plus',
+          genericName: 'Paracetamol + Caffeine',
+          manufacturer: 'Square Pharmaceuticals PLC',
+          dosageForm: 'Tablet',
+          unitPrice: 2.50,
+          packSize: '1 Strip',
+          slug: 'ace-plus',
+        ),
+      ],
     );
   }
 }
@@ -202,6 +215,30 @@ void main() {
       expect(model.sections.first.content, contains('Tolfenamic acid is an NSAID of the fenamate class'));
       expect(model.sections.first.content, contains('• Acute treatment of migraine attacks'));
     });
+
+    test('MedicineModel extracts price and pack size from unit_prices when unit_price is absent', () {
+      final json = {
+        'id': 19095,
+        'medicine_name': 'Coralcin-DX',
+        'category_name': 'Tablet',
+        'generic_name': 'Calcium Carbonate + Vitamin D3',
+        'manufacturer_name': 'Renata Limited',
+        'slug': 'coralcin-dx-tablet',
+        'unit_prices': [
+          {
+            'id': 31149,
+            'unit': "30's pack",
+            'unit_size': 30,
+            'price': 450,
+          },
+        ],
+      };
+
+      final model = MedicineModel.fromJson(json);
+      expect(model.name, equals('Coralcin-DX'));
+      expect(model.unitPrice, equals(450.0));
+      expect(model.packSize, equals("30's pack"));
+    });
   });
 
   group('Medicine Detail Screen Widget Tests', () {
@@ -251,16 +288,21 @@ void main() {
       await tester.pumpAndSettle();
 
       // Scroll down to reveal remaining monograph sections and FAQ
-      final faqItemFinder = find.text('Can I take this on an empty stomach?');
-      await tester.dragUntilVisible(
-        faqItemFinder,
-        find.byType(Scrollable).first,
-        const Offset(0, -300),
-      );
-      await tester.pumpAndSettle();
+      await tester.drag(find.byType(ListView).first, const Offset(0, -500));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
-      // Verify FAQ Item inside Accordion
+      final faqItemFinder = find.text('Can I take this on an empty stomach?');
       expect(faqItemFinder, findsOneWidget);
+
+      // Scroll further down to reveal Generic Alternatives
+      await tester.drag(find.byType(ListView).first, const Offset(0, -500));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final altFinder = find.text('Generic Alternatives & Substitutes');
+      expect(altFinder, findsOneWidget);
+      expect(find.text('Ace Plus'), findsOneWidget);
 
       expect(find.text('1'), findsWidgets);
     });

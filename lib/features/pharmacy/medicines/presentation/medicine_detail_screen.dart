@@ -798,7 +798,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
     );
   }
 
-  // 4. Generic Alternatives
+  // 4. Generic Alternatives (Consistent with Pharmacy Page Card)
   Widget _buildRelatedMedicinesSection(List<MedicineModel> related, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -811,107 +811,299 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
               color: isDark ? AppColors.primaryDark : AppColors.primary,
             ),
             const SizedBox(width: 8),
-            Text(
-              'Generic Alternatives (${related.length})',
-              style: GoogleFonts.inter(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+            Expanded(
+              child: Text(
+                'Generic Alternatives & Substitutes',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 135,
+          height: 228,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: related.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, idx) {
               final alt = related[idx];
-              return InkWell(
-                onTap: () {
-                  context.push(
-                    '/pharmacy/medicine/${alt.slug ?? alt.id}',
-                    extra: alt,
-                  );
-                },
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  width: 160,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.10)
-                          : const Color(0xFFE5E5EA),
-                      width: 0.9,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.03),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
+              return _buildAlternativeMedicineCard(alt, isDark);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAlternativeMedicineCard(MedicineModel alt, bool isDark) {
+    return Container(
+      width: 168,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.09)
+              : const Color(0xFFE5E5EA),
+          width: 0.8,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            context.push(
+              '/pharmacy/medicine/${alt.slug ?? alt.id}',
+              extra: alt,
+            );
+          },
+          borderRadius: BorderRadius.circular(22),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. Image Canvas with clean rounded inner island & badges
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(6, 6, 6, 4),
+                        width: double.infinity,
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: alt.image != null && alt.image!.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: alt.image!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  placeholder: (context, url) => Container(
+                                    color: Colors.grey.shade50,
+                                    child: Center(
+                                      child: CupertinoActivityIndicator(
+                                        radius: 8,
+                                        color: isDark
+                                            ? AppColors.primaryDark
+                                            : AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (_, __, ___) => _buildFallbackCardIcon(isDark),
+                                  fadeInDuration: const Duration(milliseconds: 300),
+                                  fadeOutDuration: const Duration(milliseconds: 150),
+                                )
+                              : _buildFallbackCardIcon(isDark),
+                        ),
+                      ),
+
+                      // Category Capsule Pill (Top-Left)
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.black.withValues(alpha: 0.65)
+                                    : Colors.white.withValues(alpha: 0.90),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.12)
+                                      : const Color(0xFFE5E5EA),
+                                  width: 0.6,
+                                ),
+                              ),
+                              child: Text(
+                                alt.dosageForm.toUpperCase(),
+                                style: GoogleFonts.inter(
+                                  fontSize: 7.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Rx / OTC Badge (Top-Right)
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6.5, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: alt.rxRequired
+                                    ? (isDark ? const Color(0xFF2C1518).withValues(alpha: 0.85) : const Color(0xFFFEF2F2))
+                                    : (isDark ? const Color(0xFF13281C).withValues(alpha: 0.85) : const Color(0xFFECFDF5)),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: alt.rxRequired
+                                      ? (isDark ? const Color(0xFF5C2025) : const Color(0xFFFECACA))
+                                      : (isDark ? const Color(0xFF1E5032) : const Color(0xFFA7F3D0)),
+                                  width: 0.6,
+                                ),
+                              ),
+                              child: Text(
+                                alt.rxRequired ? 'Rx' : 'OTC',
+                                style: GoogleFonts.inter(
+                                  fontSize: 7.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: alt.rxRequired
+                                      ? (isDark ? const Color(0xFFFF6961) : const Color(0xFFDC2626))
+                                      : (isDark ? const Color(0xFF30D158) : const Color(0xFF059669)),
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
+                ),
+
+                // 2. Compact Info Details
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 4, 10, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            alt.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                            ),
-                          ),
-                          Text(
-                            alt.manufacturer,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-                            ),
-                          ),
-                        ],
+                      // Product Name
+                      Text(
+                        alt.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          height: 1.2,
+                        ),
                       ),
+                      const SizedBox(height: 2),
+
+                      // Generic / Manufacturer
+                      Text(
+                        alt.genericName ?? alt.manufacturer,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 9.5,
+                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+
+                      // Price & Liquid Glass View Button Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            _formatCurrency(alt.unitPrice),
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? AppColors.primaryDark : AppColors.primary,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _formatCurrency(alt.unitPrice),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  ),
+                                ),
+                                Text(
+                                  alt.packSize,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 8.5,
+                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Icon(
-                            LucideIcons.arrowRight,
-                            size: 13,
-                            color: isDark ? AppColors.primaryDark : AppColors.primary,
+
+                          // Clean iOS 26 View / Navigate Button (No Gradient)
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.12)
+                                  : const Color(0xFFF2F2F7),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.18)
+                                    : const Color(0xFFE5E5EA),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                LucideIcons.arrowRight,
+                                size: 14,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildFallbackCardIcon(bool isDark) {
+    return Container(
+      color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
+      child: Center(
+        child: Icon(
+          LucideIcons.pill,
+          size: 26,
+          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+        ),
+      ),
     );
   }
 
