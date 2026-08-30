@@ -1,156 +1,216 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
-import 'package:meditouch/core/router/route_names.dart';
-import 'package:meditouch/core/storage/secure_storage.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Profile & Settings',
+          'Personal Profile',
           style: GoogleFonts.youngSerif(
             fontSize: 18,
-            color: AppColors.textPrimary,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
-            tooltip: 'Notifications',
-            onPressed: () => context.push(RouteNames.notifications),
-          ),
-        ],
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.borderSubtle),
-              ),
-              child: Row(
+            // Avatar & Name Card
+            Center(
+              child: Stack(
                 children: [
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundColor: AppColors.primaryLight,
-                    child: Icon(Icons.person, color: AppColors.primary, size: 32),
+                  CircleAvatar(
+                    radius: 44,
+                    backgroundColor: isDark
+                        ? AppColors.primaryDarkLight
+                        : AppColors.primaryLight,
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: isDark ? AppColors.primaryDark : AppColors.primary,
+                      size: 48,
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Patient Account',
-                        style: GoogleFonts.youngSerif(
-                          fontSize: 15,
-                          color: AppColors.textPrimary,
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.primaryDark : AppColors.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark ? AppColors.darkSurface : Colors.white,
+                          width: 2,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'patient@meditouch.health',
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
-                        ),
+                      child: const Icon(
+                        Icons.camera_alt_rounded,
+                        size: 14,
+                        color: Colors.white,
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            _ProfileTile(
-              icon: Icons.receipt_long_outlined,
-              title: 'Prescription Orders',
-              onTap: () => context.push(RouteNames.orders),
-            ),
-            _ProfileTile(
-              icon: Icons.calendar_month_outlined,
-              title: 'My Consultations',
-              onTap: () => context.push(RouteNames.appointments),
-            ),
-            _ProfileTile(
-              icon: Icons.payment_outlined,
-              title: 'Payment Methods & bKash',
-              onTap: () {},
-            ),
-            _ProfileTile(
-              icon: Icons.security_outlined,
-              title: 'Privacy & Medical Records',
-              onTap: () {},
-            ),
-            const SizedBox(height: 24),
-            OutlinedButton.icon(
-              onPressed: () async {
-                final storage = ref.read(secureStorageServiceProvider);
-                await storage.clearAll();
-                if (context.mounted) {
-                  context.go(RouteNames.login);
-                }
-              },
-              icon: const Icon(Icons.logout, color: AppColors.error, size: 18),
-              label: Text(
-                'Sign Out',
-                style: GoogleFonts.inter(
-                  color: AppColors.error,
-                  fontWeight: FontWeight.w600,
+            const SizedBox(height: 14),
+            Center(
+              child: Text(
+                'Patient Account',
+                style: GoogleFonts.youngSerif(
+                  fontSize: 19,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                 ),
               ),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.errorLight),
+            ),
+            const SizedBox(height: 2),
+            Center(
+              child: Text(
+                'patient@meditouch.health',
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                ),
               ),
             ),
+            const SizedBox(height: 24),
+
+            // Profile Information Cards
+            _buildInfoCard(
+              context: context,
+              isDark: isDark,
+              title: 'PERSONAL INFORMATION',
+              items: [
+                _InfoRow(label: 'Full Name', value: 'Patient User', isDark: isDark),
+                _InfoRow(label: 'Phone Number', value: '+880 1712-345678', isDark: isDark),
+                _InfoRow(label: 'Email', value: 'patient@meditouch.health', isDark: isDark),
+                _InfoRow(label: 'Gender', value: 'Not specified', isDark: isDark),
+                _InfoRow(label: 'Blood Group', value: 'O+', isDark: isDark),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            _buildInfoCard(
+              context: context,
+              isDark: isDark,
+              title: 'DELIVERY & ADDRESS',
+              items: [
+                _InfoRow(label: 'Default Address', value: 'Dhaka, Bangladesh', isDark: isDark),
+                _InfoRow(label: 'Postal Code', value: '1212', isDark: isDark),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Edit Profile Button
+            ElevatedButton.icon(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Profile edit mode is enabled'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.edit_outlined, size: 16),
+              label: const Text('Edit Profile Information'),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildInfoCard({
+    required BuildContext context,
+    required bool isDark,
+    required String title,
+    required List<_InfoRow> items,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          child: Text(
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.6,
+              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+            ),
+          ),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: items.length,
+            separatorBuilder: (_, __) => Divider(
+              height: 1,
+              color: isDark ? AppColors.darkBorderSubtle : AppColors.borderSubtle,
+            ),
+            itemBuilder: (_, index) => items[index],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _ProfileTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isDark;
 
-  const _ProfileTile({
-    required this.icon,
-    required this.title,
-    required this.onTap,
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.borderSubtle),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: AppColors.primary, size: 22),
-        title: Text(
-          title,
-          style: GoogleFonts.inter(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w500,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            ),
           ),
-        ),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 18),
-        onTap: onTap,
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+            ),
+          ),
+        ],
       ),
     );
   }

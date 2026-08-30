@@ -7,6 +7,8 @@ class ChatbotScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -16,7 +18,7 @@ class ChatbotScreen extends StatelessWidget {
               'AI Clinical Assistant',
               style: GoogleFonts.youngSerif(
                 fontSize: 17,
-                color: AppColors.textPrimary,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
               ),
             ),
             Row(
@@ -63,10 +65,16 @@ class ChatbotScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
+                          color: isDark
+                              ? AppColors.primaryDarkLight
+                              : AppColors.primaryLight,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Icon(Icons.auto_awesome, color: AppColors.primary, size: 36),
+                        child: Icon(
+                          Icons.auto_awesome,
+                          color: isDark ? AppColors.primaryDark : AppColors.primary,
+                          size: 36,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -86,28 +94,50 @@ class ChatbotScreen extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(top: BorderSide(color: AppColors.border)),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: isDark ? AppColors.darkBorder : AppColors.border,
+                  ),
+                ),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: TextField(
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Ask clinical question or search medicine...',
+                        hintStyle: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                        ),
+                        filled: true,
+                        fillColor: isDark ? AppColors.darkBackground : AppColors.background,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
-                          borderSide: const BorderSide(color: AppColors.border),
+                          borderSide: BorderSide(
+                            color: isDark ? AppColors.darkBorder : AppColors.border,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide(
+                            color: isDark ? AppColors.darkBorder : AppColors.border,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.primaryDark : AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(

@@ -11,6 +11,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -26,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               'MediTouch',
               style: GoogleFonts.youngSerif(
                 fontSize: 19,
-                color: AppColors.textPrimary,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
               ),
             ),
           ],
@@ -51,15 +53,17 @@ class HomeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF5B15FC), Color(0xFF4A0FD4)],
+                gradient: LinearGradient(
+                  colors: isDark
+                      ? const [Color(0xFF6D28D9), Color(0xFF4C1D95)]
+                      : const [Color(0xFF5B15FC), Color(0xFF4A0FD4)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.25),
+                    color: AppColors.primary.withValues(alpha: isDark ? 0.35 : 0.25),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -118,7 +122,7 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () => context.push(RouteNames.chatbot),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: AppColors.primary,
+                      foregroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
                       elevation: 0,
                     ),
                     icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16),
@@ -150,7 +154,8 @@ class HomeScreen extends StatelessWidget {
                   title: 'Order Medicine',
                   subtitle: 'Genuine OTC & Rx',
                   icon: Icons.medication_rounded,
-                  color: AppColors.primary,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
+                  isDark: isDark,
                   onTap: () => context.push(RouteNames.pharmacy),
                 ),
                 _ServiceCard(
@@ -158,6 +163,7 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'BMDC Verified Docs',
                   icon: Icons.video_call_rounded,
                   color: AppColors.secondary,
+                  isDark: isDark,
                   onTap: () => context.push(RouteNames.doctors),
                 ),
                 _ServiceCard(
@@ -165,6 +171,7 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'Live Telemedicine',
                   icon: Icons.calendar_month_rounded,
                   color: const Color(0xFF0284C7),
+                  isDark: isDark,
                   onTap: () => context.push(RouteNames.appointments),
                 ),
                 _ServiceCard(
@@ -172,6 +179,7 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'Order History & Docs',
                   icon: Icons.receipt_long_rounded,
                   color: const Color(0xFFF59E0B),
+                  isDark: isDark,
                   onTap: () => context.push(RouteNames.orders),
                 ),
               ],
@@ -188,6 +196,7 @@ class _ServiceCard extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final Color color;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _ServiceCard({
@@ -195,6 +204,7 @@ class _ServiceCard extends StatelessWidget {
     required this.subtitle,
     required this.icon,
     required this.color,
+    required this.isDark,
     required this.onTap,
   });
 
@@ -206,12 +216,14 @@ class _ServiceCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.borderSubtle),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.borderSubtle,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -224,7 +236,7 @@ class _ServiceCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withValues(alpha: isDark ? 0.2 : 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 22),
@@ -236,7 +248,7 @@ class _ServiceCard extends StatelessWidget {
                   title,
                   style: GoogleFonts.youngSerif(
                     fontSize: 14.5,
-                    color: AppColors.textPrimary,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -244,7 +256,7 @@ class _ServiceCard extends StatelessWidget {
                   subtitle,
                   style: GoogleFonts.inter(
                     fontSize: 11,
-                    color: AppColors.textMuted,
+                    color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                   ),
                 ),
               ],

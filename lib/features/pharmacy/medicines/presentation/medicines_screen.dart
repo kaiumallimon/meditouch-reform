@@ -54,6 +54,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(pharmacyProvider);
     final notifier = ref.read(pharmacyProvider.notifier);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Ensure selected category exists in the list for dropdown
     final selectedCategoryValue = state.categories
@@ -63,13 +64,13 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
         : (state.categories.isNotEmpty ? state.categories.first : 'ALL');
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
         title: Text(
           'MediTouch Pharmacy',
           style: GoogleFonts.youngSerif(
             fontSize: 18,
-            color: AppColors.textPrimary,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
           ),
         ),
         actions: [
@@ -90,7 +91,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
           children: [
             // Search Bar & Dropdown Filters
             Container(
-              color: Colors.white,
+              color: isDark ? AppColors.darkSurface : Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               child: Column(
                 children: [
@@ -98,13 +99,28 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                   TextField(
                     controller: _searchController,
                     onChanged: (val) => notifier.onSearchChanged(val),
-                    style: GoogleFonts.inter(fontSize: 13),
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Search medicines, generics, brands...',
-                      prefixIcon: const Icon(Icons.search_rounded, size: 19),
+                      hintStyle: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search_rounded,
+                        size: 19,
+                        color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                      ),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
-                              icon: const Icon(Icons.clear_rounded, size: 17),
+                              icon: Icon(
+                                Icons.clear_rounded,
+                                size: 17,
+                                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                              ),
                               onPressed: () {
                                 _searchController.clear();
                                 notifier.onSearchChanged('');
@@ -112,11 +128,19 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                             )
                           : null,
                       filled: true,
-                      fillColor: AppColors.background,
+                      fillColor: isDark ? AppColors.darkBackground : AppColors.background,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.border),
+                        borderSide: BorderSide(
+                          color: isDark ? AppColors.darkBorder : AppColors.border,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: isDark ? AppColors.darkBorder : AppColors.border,
+                        ),
                       ),
                     ),
                   ),
@@ -131,26 +155,32 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           height: 38,
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
+                            color: isDark ? AppColors.darkBackground : AppColors.background,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.border),
+                            border: Border.all(
+                              color: isDark ? AppColors.darkBorder : AppColors.border,
+                            ),
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               value: selectedCategoryValue,
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.keyboard_arrow_down_rounded,
                                 size: 18,
-                                color: AppColors.textSecondary,
+                                color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
                               ),
+                              dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
                               isExpanded: true,
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                               ),
                               items: state.categories.map((cat) {
                                 final isAll = cat.toUpperCase() == 'ALL';
+                                final isSelected =
+                                    cat.toUpperCase() == state.selectedCategory.toUpperCase();
+
                                 return DropdownMenuItem<String>(
                                   value: cat,
                                   child: Text(
@@ -158,14 +188,12 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.inter(
                                       fontSize: 12,
-                                      fontWeight: cat.toUpperCase() ==
-                                              state.selectedCategory.toUpperCase()
-                                          ? FontWeight.w700
-                                          : FontWeight.w500,
-                                      color: cat.toUpperCase() ==
-                                              state.selectedCategory.toUpperCase()
-                                          ? AppColors.primary
-                                          : AppColors.textPrimary,
+                                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                      color: isSelected
+                                          ? (isDark ? AppColors.primaryDark : AppColors.primary)
+                                          : (isDark
+                                              ? AppColors.darkTextPrimary
+                                              : AppColors.textPrimary),
                                     ),
                                   ),
                                 );
@@ -187,22 +215,25 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                         height: 38,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: AppColors.background,
+                          color: isDark ? AppColors.darkBackground : AppColors.background,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.border),
+                          border: Border.all(
+                            color: isDark ? AppColors.darkBorder : AppColors.border,
+                          ),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: state.sortBy,
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.sort_rounded,
                               size: 16,
-                              color: AppColors.textSecondary,
+                              color: isDark ? AppColors.darkTextMuted : AppColors.textSecondary,
                             ),
+                            dropdownColor: isDark ? AppColors.darkSurfaceElevated : Colors.white,
                             style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                             ),
                             items: const [
                               DropdownMenuItem(
@@ -240,11 +271,11 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
             // Medicines Grid (2 per row) + Pagination
             Expanded(
               child: state.isLoading && state.medicines.isEmpty
-                  ? _buildLoadingGrid()
+                  ? _buildLoadingGrid(isDark)
                   : state.errorMessage != null && state.medicines.isEmpty
-                      ? _buildErrorView(state.errorMessage!, notifier)
+                      ? _buildErrorView(state.errorMessage!, notifier, isDark)
                       : state.medicines.isEmpty
-                          ? _buildEmptyView()
+                          ? _buildEmptyView(isDark)
                           : RefreshIndicator(
                               onRefresh: () => notifier.loadMedicines(),
                               child: ListView(
@@ -257,20 +288,24 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          'Showing ${((state.currentPage - 1) * state.limit) + 1}-${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textMuted,
+                                        Expanded(
+                                          child: Text(
+                                            'Showing ${((state.currentPage - 1) * state.limit) + 1}-${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                                            ),
                                           ),
                                         ),
+                                        const SizedBox(width: 8),
                                         Text(
                                           'Page ${state.currentPage} of ${state.totalPages}',
                                           style: GoogleFonts.inter(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w600,
-                                            color: AppColors.primary,
+                                            color: isDark ? AppColors.primaryDark : AppColors.primary,
                                           ),
                                         ),
                                       ],
@@ -291,13 +326,13 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                     itemCount: state.medicines.length,
                                     itemBuilder: (context, index) {
                                       final medicine = state.medicines[index];
-                                      return _MedicineCard(medicine: medicine);
+                                      return _MedicineCard(medicine: medicine, isDark: isDark);
                                     },
                                   ),
                                   const SizedBox(height: 12),
 
                                   // Clean Seamless Pagination Bar
-                                  _buildPaginationBar(state, notifier),
+                                  _buildPaginationBar(state, notifier, isDark),
                                 ],
                               ),
                             ),
@@ -308,7 +343,11 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     );
   }
 
-  Widget _buildPaginationBar(PharmacyState state, PharmacyNotifier notifier) {
+  Widget _buildPaginationBar(
+    PharmacyState state,
+    PharmacyNotifier notifier,
+    bool isDark,
+  ) {
     if (state.totalPages <= 1) return const SizedBox.shrink();
 
     final pages = _getPaginationRange(state.currentPage, state.totalPages);
@@ -331,17 +370,17 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.darkSurface : Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: state.currentPage > 1
-                      ? const Color(0xFFE7E5E4)
-                      : const Color(0xFFF0EEEB),
+                      ? (isDark ? AppColors.darkBorder : const Color(0xFFE7E5E4))
+                      : (isDark ? AppColors.darkBorderSubtle : const Color(0xFFF0EEEB)),
                 ),
                 boxShadow: state.currentPage > 1
                     ? [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.03),
+                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                           blurRadius: 4,
                           offset: const Offset(0, 1),
                         ),
@@ -353,15 +392,17 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                   Icons.arrow_back_ios_new_rounded,
                   size: 13,
                   color: state.currentPage > 1
-                      ? AppColors.textPrimary
-                      : AppColors.textMuted.withValues(alpha: 0.35),
+                      ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
+                      : (isDark
+                          ? AppColors.darkTextMuted.withValues(alpha: 0.35)
+                          : AppColors.textMuted.withValues(alpha: 0.35)),
                 ),
               ),
             ),
           ),
           const SizedBox(width: 8),
 
-          // Numbered Page Buttons (Directly on background)
+          // Numbered Page Buttons
           Flexible(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -369,13 +410,13 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: pages.map((p) {
                   if (p is String) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
                       child: Text(
                         '•••',
                         style: TextStyle(
                           fontSize: 11,
-                          color: AppColors.textMuted,
+                          color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -384,6 +425,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
                   final pageNum = p as int;
                   final isCurrent = pageNum == state.currentPage;
+                  final activeBg = isDark ? AppColors.primaryDark : AppColors.primary;
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -398,35 +440,35 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                         height: 36,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isCurrent ? AppColors.primary : Colors.white,
+                          color: isCurrent
+                              ? activeBg
+                              : (isDark ? AppColors.darkSurface : Colors.white),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isCurrent
-                                ? AppColors.primary
-                                : const Color(0xFFE7E5E4),
+                                ? activeBg
+                                : (isDark ? AppColors.darkBorder : const Color(0xFFE7E5E4)),
                           ),
                           boxShadow: isCurrent
                               ? [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.28),
+                                    color: activeBg.withValues(alpha: 0.35),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),
                                   ),
                                 ]
-                              : [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.02),
-                                    blurRadius: 3,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
+                              : null,
                         ),
                         child: Text(
                           '$pageNum',
                           style: GoogleFonts.inter(
                             fontSize: 12.5,
                             fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w600,
-                            color: isCurrent ? Colors.white : AppColors.textPrimary,
+                            color: isCurrent
+                                ? Colors.white
+                                : (isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.textPrimary),
                           ),
                         ),
                       ),
@@ -451,17 +493,17 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.darkSurface : Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: state.currentPage < state.totalPages
-                      ? const Color(0xFFE7E5E4)
-                      : const Color(0xFFF0EEEB),
+                      ? (isDark ? AppColors.darkBorder : const Color(0xFFE7E5E4))
+                      : (isDark ? AppColors.darkBorderSubtle : const Color(0xFFF0EEEB)),
                 ),
                 boxShadow: state.currentPage < state.totalPages
                     ? [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.03),
+                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                           blurRadius: 4,
                           offset: const Offset(0, 1),
                         ),
@@ -473,8 +515,10 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                   Icons.arrow_forward_ios_rounded,
                   size: 13,
                   color: state.currentPage < state.totalPages
-                      ? AppColors.textPrimary
-                      : AppColors.textMuted.withValues(alpha: 0.35),
+                      ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
+                      : (isDark
+                          ? AppColors.darkTextMuted.withValues(alpha: 0.35)
+                          : AppColors.textMuted.withValues(alpha: 0.35)),
                 ),
               ),
             ),
@@ -484,7 +528,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     );
   }
 
-  Widget _buildLoadingGrid() {
+  Widget _buildLoadingGrid(bool isDark) {
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -497,36 +541,51 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? AppColors.darkSurface : Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.borderSubtle),
+            border: Border.all(
+              color: isDark ? AppColors.darkBorderSubtle : AppColors.borderSubtle,
+            ),
           ),
-          child: const Center(
-            child: CupertinoActivityIndicator(radius: 10, color: AppColors.primary),
+          child: Center(
+            child: CupertinoActivityIndicator(
+              radius: 10,
+              color: isDark ? AppColors.primaryDark : AppColors.primary,
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildEmptyView() {
+  Widget _buildEmptyView(bool isDark) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.search_off_rounded, size: 48, color: AppColors.textMuted),
+            Icon(
+              Icons.search_off_rounded,
+              size: 48,
+              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+            ),
             const SizedBox(height: 10),
             Text(
               'No Medicines Found',
-              style: GoogleFonts.youngSerif(fontSize: 17, color: AppColors.textPrimary),
+              style: GoogleFonts.youngSerif(
+                fontSize: 17,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               'Try searching with a different keyword or change active category.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              ),
             ),
           ],
         ),
@@ -534,7 +593,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     );
   }
 
-  Widget _buildErrorView(String message, PharmacyNotifier notifier) {
+  Widget _buildErrorView(String message, PharmacyNotifier notifier, bool isDark) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -545,13 +604,19 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
             const SizedBox(height: 10),
             Text(
               'Unable to Load Medicines',
-              style: GoogleFonts.youngSerif(fontSize: 17, color: AppColors.textPrimary),
+              style: GoogleFonts.youngSerif(
+                fontSize: 17,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.textMuted),
+              style: GoogleFonts.inter(
+                fontSize: 11.5,
+                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+              ),
             ),
             const SizedBox(height: 14),
             ElevatedButton(
@@ -567,8 +632,9 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
 class _MedicineCard extends StatelessWidget {
   final MedicineModel medicine;
+  final bool isDark;
 
-  const _MedicineCard({required this.medicine});
+  const _MedicineCard({required this.medicine, required this.isDark});
 
   String _formatCurrency(double amount) {
     final formatter = NumberFormat('#,##0.00', 'en_US');
@@ -577,14 +643,18 @@ class _MedicineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeColor = isDark ? AppColors.primaryDark : AppColors.primary;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEAE8E4)),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : const Color(0xFFEAE8E4),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.025),
+            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.025),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -600,9 +670,9 @@ class _MedicineCard extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   height: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF9F9F8),
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF14131F) : const Color(0xFFF9F9F8),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   ),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
@@ -623,12 +693,16 @@ class _MedicineCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 3),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.95),
+                      color: isDark
+                          ? AppColors.darkSurface.withValues(alpha: 0.92)
+                          : Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFE5E7EB)),
+                      border: Border.all(
+                        color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
+                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                           blurRadius: 4,
                           offset: const Offset(0, 1),
                         ),
@@ -640,8 +714,8 @@ class _MedicineCard extends StatelessWidget {
                         Container(
                           width: 4.5,
                           height: 4.5,
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
+                          decoration: BoxDecoration(
+                            color: activeColor,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -651,7 +725,7 @@ class _MedicineCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                             letterSpacing: 0.2,
                           ),
                         ),
@@ -668,13 +742,13 @@ class _MedicineCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
                       color: medicine.rxRequired
-                          ? const Color(0xFFFEF2F2)
-                          : const Color(0xFFECFDF5),
+                          ? (isDark ? const Color(0xFF3B151A) : const Color(0xFFFEF2F2))
+                          : (isDark ? const Color(0xFF0D3325) : const Color(0xFFECFDF5)),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: medicine.rxRequired
-                            ? const Color(0xFFFECACA)
-                            : const Color(0xFFA7F3D0),
+                            ? (isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECACA))
+                            : (isDark ? const Color(0xFF065F46) : const Color(0xFFA7F3D0)),
                       ),
                     ),
                     child: Text(
@@ -683,8 +757,8 @@ class _MedicineCard extends StatelessWidget {
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         color: medicine.rxRequired
-                            ? const Color(0xFFDC2626)
-                            : const Color(0xFF059669),
+                            ? (isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626))
+                            : (isDark ? const Color(0xFF34D399) : const Color(0xFF059669)),
                         letterSpacing: 0.2,
                       ),
                     ),
@@ -694,7 +768,7 @@ class _MedicineCard extends StatelessWidget {
             ),
           ),
 
-          // 2. Compact Info Canvas (Zero Artificial Blank Gap)
+          // 2. Compact Info Canvas
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
             child: Column(
@@ -709,7 +783,7 @@ class _MedicineCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                     height: 1.15,
                   ),
                 ),
@@ -722,7 +796,7 @@ class _MedicineCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
                     fontSize: 9.5,
-                    color: AppColors.textMuted,
+                    color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -742,7 +816,7 @@ class _MedicineCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                             ),
                           ),
                           Text(
@@ -751,7 +825,7 @@ class _MedicineCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.inter(
                               fontSize: 8.5,
-                              color: AppColors.textMuted,
+                              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                             ),
                           ),
                         ],
@@ -777,7 +851,7 @@ class _MedicineCard extends StatelessWidget {
                         width: 30,
                         height: 30,
                         decoration: BoxDecoration(
-                          color: AppColors.primary,
+                          color: activeColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -798,11 +872,11 @@ class _MedicineCard extends StatelessWidget {
   }
 
   Widget _buildFallbackIcon() {
-    return const Center(
+    return Center(
       child: Icon(
         Icons.medication_rounded,
         size: 32,
-        color: Color(0xFFD6D3D1),
+        color: isDark ? const Color(0xFF3B384E) : const Color(0xFFD6D3D1),
       ),
     );
   }

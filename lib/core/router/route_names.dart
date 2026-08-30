@@ -25,7 +25,7 @@ class RouteNames {
   static const String chatbot = '/chatbot';
 
   // Profile & Settings
+  static const String settings = '/settings';
   static const String profile = '/profile';
   static const String notifications = '/notifications';
 }
-

@@ -9,13 +9,15 @@ class DoctorsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Doctors & Telemedicine',
           style: GoogleFonts.youngSerif(
             fontSize: 18,
-            color: AppColors.textPrimary,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
           ),
         ),
         actions: [
@@ -33,9 +35,35 @@ class DoctorsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
-                decoration: const InputDecoration(
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                ),
+                decoration: InputDecoration(
                   hintText: 'Search doctors by name or specialty...',
-                  prefixIcon: Icon(Icons.search, size: 20),
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 12.5,
+                    color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                  ),
+                  filled: true,
+                  fillColor: isDark ? AppColors.darkSurface : Colors.white,
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 20,
+                    color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -49,19 +77,35 @@ class DoctorsScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.health_and_safety_rounded, size: 48, color: AppColors.secondary),
-                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF0D3325)
+                              : AppColors.secondaryLight,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Icon(
+                          Icons.health_and_safety_rounded,
+                          size: 40,
+                          color: AppColors.secondary,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
                       Text(
                         'Verified Practitioners',
                         style: GoogleFonts.youngSerif(
-                          fontSize: 15,
-                          color: AppColors.textSecondary,
+                          fontSize: 16,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Connect with BMDC verified practitioners via video consultation.',
-                        style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted),
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                        ),
                       ),
                     ],
                   ),

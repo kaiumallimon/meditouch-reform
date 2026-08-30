@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meditouch/features/pharmacy/medicines/data/pharmacy_repository.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/medicines_screen.dart';
@@ -67,12 +68,32 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
+    final router = GoRouter(
+      initialLocation: '/pharmacy',
+      routes: [
+        GoRoute(
+          path: '/pharmacy',
+          builder: (context, state) => const MedicinesScreen(),
+        ),
+        GoRoute(
+          path: '/pharmacy/cart',
+          builder: (context, state) => const Scaffold(body: Text('Cart')),
+        ),
+        GoRoute(
+          path: '/pharmacy/orders',
+          builder: (context, state) => const Scaffold(body: Text('Orders')),
+        ),
+      ],
+    );
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           pharmacyRepositoryProvider.overrideWithValue(FakePharmacyRepository()),
         ],
-        child: const RootWidget(),
+        child: MaterialApp.router(
+          routerConfig: router,
+        ),
       ),
     );
 
@@ -93,15 +114,4 @@ void main() {
     // Verify Pagination Header Summary
     expect(find.text('Showing 1-2 of 2 medicines'), findsOneWidget);
   });
-}
-
-class RootWidget extends StatelessWidget {
-  const RootWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MedicinesScreen(),
-    );
-  }
 }

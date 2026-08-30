@@ -14,6 +14,7 @@ import 'package:meditouch/features/pharmacy/cart/presentation/cart_screen.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/medicines_screen.dart';
 import 'package:meditouch/features/pharmacy/orders/presentation/orders_screen.dart';
 import 'package:meditouch/features/profile/presentation/profile_screen.dart';
+import 'package:meditouch/features/settings/presentation/settings_screen.dart';
 import 'package:meditouch/features/splash/presentation/splash_screen.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -43,7 +44,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const RegisterScreen(),
       ),
-
 
       // Main Shell with Bottom Navigation
       ShellRoute(
@@ -77,12 +77,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
-            path: RouteNames.profile,
+            path: RouteNames.settings,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: ProfileScreen(),
+              child: SettingsScreen(),
             ),
           ),
         ],
+      ),
+
+      // Dedicated Profile Sub-route
+      GoRoute(
+        path: RouteNames.profile,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const ProfileScreen(),
       ),
 
       // Full-screen Modal / Sub-routes
@@ -109,4 +116,3 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
-

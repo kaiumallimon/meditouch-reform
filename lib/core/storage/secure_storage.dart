@@ -23,6 +23,22 @@ class SecureStorageService {
   static const String _keyRefreshToken = 'meditouch_refresh_token';
   static const String _keyUserProfile = 'meditouch_user_profile';
 
+  Future<void> write(String key, String value) async {
+    await _storage.write(key: key, value: value);
+  }
+
+  Future<String?> read(String key) async {
+    try {
+      return await _storage.read(key: key);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> delete(String key) async {
+    await _storage.delete(key: key);
+  }
+
   Future<void> saveTokens({required String accessToken, String? refreshToken}) async {
     await _storage.write(key: _keyAccessToken, value: accessToken);
     if (refreshToken != null) {
@@ -46,7 +62,6 @@ class SecureStorageService {
     }
   }
 
-
   Future<void> saveUserProfile(Map<String, dynamic> userJson) async {
     await _storage.write(key: _keyUserProfile, value: jsonEncode(userJson));
   }
@@ -65,4 +80,3 @@ class SecureStorageService {
     await _storage.deleteAll();
   }
 }
-

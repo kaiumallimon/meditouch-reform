@@ -18,7 +18,7 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
     if (location.startsWith('/pharmacy')) return 1;
     if (location.startsWith('/doctors')) return 2;
     if (location.startsWith('/chatbot')) return 3;
-    if (location.startsWith('/profile')) return 4;
+    if (location.startsWith('/settings') || location.startsWith('/profile')) return 4;
     return 0;
   }
 
@@ -37,7 +37,7 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
         context.go(RouteNames.chatbot);
         break;
       case 4:
-        context.go(RouteNames.profile);
+        context.go(RouteNames.settings);
         break;
     }
   }
@@ -45,43 +45,51 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedIndex = _calculateSelectedIndex(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeColor = isDark ? AppColors.primaryDark : AppColors.primary;
 
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.border, width: 1)),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkBackground : Colors.white,
+          border: Border(
+            top: BorderSide(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+              width: 1,
+            ),
+          ),
         ),
         child: NavigationBar(
           selectedIndex: selectedIndex,
           onDestinationSelected: (index) => _onItemTapped(index, context),
-          backgroundColor: Colors.white,
-          indicatorColor: AppColors.primaryLight,
-          destinations: const [
+          backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
+          indicatorColor: isDark ? AppColors.primaryDarkLight : AppColors.primaryLight,
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded, color: AppColors.primary),
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded, color: activeColor),
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.medication_outlined),
-              selectedIcon: Icon(Icons.medication_rounded, color: AppColors.primary),
+              icon: const Icon(Icons.medication_outlined),
+              selectedIcon: Icon(Icons.medication_rounded, color: activeColor),
               label: 'Pharmacy',
             ),
             NavigationDestination(
-              icon: Icon(Icons.health_and_safety_outlined),
-              selectedIcon: Icon(Icons.health_and_safety_rounded, color: AppColors.primary),
+              icon: const Icon(Icons.health_and_safety_outlined),
+              selectedIcon: Icon(Icons.health_and_safety_rounded, color: activeColor),
               label: 'Doctors',
             ),
             NavigationDestination(
-              icon: Icon(Icons.auto_awesome_outlined),
-              selectedIcon: Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
+              icon: const Icon(Icons.auto_awesome_outlined),
+              selectedIcon: Icon(Icons.auto_awesome_rounded, color: activeColor),
               label: 'AI Chat',
             ),
             NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded),
-              selectedIcon: Icon(Icons.person_rounded, color: AppColors.primary),
-              label: 'Profile',
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings_rounded, color: activeColor),
+              label: 'Settings',
             ),
           ],
         ),
