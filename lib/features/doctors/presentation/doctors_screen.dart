@@ -12,7 +12,9 @@ class DoctorsScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
         title: Text(
           'Doctors & Telemedicine',
           style: GoogleFonts.youngSerif(
@@ -81,14 +83,14 @@ class DoctorsScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? const Color(0xFF0D3325)
+                              ? AppColors.darkSurfaceElevated
                               : AppColors.secondaryLight,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.health_and_safety_rounded,
                           size: 40,
-                          color: AppColors.secondary,
+                          color: isDark ? AppColors.secondaryDark : AppColors.secondary,
                         ),
                       ),
                       const SizedBox(height: 14),

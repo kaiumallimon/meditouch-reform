@@ -66,6 +66,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
         title: Text(
           'MediTouch Pharmacy',
           style: GoogleFonts.youngSerif(
@@ -91,7 +92,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
           children: [
             // Search Bar & Dropdown Filters
             Container(
-              color: isDark ? AppColors.darkSurface : Colors.white,
+              color: isDark ? AppColors.darkBackground : Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               child: Column(
                 children: [
@@ -128,7 +129,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                             )
                           : null,
                       filled: true,
-                      fillColor: isDark ? AppColors.darkBackground : AppColors.background,
+                      fillColor: isDark ? AppColors.darkSurface : AppColors.background,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -155,7 +156,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           height: 38,
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkBackground : AppColors.background,
+                            color: isDark ? AppColors.darkSurface : AppColors.background,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: isDark ? AppColors.darkBorder : AppColors.border,
@@ -215,7 +216,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                         height: 38,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: isDark ? AppColors.darkBackground : AppColors.background,
+                          color: isDark ? AppColors.darkSurface : AppColors.background,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isDark ? AppColors.darkBorder : AppColors.border,
@@ -357,7 +358,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Previous Button (Squircle with border)
+          // Previous Button
           InkWell(
             onTap: state.currentPage > 1
                 ? () {
@@ -377,15 +378,6 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                       ? (isDark ? AppColors.darkBorder : const Color(0xFFE7E5E4))
                       : (isDark ? AppColors.darkBorderSubtle : const Color(0xFFF0EEEB)),
                 ),
-                boxShadow: state.currentPage > 1
-                    ? [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
-                        ),
-                      ]
-                    : null,
               ),
               child: Center(
                 child: Icon(
@@ -480,7 +472,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
           ),
           const SizedBox(width: 8),
 
-          // Next Button (Squircle with border)
+          // Next Button
           InkWell(
             onTap: state.currentPage < state.totalPages
                 ? () {
@@ -500,15 +492,6 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                       ? (isDark ? AppColors.darkBorder : const Color(0xFFE7E5E4))
                       : (isDark ? AppColors.darkBorderSubtle : const Color(0xFFF0EEEB)),
                 ),
-                boxShadow: state.currentPage < state.totalPages
-                    ? [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
-                        ),
-                      ]
-                    : null,
               ),
               child: Center(
                 child: Icon(
@@ -652,13 +635,6 @@ class _MedicineCard extends StatelessWidget {
         border: Border.all(
           color: isDark ? AppColors.darkBorder : const Color(0xFFEAE8E4),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.025),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -671,7 +647,7 @@ class _MedicineCard extends StatelessWidget {
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF14131F) : const Color(0xFFF9F9F8),
+                    color: isDark ? const Color(0xFF141416) : const Color(0xFFF9F9F8),
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   ),
                   child: ClipRRect(
@@ -686,7 +662,7 @@ class _MedicineCard extends StatelessWidget {
                   ),
                 ),
 
-                // Fully Rounded Category Pill (Top-Left)
+                // Fully Rounded Neutral Category Pill (Top-Left)
                 Positioned(
                   top: 6,
                   left: 6,
@@ -694,19 +670,12 @@ class _MedicineCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 3),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? AppColors.darkSurface.withValues(alpha: 0.92)
+                          ? AppColors.darkSurfaceElevated
                           : Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -742,13 +711,13 @@ class _MedicineCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
                       color: medicine.rxRequired
-                          ? (isDark ? const Color(0xFF3B151A) : const Color(0xFFFEF2F2))
-                          : (isDark ? const Color(0xFF0D3325) : const Color(0xFFECFDF5)),
+                          ? (isDark ? const Color(0xFF2C1518) : const Color(0xFFFEF2F2))
+                          : (isDark ? const Color(0xFF13281C) : const Color(0xFFECFDF5)),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: medicine.rxRequired
-                            ? (isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECACA))
-                            : (isDark ? const Color(0xFF065F46) : const Color(0xFFA7F3D0)),
+                            ? (isDark ? const Color(0xFF5C2025) : const Color(0xFFFECACA))
+                            : (isDark ? const Color(0xFF1E5032) : const Color(0xFFA7F3D0)),
                       ),
                     ),
                     child: Text(
@@ -757,8 +726,8 @@ class _MedicineCard extends StatelessWidget {
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         color: medicine.rxRequired
-                            ? (isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626))
-                            : (isDark ? const Color(0xFF34D399) : const Color(0xFF059669)),
+                            ? (isDark ? const Color(0xFFFF6961) : const Color(0xFFDC2626))
+                            : (isDark ? const Color(0xFF30D158) : const Color(0xFF059669)),
                         letterSpacing: 0.2,
                       ),
                     ),
@@ -876,7 +845,7 @@ class _MedicineCard extends StatelessWidget {
       child: Icon(
         Icons.medication_rounded,
         size: 32,
-        color: isDark ? const Color(0xFF3B384E) : const Color(0xFFD6D3D1),
+        color: isDark ? const Color(0xFF48484A) : const Color(0xFFD6D3D1),
       ),
     );
   }

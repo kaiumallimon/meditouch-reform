@@ -10,7 +10,9 @@ class ChatbotScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -26,8 +28,8 @@ class ChatbotScreen extends StatelessWidget {
                 Container(
                   width: 6,
                   height: 6,
-                  decoration: const BoxDecoration(
-                    color: AppColors.secondary,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.secondaryDark : AppColors.secondary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -37,7 +39,7 @@ class ChatbotScreen extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.secondary,
+                    color: isDark ? AppColors.secondaryDark : AppColors.secondary,
                   ),
                 ),
               ],
@@ -66,13 +68,13 @@ class ChatbotScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? AppColors.primaryDarkLight
+                              ? AppColors.darkSurfaceElevated
                               : AppColors.primaryLight,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
                           Icons.auto_awesome,
-                          color: isDark ? AppColors.primaryDark : AppColors.primary,
+                          color: isDark ? Colors.white : AppColors.primary,
                           size: 36,
                         ),
                       ),
@@ -95,7 +97,7 @@ class ChatbotScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? AppColors.darkSurface : Colors.white,
+                color: isDark ? AppColors.darkBackground : Colors.white,
                 border: Border(
                   top: BorderSide(
                     color: isDark ? AppColors.darkBorder : AppColors.border,
@@ -117,7 +119,7 @@ class ChatbotScreen extends StatelessWidget {
                           color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                         ),
                         filled: true,
-                        fillColor: isDark ? AppColors.darkBackground : AppColors.background,
+                        fillColor: isDark ? AppColors.darkSurface : AppColors.background,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
@@ -137,11 +139,15 @@ class ChatbotScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   Container(
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.primaryDark : AppColors.primary,
+                      color: isDark ? Colors.white : AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.send_rounded, color: Colors.white, size: 18),
+                      icon: Icon(
+                        Icons.send_rounded,
+                        color: isDark ? Colors.black : Colors.white,
+                        size: 18,
+                      ),
                       onPressed: () {},
                     ),
                   ),

@@ -14,7 +14,9 @@ class HomeScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
         title: Row(
           children: [
             SvgPicture.asset(
@@ -49,23 +51,24 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // AI Assistant Hero Banner
+            // AI Assistant Hero Banner (Neutral Apple Dark Gradient)
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isDark
-                      ? const [Color(0xFF6D28D9), Color(0xFF4C1D95)]
+                      ? const [Color(0xFF2C2C2E), Color(0xFF1C1C1E)]
                       : const [Color(0xFF5B15FC), Color(0xFF4A0FD4)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(22),
+                border: isDark ? Border.all(color: AppColors.darkBorder) : null,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: isDark ? 0.35 : 0.25),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.2),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
@@ -77,7 +80,9 @@ class HomeScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.12)
+                              : Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -112,7 +117,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     'Ask our clinical triage assistant about symptoms, generic alternatives, or live inventory.',
                     style: GoogleFonts.inter(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: isDark ? AppColors.darkTextSecondary : Colors.white.withValues(alpha: 0.85),
                       fontSize: 12.5,
                       height: 1.4,
                     ),
@@ -121,8 +126,8 @@ class HomeScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () => context.push(RouteNames.chatbot),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
+                      backgroundColor: isDark ? Colors.white : Colors.white,
+                      foregroundColor: isDark ? Colors.black : AppColors.primary,
                       elevation: 0,
                     ),
                     icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16),
@@ -154,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                   title: 'Order Medicine',
                   subtitle: 'Genuine OTC & Rx',
                   icon: Icons.medication_rounded,
-                  color: isDark ? AppColors.primaryDark : AppColors.primary,
+                  color: isDark ? Colors.white : AppColors.primary,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.pharmacy),
                 ),
@@ -162,7 +167,7 @@ class HomeScreen extends StatelessWidget {
                   title: 'Book Doctor',
                   subtitle: 'BMDC Verified Docs',
                   icon: Icons.video_call_rounded,
-                  color: AppColors.secondary,
+                  color: AppColors.success,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.doctors),
                 ),
@@ -170,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                   title: 'Appointments',
                   subtitle: 'Live Telemedicine',
                   icon: Icons.calendar_month_rounded,
-                  color: const Color(0xFF0284C7),
+                  color: AppColors.info,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.appointments),
                 ),
@@ -178,7 +183,7 @@ class HomeScreen extends StatelessWidget {
                   title: 'Prescriptions',
                   subtitle: 'Order History & Docs',
                   icon: Icons.receipt_long_rounded,
-                  color: const Color(0xFFF59E0B),
+                  color: AppColors.warning,
                   isDark: isDark,
                   onTap: () => context.push(RouteNames.orders),
                 ),
@@ -212,22 +217,15 @@ class _ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkSurface : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark ? AppColors.darkBorder : AppColors.borderSubtle,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,10 +234,12 @@ class _ServiceCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+                color: isDark
+                    ? AppColors.darkSurfaceElevated
+                    : color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: color, size: 22),
+              child: Icon(icon, color: isDark ? Colors.white : color, size: 22),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

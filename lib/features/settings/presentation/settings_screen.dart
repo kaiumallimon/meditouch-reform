@@ -19,6 +19,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
         title: Text(
           'Settings',
           style: GoogleFonts.youngSerif(
@@ -36,7 +37,7 @@ class SettingsScreen extends ConsumerWidget {
               color: isDark ? AppColors.darkSurface : Colors.white,
               clipBehavior: Clip.antiAlias,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(16),
                 side: BorderSide(
                   color: isDark ? AppColors.darkBorder : AppColors.border,
                 ),
@@ -50,11 +51,11 @@ class SettingsScreen extends ConsumerWidget {
                       CircleAvatar(
                         radius: 26,
                         backgroundColor: isDark
-                            ? AppColors.primaryDarkLight
+                            ? AppColors.darkSurfaceElevated
                             : AppColors.primaryLight,
                         child: Icon(
                           Icons.person_rounded,
-                          color: isDark ? AppColors.primaryDark : AppColors.primary,
+                          color: isDark ? Colors.white : AppColors.primary,
                           size: 28,
                         ),
                       ),
@@ -97,9 +98,9 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
 
-            // 2. Appearance Section (AMOLED Dark Mode Switching)
+            // 2. Appearance Section (iOS Dark Mode Switching - Zero Tint)
             _SectionHeader(title: 'APPEARANCE & DISPLAY', isDark: isDark),
             const SizedBox(height: 8),
             Material(
@@ -118,7 +119,7 @@ class SettingsScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: isDark
-                            ? AppColors.primaryDarkLight
+                            ? AppColors.darkSurfaceElevated
                             : AppColors.primaryLight,
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -127,13 +128,13 @@ class SettingsScreen extends ConsumerWidget {
                             ? Icons.dark_mode_rounded
                             : Icons.light_mode_rounded,
                         color: isDark
-                            ? AppColors.primaryDark
+                            ? Colors.white
                             : AppColors.primary,
                         size: 20,
                       ),
                     ),
                     title: Text(
-                      'Dark Mode (AMOLED)',
+                      'Dark Mode',
                       style: GoogleFonts.inter(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600,
@@ -144,10 +145,10 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     subtitle: Text(
                       themeMode == ThemeMode.system
-                          ? 'Following System Preference'
+                          ? 'Automatic (System)'
                           : themeMode == ThemeMode.dark
-                              ? 'Enabled (True Black)'
-                              : 'Disabled',
+                              ? 'On'
+                              : 'Off',
                       style: GoogleFonts.inter(
                         fontSize: 11,
                         color: isDark
@@ -157,7 +158,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     trailing: CupertinoSwitch(
                       value: isDark,
-                      activeTrackColor: AppColors.primaryDark,
+                      activeTrackColor: CupertinoColors.activeGreen,
                       onChanged: (val) {
                         ref
                             .read(themeModeProvider.notifier)
@@ -194,7 +195,7 @@ class SettingsScreen extends ConsumerWidget {
                         items: const [
                           DropdownMenuItem(
                             value: ThemeMode.system,
-                            child: Text('System Default'),
+                            child: Text('Automatic'),
                           ),
                           DropdownMenuItem(
                             value: ThemeMode.light,
@@ -202,7 +203,7 @@ class SettingsScreen extends ConsumerWidget {
                           ),
                           DropdownMenuItem(
                             value: ThemeMode.dark,
-                            child: Text('Dark (AMOLED)'),
+                            child: Text('Dark'),
                           ),
                         ],
                         onChanged: (mode) {
@@ -216,7 +217,7 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
 
             // 3. Healthcare Shortcuts Section
             _SectionHeader(title: 'HEALTHCARE & ORDERS', isDark: isDark),
@@ -261,7 +262,7 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
 
             // 4. Preferences & About Section
             _SectionHeader(title: 'PREFERENCES & ABOUT', isDark: isDark),
@@ -296,7 +297,7 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 26),
 
             // 5. Sign Out Button
             OutlinedButton.icon(
@@ -318,9 +319,9 @@ class SettingsScreen extends ConsumerWidget {
               ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
-                  color: (isDark ? AppColors.errorDark : AppColors.error).withValues(alpha: 0.35),
+                  color: (isDark ? AppColors.errorDark : AppColors.error).withValues(alpha: 0.3),
                 ),
-                backgroundColor: isDark ? AppColors.errorDarkLight : const Color(0xFFFEF2F2),
+                backgroundColor: isDark ? AppColors.darkSurface : const Color(0xFFFEF2F2),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -376,7 +377,7 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: isDark ? AppColors.primaryDark : AppColors.primary,
+        color: isDark ? AppColors.darkTextSecondary : AppColors.primary,
         size: 20,
       ),
       title: Text(

@@ -11,7 +11,9 @@ class ProfileScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
         title: Text(
           'Personal Profile',
           style: GoogleFonts.youngSerif(
@@ -31,11 +33,11 @@ class ProfileScreen extends ConsumerWidget {
                   CircleAvatar(
                     radius: 44,
                     backgroundColor: isDark
-                        ? AppColors.primaryDarkLight
+                        ? AppColors.darkSurfaceElevated
                         : AppColors.primaryLight,
                     child: Icon(
                       Icons.person_rounded,
-                      color: isDark ? AppColors.primaryDark : AppColors.primary,
+                      color: isDark ? Colors.white : AppColors.primary,
                       size: 48,
                     ),
                   ),
@@ -45,10 +47,10 @@ class ProfileScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.primaryDark : AppColors.primary,
+                        color: isDark ? AppColors.darkSurface : AppColors.primary,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isDark ? AppColors.darkSurface : Colors.white,
+                          color: isDark ? AppColors.darkBorder : Colors.white,
                           width: 2,
                         ),
                       ),
@@ -120,6 +122,11 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark ? AppColors.darkSurfaceElevated : AppColors.primary,
+                foregroundColor: Colors.white,
+                side: isDark ? const BorderSide(color: AppColors.darkBorder) : null,
+              ),
               icon: const Icon(Icons.edit_outlined, size: 16),
               label: const Text('Edit Profile Information'),
             ),

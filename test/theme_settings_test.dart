@@ -47,7 +47,7 @@ void main() {
     expect(find.text('My Profile'), findsOneWidget);
     expect(find.text('Personal details, address & medical history'), findsOneWidget);
     expect(find.text('APPEARANCE & DISPLAY'), findsOneWidget);
-    expect(find.text('Dark Mode (AMOLED)'), findsOneWidget);
+    expect(find.text('Dark Mode'), findsOneWidget);
     expect(find.text('Theme Option'), findsOneWidget);
     expect(find.text('Sign Out'), findsOneWidget);
 
