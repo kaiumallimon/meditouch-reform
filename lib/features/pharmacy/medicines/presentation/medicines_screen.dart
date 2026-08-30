@@ -88,18 +88,18 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           padding: EdgeInsets.fromLTRB(14, topInset + 72, 14, 100),
             children: [
-              // 1. iOS 26 Liquid Glass Search Bar
+              // 1. iOS 26 Liquid Glass Fully-Round Search Bar
               ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(24),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                   child: Container(
-                    height: 42,
+                    height: 44,
                     decoration: BoxDecoration(
                       color: isDark
                           ? const Color(0xFF2C2C2E).withValues(alpha: 0.60)
                           : Colors.white.withValues(alpha: 0.85),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.14)
@@ -107,42 +107,55 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                         width: 0.8,
                       ),
                     ),
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: (val) => notifier.onSearchChanged(val),
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Search medicines, generics, brands...',
-                        hintStyle: GoogleFonts.inter(
-                          fontSize: 12.5,
-                          color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
+                    child: Center(
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: (val) => notifier.onSearchChanged(val),
+                        textAlignVertical: TextAlignVertical.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                         ),
-                        prefixIcon: Icon(
-                          LucideIcons.search,
-                          size: 16,
-                          color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText: 'Search medicines, generics, brands...',
+                          hintStyle: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
+                          ),
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.only(left: 14, right: 10),
+                            child: Icon(
+                              LucideIcons.search,
+                              size: 16,
+                              color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
+                            ),
+                          ),
+                          prefixIconConstraints: const BoxConstraints(
+                            minWidth: 40,
+                            minHeight: 44,
+                          ),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(minWidth: 36, minHeight: 44),
+                                  icon: Icon(
+                                    LucideIcons.x,
+                                    size: 14,
+                                    color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
+                                  ),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    notifier.onSearchChanged('');
+                                  },
+                                )
+                              : null,
+                          filled: false,
+                          contentPadding: const EdgeInsets.only(right: 14),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
                         ),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(
-                                  LucideIcons.x,
-                                  size: 14,
-                                  color: isDark ? const Color(0xFF98989F) : const Color(0xFF8E8E93),
-                                ),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  notifier.onSearchChanged('');
-                                },
-                              )
-                            : null,
-                        filled: false,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
                       ),
                     ),
                   ),

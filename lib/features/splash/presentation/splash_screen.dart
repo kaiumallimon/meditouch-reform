@@ -72,18 +72,32 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF3EEFE), // Soft primary tint
-              AppColors.background, // Clean background #FAF8F5
-            ],
-            stops: [0.0, 0.65],
-          ),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkBackground : AppColors.background,
+          gradient: isDark
+              ? const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1E172F), // Soft deep primary tint for dark mode
+                    AppColors.darkBackground, // Clean dark background #121214
+                  ],
+                  stops: [0.0, 0.65],
+                )
+              : const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFF3EEFE), // Soft primary tint for light mode
+                    AppColors.background, // Clean background #FAF8F5
+                  ],
+                  stops: [0.0, 0.65],
+                ),
         ),
         child: SafeArea(
           child: Stack(
@@ -105,14 +119,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
 
               // Bottom Cupertino Activity Indicator
-              const Positioned(
+              Positioned(
                 bottom: 36,
                 left: 0,
                 right: 0,
                 child: Center(
                   child: CupertinoActivityIndicator(
                     radius: 12,
-                    color: AppColors.primary,
+                    color: isDark ? AppColors.primaryDark : AppColors.primary,
                   ),
                 ),
               ),
