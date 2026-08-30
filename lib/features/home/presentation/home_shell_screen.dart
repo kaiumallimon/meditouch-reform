@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:meditouch/core/constants/app_assets.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 
@@ -49,7 +47,6 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
     final selectedIndex = _calculateSelectedIndex(context);
 
     return Scaffold(
-      
       body: widget.child,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -92,4 +89,3 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
     );
   }
 }
-
