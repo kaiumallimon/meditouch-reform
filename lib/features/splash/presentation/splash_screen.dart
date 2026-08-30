@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,35 +17,51 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+    with TickerProviderStateMixin {
+  late final AnimationController _entranceController;
+  late final AnimationController _pulseController;
   late final Animation<double> _scaleAnimation;
   late final Animation<double> _fadeAnimation;
+  late final Animation<double> _haloAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    // 1. Entrance reveal animation
+    _entranceController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
+        parent: _entranceController,
+        curve: Curves.easeOutBack,
       ),
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _controller,
+        parent: _entranceController,
         curve: Curves.easeIn,
       ),
     );
 
-    _controller.forward();
+    // 2. Ambient breathing pulse
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat(reverse: true);
+
+    _haloAnimation = Tween<double>(begin: 0.85, end: 1.15).animate(
+      CurvedAnimation(
+        parent: _pulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _entranceController.forward();
     _checkInitialAuth();
   }
 
@@ -67,7 +82,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _entranceController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -79,115 +95,99 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: SafeArea(
         child: Stack(
+          alignment: Alignment.center,
           children: [
-            // Center Floating Liquid Glass Hero Card
+            // 1. Atmospheric Breathing Ambient Halo
+            AnimatedBuilder(
+              animation: _haloAnimation,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _haloAnimation.value,
+                  child: Container(
+                    width: 280,
+                    height: 280,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          (isDark ? AppColors.primaryDark : AppColors.primary)
+                              .withValues(alpha: isDark ? 0.22 : 0.14),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.75],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            // 2. Freely Floating Logo & Tagline
             Center(
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: ScaleTransition(
                   scale: _scaleAnimation,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Brand Mark
+                      isDark
+                          ? Image.asset(
+                              AppAssets.logoDarkPng,
+                              width: 230,
+                              height: 140,
+                              fit: BoxFit.contain,
+                            )
+                          : SvgPicture.asset(
+                              AppAssets.logoSvg,
+                              width: 160,
+                              height: 95,
+                              fit: BoxFit.contain,
+                            ),
+                      const SizedBox(height: 14),
+
+                      // Refined Category Pill Tagline
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? const Color(0xFF1C1C1E).withValues(alpha: 0.65)
+                              ? const Color(0xFF2C2C2E).withValues(alpha: 0.50)
                               : Colors.white.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isDark
-                                ? Colors.white.withValues(alpha: 0.12)
+                                ? Colors.white.withValues(alpha: 0.08)
                                 : const Color(0xFFE5E5EA),
-                            width: 0.9,
+                            width: 0.75,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.04),
-                              blurRadius: 24,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            isDark
-                                ? Image.asset(
-                                    AppAssets.logoDarkPng,
-                                    width: 190,
-                                    height: 100,
-                                    fit: BoxFit.contain,
-                                  )
-                                : SvgPicture.asset(
-                                    AppAssets.logoSvg,
-                                    width: 145,
-                                    height: 80,
-                                    fit: BoxFit.contain,
-                                  ),
-                          ],
+                        child: Text(
+                          'TELEMEDICINE & PHARMACY',
+                          style: GoogleFonts.inter(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.4,
+                            color: isDark
+                                ? const Color(0xFF98989F)
+                                : const Color(0xFF8E8E93),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
             ),
 
-            // Bottom Floating Liquid Glass Status Capsule
+            // 3. Floating Bottom Loading Indicator
             Positioned(
-              bottom: 44,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF1C1C1E).withValues(alpha: 0.70)
-                            : Colors.white.withValues(alpha: 0.88),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.14)
-                              : const Color(0xFFE5E5EA),
-                          width: 0.8,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CupertinoActivityIndicator(
-                            radius: 7,
-                            color: isDark ? AppColors.primaryDark : AppColors.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'MediTouch',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.3,
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+              bottom: 40,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: CupertinoActivityIndicator(
+                  radius: 11,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
                 ),
               ),
             ),
