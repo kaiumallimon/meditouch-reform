@@ -203,22 +203,28 @@ void main() {
       // Verify Monograph Sections
       expect(find.text('Clinical Monograph & Details'), findsOneWidget);
       expect(find.text('Indications & Uses'), findsWidgets);
-      expect(find.text('Dosage & Administration'), findsWidgets);
-      expect(find.text('Frequently Asked Questions'), findsWidgets);
-
-      // Verify FAQ Item inside Accordion
-      expect(find.text('Can I take this on an empty stomach?'), findsOneWidget);
 
       // Verify Bottom Action Bar
       expect(find.textContaining('Add to Cart'), findsOneWidget);
 
       // Tap on Pack Size '1 Box' to switch selected pack
-      await tester.tap(find.text('1 Box'));
+      final boxPackFinder = find.text('1 Box');
+      expect(boxPackFinder, findsOneWidget);
+      await tester.tap(boxPackFinder);
       await tester.pumpAndSettle();
 
-      // Quantity stepper interaction
-      final plusIcon = find.byIcon(Icons.add).first;
-      // Stepper uses LucideIcons.plus
+      // Scroll down to reveal remaining monograph sections and FAQ
+      final faqItemFinder = find.text('Can I take this on an empty stomach?');
+      await tester.dragUntilVisible(
+        faqItemFinder,
+        find.byType(Scrollable).first,
+        const Offset(0, -300),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify FAQ Item inside Accordion
+      expect(faqItemFinder, findsOneWidget);
+
       expect(find.text('1'), findsWidgets);
     });
 

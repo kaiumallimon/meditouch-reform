@@ -749,57 +749,60 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
           ),
         ],
       ),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          initiallyExpanded: true,
-          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          leading: Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? AppColors.primaryDark.withValues(alpha: 0.15)
-                  : AppColors.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(10),
+      child: Material(
+        color: Colors.transparent,
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            initiallyExpanded: true,
+            tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            leading: Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.primaryDark.withValues(alpha: 0.15)
+                    : AppColors.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _getSectionIcon(sec.id),
+                size: 16,
+                color: isDark ? AppColors.primaryDark : AppColors.primary,
+              ),
             ),
-            child: Icon(
-              _getSectionIcon(sec.id),
-              size: 16,
-              color: isDark ? AppColors.primaryDark : AppColors.primary,
+            title: Text(
+              sec.label,
+              style: GoogleFonts.inter(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w700,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              ),
             ),
-          ),
-          title: Text(
-            sec.label,
-            style: GoogleFonts.inter(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w700,
-              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+            subtitle: Text(
+              sec.tag,
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+              ),
             ),
-          ),
-          subtitle: Text(
-            sec.tag,
-            style: GoogleFonts.inter(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-            ),
-          ),
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: sec.faqItems != null && sec.faqItems!.isNotEmpty
-                  ? _buildFaqAccordionList(sec.faqItems!, isDark)
-                  : Text(
-                      sec.content,
-                      style: GoogleFonts.inter(
-                        fontSize: 12.5,
-                        height: 1.55,
-                        color: isDark ? const Color(0xFFD1D1D6) : const Color(0xFF3C3C43),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: sec.faqItems != null && sec.faqItems!.isNotEmpty
+                    ? _buildFaqAccordionList(sec.faqItems!, isDark)
+                    : Text(
+                        sec.content,
+                        style: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          height: 1.55,
+                          color: isDark ? const Color(0xFFD1D1D6) : const Color(0xFF3C3C43),
+                        ),
                       ),
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -824,9 +827,11 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
               width: 0.6,
             ),
           ),
-          child: ExpansionTile(
-            initiallyExpanded: idx == 0,
-            tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+          child: Material(
+            color: Colors.transparent,
+            child: ExpansionTile(
+              initiallyExpanded: idx == 0,
+              tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             leading: Container(
               width: 22,
               height: 22,
@@ -870,8 +875,9 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
               ),
             ],
           ),
-        );
-      }).toList(),
+        ),
+      );
+    }).toList(),
     );
   }
 
@@ -985,7 +991,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
     );
   }
 
-  // 5. Floating Bottom Action Bar
+  // 5. Floating Bottom Action Bar (iOS 26 Liquid Glass Dock)
   Widget _buildBottomActionBar(
     MedicineDetailModel med,
     MedicineDetailState state,
@@ -995,108 +1001,210 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
     final totalPrice = state.activePrice * state.quantity;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(34),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          height: 62,
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 6),
           decoration: BoxDecoration(
             color: isDark
                 ? const Color(0xFF161618).withValues(alpha: 0.85)
-                : Colors.white.withValues(alpha: 0.92),
-            borderRadius: BorderRadius.circular(24),
+                : const Color(0xFFF6F6F8).withValues(alpha: 0.88),
+            borderRadius: BorderRadius.circular(34),
             border: Border.all(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.16)
-                  : const Color(0xFFE5E5EA),
+                  : Colors.white.withValues(alpha: 0.90),
               width: 0.9,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.08),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
+                color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.08),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Row(
             children: [
-              // Quantity Stepper
+              // Liquid Glass Quantity Stepper Capsule
               Container(
+                height: 50,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
-                  borderRadius: BorderRadius.circular(14),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : const Color(0xFFEAEAEE),
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.10)
+                        : Colors.white.withValues(alpha: 0.70),
+                    width: 0.6,
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      icon: const Icon(LucideIcons.minus, size: 14),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: state.quantity > 1 ? () => notifier.decrementQuantity() : null,
-                    ),
-                    Text(
-                      '${state.quantity}',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    InkWell(
+                      onTap: state.quantity > 1 ? () => notifier.decrementQuantity() : null,
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: state.quantity > 1 ? 0.12 : 0.04)
+                              : Colors.white.withValues(alpha: state.quantity > 1 ? 0.90 : 0.40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          LucideIcons.minus,
+                          size: 13,
+                          color: state.quantity > 1
+                              ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
+                              : (isDark ? const Color(0xFF555558) : const Color(0xFFAAAAAE)),
+                        ),
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(LucideIcons.plus, size: 14),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => notifier.incrementQuantity(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        '${state.quantity}',
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => notifier.incrementQuantity(),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.14)
+                              : Colors.white.withValues(alpha: 0.90),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          LucideIcons.plus,
+                          size: 13,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
 
-              // Add to Cart Glass Button
+              // Gradient Add to Cart Liquid Pill Button
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          '${state.quantity}x ${med.medicineName} (${state.activeUnitLabel}) added to cart',
-                          style: GoogleFonts.inter(fontSize: 12),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${state.quantity}x ${med.medicineName} (${state.activeUnitLabel}) added to cart',
+                            style: GoogleFonts.inter(fontSize: 12),
+                          ),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
                         ),
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                  icon: const Icon(LucideIcons.shoppingBag, size: 16, color: Colors.white),
-                  label: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Add to Cart • ',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        gradient: isDark
+                            ? const LinearGradient(
+                                colors: [Color(0xFFA855F7), Color(0xFF9333EA), Color(0xFF7E22CE)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )
+                            : const LinearGradient(
+                                colors: [Color(0xFF6B28FD), Color(0xFF5B15FC), Color(0xFF4C0FD9)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.28),
+                          width: 0.9,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isDark ? const Color(0xFF9333EA) : const Color(0xFF5B15FC))
+                                .withValues(alpha: 0.35),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      Text(
-                        _formatCurrency(totalPrice),
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Frosted Icon Chip
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.22),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              LucideIcons.shoppingBag,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+
+                          // Action Text & Price
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Add to Cart',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 6),
+                                    child: Text(
+                                      '•',
+                                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                                    ),
+                                  ),
+                                  Text(
+                                    _formatCurrency(totalPrice),
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                 ),
