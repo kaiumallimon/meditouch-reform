@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:meditouch/core/constants/app_assets.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
@@ -124,60 +123,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               },
             ),
 
-            // 2. Freely Floating Logo & Tagline
+            // 2. Freely Floating Logo
             Center(
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: ScaleTransition(
                   scale: _scaleAnimation,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Brand Mark
-                      isDark
-                          ? Image.asset(
-                              AppAssets.logoDarkPng,
-                              width: 230,
-                              height: 140,
-                              fit: BoxFit.contain,
-                            )
-                          : SvgPicture.asset(
-                              AppAssets.logoSvg,
-                              width: 160,
-                              height: 95,
-                              fit: BoxFit.contain,
-                            ),
-                      const SizedBox(height: 14),
-
-                      // Refined Category Pill Tagline
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF2C2C2E).withValues(alpha: 0.50)
-                              : Colors.white.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.08)
-                                : const Color(0xFFE5E5EA),
-                            width: 0.75,
-                          ),
+                  child: isDark
+                      ? Image.asset(
+                          AppAssets.logoDarkPng,
+                          width: 230,
+                          height: 140,
+                          fit: BoxFit.contain,
+                        )
+                      : SvgPicture.asset(
+                          AppAssets.logoSvg,
+                          width: 160,
+                          height: 95,
+                          fit: BoxFit.contain,
                         ),
-                        child: Text(
-                          'TELEMEDICINE & PHARMACY',
-                          style: GoogleFonts.inter(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.4,
-                            color: isDark
-                                ? const Color(0xFF98989F)
-                                : const Color(0xFF8E8E93),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),

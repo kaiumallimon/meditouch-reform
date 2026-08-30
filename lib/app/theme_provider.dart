@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meditouch/core/storage/secure_storage.dart';
 
+final initialThemeModeProvider = Provider<ThemeMode>((ref) => ThemeMode.light);
+
 final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
   final storage = ref.watch(secureStorageServiceProvider);
-  return ThemeModeNotifier(storage);
+  final initialMode = ref.watch(initialThemeModeProvider);
+  return ThemeModeNotifier(storage, initialMode: initialMode);
 });
 
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   final SecureStorageService _storage;
   static const _themeKey = 'app_theme_mode';
 
-  ThemeModeNotifier(this._storage) : super(ThemeMode.system) {
+  ThemeModeNotifier(this._storage, {ThemeMode initialMode = ThemeMode.light}) : super(initialMode) {
     _loadTheme();
   }
 
