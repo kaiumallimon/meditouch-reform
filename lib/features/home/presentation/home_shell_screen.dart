@@ -60,12 +60,12 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
             child: widget.child,
           ),
 
-          // 2. Soft Ambient Bottom Fade Gradient
+          // 2. Soft Ambient Bottom Fade Gradient (confined strictly behind and below the floating navbar)
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            height: (bottomInset > 0 ? bottomInset + 88 : 100),
+            height: (bottomInset > 0 ? bottomInset + 64 : 76),
             child: IgnorePointer(
               child: Container(
                 decoration: BoxDecoration(
@@ -74,11 +74,11 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
                     end: Alignment.bottomCenter,
                     colors: [
                       (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.0),
-                      (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.50),
-                      (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.88),
+                      (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.40),
+                      (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.85),
                       (isDark ? AppColors.darkBackground : AppColors.background),
                     ],
-                    stops: const [0.0, 0.40, 0.78, 1.0],
+                    stops: const [0.0, 0.35, 0.75, 1.0],
                   ),
                 ),
               ),

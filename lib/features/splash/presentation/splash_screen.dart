@@ -73,6 +73,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final token = await storage.getAccessToken();
 
     if (!mounted) return;
+    _pulseController.stop();
+    _entranceController.stop();
     if (token != null && token.isNotEmpty) {
       context.go(RouteNames.home);
     } else {
