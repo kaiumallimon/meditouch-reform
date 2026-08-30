@@ -134,13 +134,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
                 _buildHeroCard(med, state, notifier, isDark),
                 const SizedBox(height: 20),
 
-                // 2. Monograph Navigation Pills Carousel
-                if (med.sections.isNotEmpty) ...[
-                  _buildMonographIndexBar(med, state, isDark),
-                  const SizedBox(height: 16),
-                ],
-
-                // 3. Clinical Monograph Sections
+                // 2. Clinical Monograph Sections
                 if (med.sections.isNotEmpty) ...[
                   _buildMonographHeader(isDark),
                   const SizedBox(height: 12),
