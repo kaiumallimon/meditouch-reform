@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
@@ -80,7 +81,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Search Bar & Filter Bar
+            // Search Bar & Categories Filter
             Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -116,11 +117,11 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
                   // Categories Horizontal List
                   SizedBox(
-                    height: 34,
+                    height: 32,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: state.categories.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 8),
+                      separatorBuilder: (context, index) => const SizedBox(width: 6),
                       itemBuilder: (context, index) {
                         final cat = state.categories[index];
                         final isSelected = state.selectedCategory.toUpperCase() == cat.toUpperCase();
@@ -129,7 +130,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           label: Text(
                             cat.toUpperCase(),
                             style: GoogleFonts.inter(
-                              fontSize: 11,
+                              fontSize: 10.5,
                               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                               color: isSelected ? Colors.white : AppColors.textSecondary,
                             ),
@@ -140,7 +141,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           showCheckmark: false,
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(18),
                             side: BorderSide(
                               color: isSelected ? AppColors.primary : AppColors.border,
                             ),
@@ -173,7 +174,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                 children: [
                                   // Stats & Pagination Summary Header
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -196,7 +197,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: 8),
 
                                   // 2 Medicines Per Row Grid
                                   GridView.builder(
@@ -204,7 +205,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                     physics: const NeverScrollableScrollPhysics(),
                                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
-                                      childAspectRatio: 0.64,
+                                      childAspectRatio: 0.58,
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 10,
                                     ),
@@ -214,7 +215,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                       return _MedicineCard(medicine: medicine);
                                     },
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 18),
 
                                   // Admin-Style Pagination Bar
                                   _buildPaginationBar(state, notifier),
@@ -347,7 +348,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
       padding: const EdgeInsets.all(12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.64,
+        childAspectRatio: 0.58,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
@@ -428,6 +429,11 @@ class _MedicineCard extends StatelessWidget {
 
   const _MedicineCard({required this.medicine});
 
+  String _formatCurrency(double amount) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    return '৳ ${formatter.format(amount)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -438,59 +444,76 @@ class _MedicineCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image / Icon Header with Badges
-          Expanded(
-            flex: 9,
+          // 1. Image Canvas with Subtle Padding
+          Container(
+            height: 130,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFBFBFA),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+            ),
             child: Stack(
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF9F9F8),
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                  ),
-                  child: medicine.image != null && medicine.image!.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-                          child: Image.network(
+                // Product Image (Padded & Contained)
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: medicine.image != null && medicine.image!.isNotEmpty
+                        ? Image.network(
                             medicine.image!,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => _buildFallbackIcon(),
-                          ),
-                        )
-                      : _buildFallbackIcon(),
+                          )
+                        : _buildFallbackIcon(),
+                  ),
                 ),
 
-                // Dosage Form Badge
+                // Top-Left Category Badge (Clean Pill)
                 Positioned(
                   top: 8,
                   left: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: AppColors.border),
                     ),
-                    child: Text(
-                      medicine.dosageForm.toUpperCase(),
-                      style: GoogleFonts.inter(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 5,
+                          height: 5,
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          medicine.dosageForm.toUpperCase(),
+                          style: GoogleFonts.inter(
+                            fontSize: 8.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
 
-                // Rx Badge (OTC vs Rx Required)
+                // Top-Right Rx / OTC Badge
                 Positioned(
                   top: 8,
                   right: 8,
@@ -501,13 +524,19 @@ class _MedicineCard extends StatelessWidget {
                           ? AppColors.warningLight
                           : AppColors.secondaryLight,
                       borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: medicine.rxRequired
+                            ? AppColors.warning.withValues(alpha: 0.3)
+                            : AppColors.secondary.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
-                      medicine.rxRequired ? 'Rx Req' : 'OTC',
+                      medicine.rxRequired ? 'Rx' : 'OTC',
                       style: GoogleFonts.inter(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 8.5,
+                        fontWeight: FontWeight.w800,
                         color: medicine.rxRequired ? AppColors.warning : AppColors.secondary,
+                        letterSpacing: 0.2,
                       ),
                     ),
                   ),
@@ -516,11 +545,13 @@ class _MedicineCard extends StatelessWidget {
             ),
           ),
 
-          // Details & Price Body
+          // Divider between image and content
+          const Divider(height: 1, color: AppColors.borderSubtle),
+
+          // 2. Product Details & Price
           Expanded(
-            flex: 11,
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -528,72 +559,76 @@ class _MedicineCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Brand Name (Young Serif)
+                      // Product Name (Inter Bold - Clean & Modern)
                       Text(
                         medicine.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.youngSerif(
-                          fontSize: 13.5,
+                        style: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
-                          letterSpacing: -0.2,
+                          height: 1.25,
                         ),
                       ),
                       const SizedBox(height: 3),
 
-                      // Generic Name & Strength (Inter)
+                      // Generic / Formulation / Manufacturer
                       if (medicine.genericName != null && medicine.genericName!.isNotEmpty)
                         Text(
-                          '${medicine.genericName!} ${medicine.strength ?? ''}'.trim(),
+                          medicine.genericName!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
                             fontSize: 10.5,
-                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.italic,
                             color: AppColors.textSecondary,
                           ),
                         ),
-
-                      // Manufacturer
                       Text(
                         medicine.manufacturer,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.inter(
-                          fontSize: 9.5,
+                          fontSize: 10,
                           color: AppColors.textMuted,
                         ),
                       ),
                     ],
                   ),
 
-                  // Price & Add Button Row
+                  // Price & Add To Cart Button Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '৳ ${medicine.unitPrice.toStringAsFixed(2)}',
-                            style: GoogleFonts.inter(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _formatCurrency(medicine.unitPrice),
+                              style: GoogleFonts.inter(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
                             ),
-                          ),
-                          Text(
-                            medicine.packSize,
-                            style: GoogleFonts.inter(
-                              fontSize: 9,
-                              color: AppColors.textMuted,
+                            Text(
+                              medicine.packSize,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                fontSize: 9.5,
+                                color: AppColors.textMuted,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
 
-                      // Quick Add to Cart Button
+                      // Circular / Squircle Add Button
                       InkWell(
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -609,15 +644,16 @@ class _MedicineCard extends StatelessWidget {
                         },
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
-                          padding: const EdgeInsets.all(6),
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             color: AppColors.primary,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
-                            Icons.add_shopping_cart_rounded,
+                            Icons.shopping_bag_outlined,
                             color: Colors.white,
-                            size: 15,
+                            size: 16,
                           ),
                         ),
                       ),
