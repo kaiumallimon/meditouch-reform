@@ -16,19 +16,71 @@ class AuthRepository {
 
   AuthRepository(this._client, this._storage);
 
-  Future<UserModel> login({required String emailOrPhone, required String password}) async {
+  Future<UserModel> login({
+    required String emailOrPhone,
+    required String password,
+  }) async {
     final response = await _client.post(
       ApiEndpoints.login,
       data: {
-        'username': emailOrPhone,
+        'identifier': emailOrPhone,
         'password': password,
       },
     );
 
-    final data = response.data as Map<String, dynamic>;
+    final respJson = response.data as Map<String, dynamic>;
+    final data = (respJson['data'] is Map<String, dynamic>)
+        ? respJson['data'] as Map<String, dynamic>
+        : respJson;
+
     final token = data['access_token']?.toString() ?? '';
     final refreshToken = data['refresh_token']?.toString();
-    final userJson = data['user'] as Map<String, dynamic>? ?? {};
+    final userJson = {
+      'id': data['user_id'] ?? data['id'],
+      'name': data['name'] ?? 'User',
+      'phone': data['phone'],
+      'email': data['email'],
+      'role': data['role'] ?? 'PATIENT',
+    };
+
+    await _storage.saveTokens(accessToken: token, refreshToken: refreshToken);
+    await _storage.saveUserProfile(userJson);
+
+    return UserModel.fromJson(userJson);
+  }
+
+  Future<UserModel> register({
+    required String name,
+    required String phone,
+    String? email,
+    required String password,
+    String gender = 'unspecified',
+  }) async {
+    final response = await _client.post(
+      ApiEndpoints.register,
+      data: {
+        'name': name,
+        'phone': phone,
+        if (email != null && email.isNotEmpty) 'email': email,
+        'password': password,
+        'gender': gender,
+      },
+    );
+
+    final respJson = response.data as Map<String, dynamic>;
+    final data = (respJson['data'] is Map<String, dynamic>)
+        ? respJson['data'] as Map<String, dynamic>
+        : respJson;
+
+    final token = data['access_token']?.toString() ?? '';
+    final refreshToken = data['refresh_token']?.toString();
+    final userJson = {
+      'id': data['user_id'] ?? data['id'],
+      'name': data['name'] ?? name,
+      'phone': data['phone'] ?? phone,
+      'email': data['email'] ?? email,
+      'role': data['role'] ?? 'PATIENT',
+    };
 
     await _storage.saveTokens(accessToken: token, refreshToken: refreshToken);
     await _storage.saveUserProfile(userJson);
@@ -40,4 +92,3 @@ class AuthRepository {
     await _storage.clearAll();
   }
 }
-

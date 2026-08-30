@@ -11,29 +11,37 @@ import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/storage/secure_storage.dart';
 import 'package:meditouch/features/auth/data/auth_repository.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends ConsumerStatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _identifierController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   bool _isLoading = false;
   String? _errorMessage;
 
   @override
   void dispose() {
-    _identifierController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleLogin() async {
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -42,11 +50,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
-      final identifier = _identifierController.text.trim();
+      final name = _nameController.text.trim();
+      final phone = _phoneController.text.trim();
+      final email = _emailController.text.trim();
       final password = _passwordController.text;
 
       final authRepo = ref.read(authRepositoryProvider);
-      await authRepo.login(emailOrPhone: identifier, password: password);
+      await authRepo.register(
+        name: name,
+        phone: phone,
+        email: email.isNotEmpty ? email : null,
+        password: password,
+      );
 
       if (!mounted) return;
       context.go(RouteNames.home);
@@ -57,14 +72,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         });
       }
     } catch (_) {
-      // Fallback for mock/demo or offline exploration
+      // Offline / demo fallback
       final storage = ref.read(secureStorageServiceProvider);
       await storage.saveTokens(
-        accessToken: 'mock_jwt_token_${DateTime.now().millisecondsSinceEpoch}',
+        accessToken: 'mock_registered_token_${DateTime.now().millisecondsSinceEpoch}',
       );
       await storage.saveUserProfile({
-        'name': 'Patient User',
-        'email': _identifierController.text.trim(),
+        'name': _nameController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'email': _emailController.text.trim(),
         'role': 'PATIENT',
       });
 
@@ -75,21 +91,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  void _handleGuestExplore() async {
-    final storage = ref.read(secureStorageServiceProvider);
-    await storage.saveTokens(
-      accessToken: 'guest_token_${DateTime.now().millisecondsSinceEpoch}',
-    );
-    await storage.saveUserProfile({
-      'name': 'Guest Patient',
-      'email': 'guest@meditouch.health',
-      'role': 'PATIENT',
-    });
-
-    if (!mounted) return;
-    context.go(RouteNames.home);
   }
 
   @override
@@ -104,33 +105,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               Color(0xFFF3EEFE), // Soft primary purple tint
               AppColors.background, // #FAF8F5
             ],
-            stops: [0.0, 0.45],
+            stops: [0.0, 0.35],
           ),
         ),
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
 
                   // Top Clean Vector Logo
                   Center(
                     child: SvgPicture.asset(
                       AppAssets.logoSvg,
-                      width: 140,
-                      height: 75,
+                      width: 130,
+                      height: 70,
                       fit: BoxFit.contain,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                  // Typography Header (Young Serif + Inter)
+                  // Title & Subtitle (Young Serif + Inter)
                   Center(
                     child: Text(
-                      'Welcome back',
+                      'Create Account',
                       style: GoogleFonts.youngSerif(
                         fontSize: 28,
                         fontWeight: FontWeight.w400,
@@ -142,7 +143,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 6),
                   Center(
                     child: Text(
-                      'Sign in to access meditouch services',
+                      'Sign up for verified telemedicine & pharmacy orders',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 13,
@@ -152,7 +153,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
 
                   // Error Banner
                   if (_errorMessage != null) ...[
@@ -180,18 +181,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
                   ],
 
-                  // Form Container
+                  // Form
                   Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Identifier Field
+                        // Full Name
                         Text(
-                          'EMAIL OR PHONE NUMBER',
+                          'FULL NAME',
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -201,25 +202,85 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 6),
                         TextFormField(
-                          controller: _identifierController,
-                          keyboardType: TextInputType.emailAddress,
+                          controller: _nameController,
+                          keyboardType: TextInputType.name,
                           style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
-                          decoration: InputDecoration(
-                            hintText: 'e.g. 01712345678 or name@example.com',
-                            prefixIcon: const Icon(Icons.person_outline_rounded, size: 19),
+                          decoration: const InputDecoration(
+                            hintText: 'e.g. John Doe',
+                            prefixIcon: Icon(Icons.person_outline_rounded, size: 19),
                             filled: true,
                             fillColor: Colors.white,
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Please enter your email or phone number';
+                              return 'Please enter your full name';
+                            }
+                            if (value.trim().length < 2) {
+                              return 'Name must be at least 2 characters';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 16),
 
-                        // Password Field
+                        // Phone Number
+                        Text(
+                          'PHONE NUMBER',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.6,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                          decoration: const InputDecoration(
+                            hintText: 'e.g. 01712345678',
+                            prefixIcon: Icon(Icons.phone_outlined, size: 19),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Please enter your phone number';
+                            }
+                            if (value.trim().length < 10) {
+                              return 'Please enter a valid phone number';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Email (Optional)
+                        Text(
+                          'EMAIL ADDRESS (OPTIONAL)',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.6,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                          decoration: const InputDecoration(
+                            hintText: 'e.g. name@example.com',
+                            prefixIcon: Icon(Icons.mail_outline_rounded, size: 19),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Password
                         Text(
                           'PASSWORD',
                           style: GoogleFonts.inter(
@@ -235,7 +296,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           obscureText: _obscurePassword,
                           style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                           decoration: InputDecoration(
-                            hintText: 'Enter your password',
+                            hintText: 'At least 6 characters',
                             prefixIcon: const Icon(Icons.lock_outline_rounded, size: 19),
                             filled: true,
                             fillColor: Colors.white,
@@ -254,19 +315,64 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
+                              return 'Please create a password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Confirm Password
+                        Text(
+                          'CONFIRM PASSWORD',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.6,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _confirmPasswordController,
+                          obscureText: _obscureConfirmPassword,
+                          style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: 'Re-enter your password',
+                            prefixIcon: const Icon(Icons.lock_reset_rounded, size: 19),
+                            filled: true,
+                            fillColor: Colors.white,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureConfirmPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                size: 19,
+                                color: AppColors.textMuted,
+                              ),
+                              onPressed: () {
+                                setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 24),
 
-                        // Primary Sign In Button
+                        // Register Button
                         SizedBox(
                           width: double.infinity,
                           height: 48,
                           child: ElevatedButton(
-                            onPressed: _isLoading ? null : _handleLogin,
+                            onPressed: _isLoading ? null : _handleRegister,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
@@ -282,7 +388,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Sign In',
+                                        'Create Account',
                                         style: GoogleFonts.inter(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
@@ -298,39 +404,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Secondary / Guest Explore Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: OutlinedButton(
-                      onPressed: _isLoading ? null : _handleGuestExplore,
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: AppColors.border),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: Text(
-                        'Explore as Guest',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 20),
 
-                  // Link to Register Screen
+                  // Link back to Login
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account? ",
+                        'Already have an account? ',
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           color: AppColors.textSecondary,
@@ -338,10 +419,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          context.push(RouteNames.register);
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(RouteNames.login);
+                          }
                         },
                         child: Text(
-                          'Create Account',
+                          'Sign In',
                           style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -351,35 +436,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
-
-
-                  // Footer Security Note
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.shield_outlined,
-                        size: 14,
-                        color: AppColors.textMuted,
-                      ),
-                      const SizedBox(width: 5),
-                      Flexible(
-                        child: Text(
-                          'End-to-End Encrypted Healthcare Platform',
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textMuted,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

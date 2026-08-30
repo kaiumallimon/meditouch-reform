@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/features/appointments/presentation/appointments_screen.dart';
 import 'package:meditouch/features/auth/presentation/login_screen.dart';
+import 'package:meditouch/features/auth/presentation/register_screen.dart';
 import 'package:meditouch/features/chatbot/presentation/chatbot_screen.dart';
 import 'package:meditouch/features/doctors/presentation/doctors_screen.dart';
 import 'package:meditouch/features/home/presentation/home_screen.dart';
@@ -37,6 +38,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const LoginScreen(),
       ),
+      GoRoute(
+        path: RouteNames.register,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const RegisterScreen(),
+      ),
+
 
       // Main Shell with Bottom Navigation
       ShellRoute(

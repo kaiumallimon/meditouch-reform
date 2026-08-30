@@ -49,30 +49,7 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
     final selectedIndex = _calculateSelectedIndex(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            SvgPicture.asset(
-              AppAssets.logoSvg,
-              width: 28,
-              height: 28,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 8),
-            const Text('MediTouch'),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () => context.push(RouteNames.notifications),
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined),
-            onPressed: () => context.push(RouteNames.cart),
-          ),
-        ],
-      ),
+      
       body: widget.child,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
