@@ -294,11 +294,11 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                       return _MedicineCard(medicine: medicine);
                                     },
                                   ),
-                                  const SizedBox(height: 14),
+                                  const SizedBox(height: 10),
 
-                                  // Admin-Style Pagination Bar
+                                  // Redesigned Sleek Pagination Bar
                                   _buildPaginationBar(state, notifier),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 16),
                                 ],
                               ),
                             ),
@@ -310,112 +310,186 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
   }
 
   Widget _buildPaginationBar(PharmacyState state, PharmacyNotifier notifier) {
+    if (state.totalPages <= 1) return const SizedBox.shrink();
+
     final pages = _getPaginationRange(state.currentPage, state.totalPages);
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFEAE8E4)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Previous Page Button
-              IconButton(
-                icon: const Icon(Icons.chevron_left_rounded, size: 20),
-                color: state.currentPage > 1 ? AppColors.textPrimary : AppColors.textMuted,
-                onPressed: state.currentPage > 1
-                    ? () {
-                        notifier.prevPage();
-                        _scrollToTop();
-                      }
-                    : null,
-              ),
-              const SizedBox(width: 4),
-
-              // Page Number Buttons
-              Flexible(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: pages.map((p) {
-                      if (p is String) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Text(
-                            '...',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: AppColors.textMuted,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        );
-                      }
-
-                      final pageNum = p as int;
-                      final isCurrent = pageNum == state.currentPage;
-
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 2),
-                        width: 32,
-                        height: 32,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            notifier.goToPage(pageNum);
-                            _scrollToTop();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: isCurrent ? AppColors.primary : Colors.transparent,
-                            foregroundColor: isCurrent ? Colors.white : AppColors.textPrimary,
-                            elevation: 0,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(
-                                color: isCurrent ? AppColors.primary : AppColors.border,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            '$pageNum',
-                            style: GoogleFonts.inter(
-                              fontSize: 11.5,
-                              fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+          // Previous Button
+          InkWell(
+            onTap: state.currentPage > 1
+                ? () {
+                    notifier.prevPage();
+                    _scrollToTop();
+                  }
+                : null,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              decoration: BoxDecoration(
+                color: state.currentPage > 1 ? Colors.white : const Color(0xFFF9F9F8),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: state.currentPage > 1
+                      ? AppColors.border
+                      : AppColors.borderSubtle,
                 ),
               ),
-              const SizedBox(width: 4),
-
-              // Next Page Button
-              IconButton(
-                icon: const Icon(Icons.chevron_right_rounded, size: 20),
-                color: state.currentPage < state.totalPages
-                    ? AppColors.textPrimary
-                    : AppColors.textMuted,
-                onPressed: state.currentPage < state.totalPages
-                    ? () {
-                        notifier.nextPage();
-                        _scrollToTop();
-                      }
-                    : null,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.chevron_left_rounded,
+                    size: 15,
+                    color: state.currentPage > 1
+                        ? AppColors.textPrimary
+                        : AppColors.textMuted.withValues(alpha: 0.5),
+                  ),
+                  Text(
+                    'Prev',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: state.currentPage > 1
+                          ? AppColors.textPrimary
+                          : AppColors.textMuted.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            'Page ${state.currentPage} of ${state.totalPages}',
-            style: GoogleFonts.inter(fontSize: 10.5, color: AppColors.textMuted),
+
+          // Numbered Page Buttons
+          Flexible(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: pages.map((p) {
+                  if (p is String) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: Text(
+                        '...',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: AppColors.textMuted,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    );
+                  }
+
+                  final pageNum = p as int;
+                  final isCurrent = pageNum == state.currentPage;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: InkWell(
+                      onTap: () {
+                        notifier.goToPage(pageNum);
+                        _scrollToTop();
+                      },
+                      borderRadius: BorderRadius.circular(7),
+                      child: Container(
+                        width: 28,
+                        height: 28,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isCurrent ? AppColors.primary : Colors.white,
+                          borderRadius: BorderRadius.circular(7),
+                          border: Border.all(
+                            color: isCurrent ? AppColors.primary : AppColors.border,
+                          ),
+                          boxShadow: isCurrent
+                              ? [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(alpha: 0.25),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Text(
+                          '$pageNum',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                            color: isCurrent ? Colors.white : AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+
+          // Next Button
+          InkWell(
+            onTap: state.currentPage < state.totalPages
+                ? () {
+                    notifier.nextPage();
+                    _scrollToTop();
+                  }
+                : null,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              decoration: BoxDecoration(
+                color: state.currentPage < state.totalPages
+                    ? Colors.white
+                    : const Color(0xFFF9F9F8),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: state.currentPage < state.totalPages
+                      ? AppColors.border
+                      : AppColors.borderSubtle,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Next',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: state.currentPage < state.totalPages
+                          ? AppColors.textPrimary
+                          : AppColors.textMuted.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 15,
+                    color: state.currentPage < state.totalPages
+                        ? AppColors.textPrimary
+                        : AppColors.textMuted.withValues(alpha: 0.5),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
