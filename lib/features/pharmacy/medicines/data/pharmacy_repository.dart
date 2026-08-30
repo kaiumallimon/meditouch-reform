@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meditouch/core/constants/api_endpoints.dart';
 import 'package:meditouch/core/network/api_client.dart';
+import 'package:meditouch/features/pharmacy/medicines/domain/medicine_detail_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
 
 final pharmacyRepositoryProvider = Provider<PharmacyRepository>((ref) {
@@ -82,6 +83,25 @@ class PharmacyRepository {
         'OINTMENT',
         'SUSPENSION',
       ];
+    }
+  }
+
+  Future<MedicineDetailModel> fetchMedicineDetails(String slug) async {
+    try {
+      final response = await _client.get('${ApiEndpoints.medicines}/$slug/details');
+      final respJson = response.data as Map<String, dynamic>;
+      final data = (respJson['data'] is Map<String, dynamic>)
+          ? respJson['data'] as Map<String, dynamic>
+          : respJson;
+      return MedicineDetailModel.fromJson(data);
+    } catch (_) {
+      // Fallback: try fetching basic medicine record
+      final response = await _client.get('${ApiEndpoints.medicines}/$slug');
+      final respJson = response.data as Map<String, dynamic>;
+      final data = (respJson['data'] is Map<String, dynamic>)
+          ? respJson['data'] as Map<String, dynamic>
+          : respJson;
+      return MedicineDetailModel.fromJson(data);
     }
   }
 }

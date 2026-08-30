@@ -656,12 +656,22 @@ class _IOS26MedicineCard extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Image Canvas with clean rounded inner island & badges
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            context.push(
+              '/pharmacy/medicine/${medicine.slug ?? medicine.id}',
+              extra: medicine,
+            );
+          },
+          borderRadius: BorderRadius.circular(22),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. Image Canvas with clean rounded inner island & badges
             Expanded(
               child: Stack(
                 children: [
@@ -883,7 +893,9 @@ class _IOS26MedicineCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _buildFallbackIcon() {

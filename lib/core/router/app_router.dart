@@ -11,6 +11,8 @@ import 'package:meditouch/features/home/presentation/home_screen.dart';
 import 'package:meditouch/features/home/presentation/home_shell_screen.dart';
 import 'package:meditouch/features/notifications/presentation/notifications_screen.dart';
 import 'package:meditouch/features/pharmacy/cart/presentation/cart_screen.dart';
+import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
+import 'package:meditouch/features/pharmacy/medicines/presentation/medicine_detail_screen.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/medicines_screen.dart';
 import 'package:meditouch/features/pharmacy/orders/presentation/orders_screen.dart';
 import 'package:meditouch/features/profile/presentation/profile_screen.dart';
@@ -117,6 +119,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // Full-screen Modal / Sub-routes
+      GoRoute(
+        path: RouteNames.medicineDetail,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) {
+          final slug = state.pathParameters['slug'] ?? '';
+          final initialMedicine = state.extra as MedicineModel?;
+          return MedicineDetailScreen(
+            slug: slug,
+            initialMedicine: initialMedicine,
+          );
+        },
+      ),
       GoRoute(
         path: RouteNames.cart,
         parentNavigatorKey: rootNavigatorKey,
