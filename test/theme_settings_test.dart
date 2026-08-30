@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meditouch/features/profile/presentation/profile_screen.dart';
 import 'package:meditouch/features/settings/presentation/settings_screen.dart';
 
 void main() {
@@ -54,5 +55,29 @@ void main() {
 
     // Verify Cupertino Switch exists for Dark Mode
     expect(find.byType(CupertinoSwitch), findsOneWidget);
+  });
+
+  testWidgets('Profile screen renders user data from secure storage',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.75;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(
+          home: ProfileScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Personal Profile'), findsOneWidget);
+    expect(find.text('PERSONAL INFORMATION'), findsOneWidget);
+    expect(find.text('DELIVERY & ADDRESS'), findsOneWidget);
+    expect(find.text('Edit Profile Information'), findsOneWidget);
   });
 }

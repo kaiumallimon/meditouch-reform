@@ -9,6 +9,7 @@ import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/storage/secure_storage.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
+import 'package:meditouch/features/auth/data/auth_repository.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -17,8 +18,17 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final userAsync = ref.watch(currentUserProvider);
+    final user = userAsync.valueOrNull;
 
     final topInset = MediaQuery.paddingOf(context).top;
+
+    final profileName = (user?.name != null && user!.name.isNotEmpty) ? user.name : 'My Profile';
+    final profileSubtitle = (user?.email != null && user!.email!.isNotEmpty)
+        ? user.email!
+        : (user?.phone != null && user!.phone!.isNotEmpty
+            ? user.phone!
+            : 'Personal details, address & medical history');
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -29,112 +39,129 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         padding: EdgeInsets.fromLTRB(16, topInset + 72, 16, 96),
-          children: [
-            // 1. iOS 26 Apple-ID Profile Island
-            _buildGroupContainer(
-              isDark: isDark,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => context.push(RouteNames.profile),
-                  borderRadius: BorderRadius.circular(22),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                    child: Row(
-                      children: [
-                        // Profile Avatar with Status Ring
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: isDark
-                                  ? const [Color(0xFF3A3A3C), Color(0xFF2C2C2E)]
-                                  : const [Color(0xFF5B15FC), Color(0xFF7C3AED)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              LucideIcons.user,
-                              color: Colors.white,
-                              size: 24,
-                            ),
+        children: [
+          // 1. iOS 26 Apple-ID Profile Island
+          _buildGroupContainer(
+            isDark: isDark,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.push(RouteNames.profile),
+                borderRadius: BorderRadius.circular(22),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  child: Row(
+                    children: [
+                      // Profile Avatar with Status Ring
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: isDark
+                                ? const [Color(0xFF3A3A3C), Color(0xFF2C2C2E)]
+                                : const [Color(0xFF5B15FC), Color(0xFF7C3AED)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
                         ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      'My Profile',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.youngSerif(
-                                        fontSize: 16,
-                                        color: isDark
-                                            ? AppColors.darkTextPrimary
-                                            : AppColors.textPrimary,
-                                      ),
+                        child: Center(
+                          child: (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty)
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(26),
+                                  child: Image.network(
+                                    user.avatarUrl!,
+                                    width: 52,
+                                    height: 52,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Icon(
+                                      LucideIcons.user,
+                                      color: Colors.white,
+                                      size: 24,
                                     ),
                                   ),
-                                  const SizedBox(width: 6),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                    decoration: BoxDecoration(
-                                      color: isDark
-                                          ? const Color(0xFF13281C)
-                                          : const Color(0xFFECFDF5),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: isDark
-                                            ? const Color(0xFF1E5032)
-                                            : const Color(0xFFA7F3D0),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'VERIFIED',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w800,
-                                        color: isDark
-                                            ? const Color(0xFF30D158)
-                                            : const Color(0xFF059669),
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Personal details, address & medical history',
-                                style: GoogleFonts.inter(
-                                  fontSize: 11.5,
-                                  color: isDark
-                                      ? AppColors.darkTextMuted
-                                      : AppColors.textMuted,
+                                )
+                              : const Icon(
+                                  LucideIcons.user,
+                                  color: Colors.white,
+                                  size: 24,
                                 ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    profileName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.youngSerif(
+                                      fontSize: 16,
+                                      color: isDark
+                                          ? AppColors.darkTextPrimary
+                                          : AppColors.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? const Color(0xFF13281C)
+                                        : const Color(0xFFECFDF5),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? const Color(0xFF1E5032)
+                                          : const Color(0xFFA7F3D0),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    user?.role ?? 'VERIFIED',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark
+                                          ? const Color(0xFF30D158)
+                                          : const Color(0xFF059669),
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              profileSubtitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                fontSize: 11.5,
+                                color: isDark
+                                    ? AppColors.darkTextMuted
+                                    : AppColors.textMuted,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Icon(
-                          LucideIcons.chevronRight,
-                          color: isDark ? AppColors.darkTextMuted : const Color(0xFFC7C7CC),
-                          size: 17,
-                        ),
-                      ],
-                    ),
+                      ),
+                      Icon(
+                        LucideIcons.chevronRight,
+                        color: isDark ? AppColors.darkTextMuted : const Color(0xFFC7C7CC),
+                        size: 17,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
+          ),
             const SizedBox(height: 24),
 
             // 2. Appearance Section (iOS 26 Display & Theme Island)

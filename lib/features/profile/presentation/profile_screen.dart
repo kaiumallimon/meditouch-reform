@@ -178,6 +178,7 @@ class ProfileScreen extends ConsumerWidget {
           // 5. Security Footer Branding
           Center(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
@@ -186,11 +187,15 @@ class ProfileScreen extends ConsumerWidget {
                   color: isDark ? const Color(0xFF48484A) : const Color(0xFFA1A1AA),
                 ),
                 const SizedBox(width: 5),
-                Text(
-                  'MediTouch • Secure & Encrypted Patient Records',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    color: isDark ? const Color(0xFF48484A) : const Color(0xFFA1A1AA),
+                Flexible(
+                  child: Text(
+                    'MediTouch • Secure & Encrypted Records',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: isDark ? const Color(0xFF48484A) : const Color(0xFFA1A1AA),
+                    ),
                   ),
                 ),
               ],
@@ -231,13 +236,6 @@ class ProfileScreen extends ConsumerWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
-                        blurRadius: 14,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Center(
                     child: (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty)
