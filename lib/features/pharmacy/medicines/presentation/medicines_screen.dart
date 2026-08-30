@@ -84,20 +84,20 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
             // Search Bar & Categories Filter
             Container(
               color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               child: Column(
                 children: [
                   // Search Input
                   TextField(
                     controller: _searchController,
                     onChanged: (val) => notifier.onSearchChanged(val),
-                    style: GoogleFonts.inter(fontSize: 13.5),
+                    style: GoogleFonts.inter(fontSize: 13),
                     decoration: InputDecoration(
                       hintText: 'Search medicines, generics, brands...',
-                      prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                      prefixIcon: const Icon(Icons.search_rounded, size: 19),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
-                              icon: const Icon(Icons.clear_rounded, size: 18),
+                              icon: const Icon(Icons.clear_rounded, size: 17),
                               onPressed: () {
                                 _searchController.clear();
                                 notifier.onSearchChanged('');
@@ -106,18 +106,18 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           : null,
                       filled: true,
                       fillColor: AppColors.background,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(color: AppColors.border),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
                   // Categories Horizontal List
                   SizedBox(
-                    height: 32,
+                    height: 30,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: state.categories.length,
@@ -130,7 +130,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           label: Text(
                             cat.toUpperCase(),
                             style: GoogleFonts.inter(
-                              fontSize: 10.5,
+                              fontSize: 10,
                               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                               color: isSelected ? Colors.white : AppColors.textSecondary,
                             ),
@@ -139,9 +139,9 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           selectedColor: AppColors.primary,
                           backgroundColor: Colors.white,
                           showCheckmark: false,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                             side: BorderSide(
                               color: isSelected ? AppColors.primary : AppColors.border,
                             ),
@@ -170,18 +170,18 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                               onRefresh: () => notifier.loadMedicines(),
                               child: ListView(
                                 controller: _scrollController,
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(10),
                                 children: [
                                   // Stats & Pagination Summary Header
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'Showing ${((state.currentPage - 1) * state.limit) + 1}-${((state.currentPage - 1) * state.limit) + state.medicines.length} of ${state.totalItems} medicines',
                                           style: GoogleFonts.inter(
-                                            fontSize: 11.5,
+                                            fontSize: 11,
                                             fontWeight: FontWeight.w500,
                                             color: AppColors.textMuted,
                                           ),
@@ -189,7 +189,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                         Text(
                                           'Page ${state.currentPage} of ${state.totalPages}',
                                           style: GoogleFonts.inter(
-                                            fontSize: 11.5,
+                                            fontSize: 11,
                                             fontWeight: FontWeight.w600,
                                             color: AppColors.primary,
                                           ),
@@ -197,17 +197,17 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 6),
 
-                                  // 2 Medicines Per Row Grid
+                                  // 2 Medicines Per Row Grid (Ultra-compact, tight spacing)
                                   GridView.builder(
                                     shrinkWrap: true,
                                     physics: const NeverScrollableScrollPhysics(),
                                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
-                                      childAspectRatio: 0.58,
-                                      crossAxisSpacing: 10,
-                                      mainAxisSpacing: 10,
+                                      childAspectRatio: 0.78,
+                                      crossAxisSpacing: 8,
+                                      mainAxisSpacing: 8,
                                     ),
                                     itemCount: state.medicines.length,
                                     itemBuilder: (context, index) {
@@ -215,11 +215,11 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                                       return _MedicineCard(medicine: medicine);
                                     },
                                   ),
-                                  const SizedBox(height: 18),
+                                  const SizedBox(height: 14),
 
                                   // Admin-Style Pagination Bar
                                   _buildPaginationBar(state, notifier),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(height: 20),
                                 ],
                               ),
                             ),
@@ -234,10 +234,10 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     final pages = _getPaginationRange(state.currentPage, state.totalPages);
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
@@ -247,7 +247,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
             children: [
               // Previous Page Button
               IconButton(
-                icon: const Icon(Icons.chevron_left_rounded, size: 22),
+                icon: const Icon(Icons.chevron_left_rounded, size: 20),
                 color: state.currentPage > 1 ? AppColors.textPrimary : AppColors.textMuted,
                 onPressed: state.currentPage > 1
                     ? () {
@@ -271,7 +271,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           child: Text(
                             '...',
                             style: GoogleFonts.inter(
-                              fontSize: 13,
+                              fontSize: 12,
                               color: AppColors.textMuted,
                               fontWeight: FontWeight.bold,
                             ),
@@ -283,9 +283,9 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                       final isCurrent = pageNum == state.currentPage;
 
                       return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        width: 34,
-                        height: 34,
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        width: 32,
+                        height: 32,
                         child: ElevatedButton(
                           onPressed: () {
                             notifier.goToPage(pageNum);
@@ -297,7 +297,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                             elevation: 0,
                             padding: EdgeInsets.zero,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(8),
                               side: BorderSide(
                                 color: isCurrent ? AppColors.primary : AppColors.border,
                               ),
@@ -306,7 +306,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                           child: Text(
                             '$pageNum',
                             style: GoogleFonts.inter(
-                              fontSize: 12,
+                              fontSize: 11.5,
                               fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
                             ),
                           ),
@@ -320,7 +320,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
               // Next Page Button
               IconButton(
-                icon: const Icon(Icons.chevron_right_rounded, size: 22),
+                icon: const Icon(Icons.chevron_right_rounded, size: 20),
                 color: state.currentPage < state.totalPages
                     ? AppColors.textPrimary
                     : AppColors.textMuted,
@@ -333,10 +333,10 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             'Page ${state.currentPage} of ${state.totalPages}',
-            style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted),
+            style: GoogleFonts.inter(fontSize: 10.5, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -345,23 +345,23 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
 
   Widget _buildLoadingGrid() {
     return GridView.builder(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.58,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        childAspectRatio: 0.78,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
       ),
       itemCount: 6,
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.borderSubtle),
           ),
           child: const Center(
-            child: CupertinoActivityIndicator(radius: 12, color: AppColors.primary),
+            child: CupertinoActivityIndicator(radius: 10, color: AppColors.primary),
           ),
         );
       },
@@ -375,17 +375,17 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.search_off_rounded, size: 56, color: AppColors.textMuted),
-            const SizedBox(height: 12),
+            const Icon(Icons.search_off_rounded, size: 48, color: AppColors.textMuted),
+            const SizedBox(height: 10),
             Text(
               'No Medicines Found',
-              style: GoogleFonts.youngSerif(fontSize: 18, color: AppColors.textPrimary),
+              style: GoogleFonts.youngSerif(fontSize: 17, color: AppColors.textPrimary),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
-              'Try searching with a different brand, generic name, or clear active category filters.',
+              'Try searching with a different keyword or clear category filters.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 12.5, color: AppColors.textSecondary),
+              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -400,19 +400,19 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.error),
-            const SizedBox(height: 12),
+            const Icon(Icons.error_outline_rounded, size: 44, color: AppColors.error),
+            const SizedBox(height: 10),
             Text(
               'Unable to Load Medicines',
-              style: GoogleFonts.youngSerif(fontSize: 18, color: AppColors.textPrimary),
+              style: GoogleFonts.youngSerif(fontSize: 17, color: AppColors.textPrimary),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted),
+              style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.textMuted),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
             ElevatedButton(
               onPressed: () => notifier.loadMedicines(),
               child: const Text('Retry'),
@@ -439,73 +439,71 @@ class _MedicineCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFEAE8E4)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.025),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Image Canvas with Subtle Padding
-          Container(
-            height: 130,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFBFBFA),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-            ),
+          // 1. Prominent Top Image
+          Expanded(
             child: Stack(
               children: [
-                // Product Image (Padded & Contained)
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Center(
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF9F9F8),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(13)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
                     child: medicine.image != null && medicine.image!.isNotEmpty
                         ? Image.network(
                             medicine.image!,
-                            fit: BoxFit.contain,
+                            fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => _buildFallbackIcon(),
                           )
                         : _buildFallbackIcon(),
                   ),
                 ),
 
-                // Top-Left Category Badge (Clean Pill)
+                // Category Pill (Top-Left)
                 Positioned(
-                  top: 8,
-                  left: 8,
+                  top: 5,
+                  left: 5,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.95),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: AppColors.border),
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: AppColors.borderSubtle),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 5,
-                          height: 5,
+                          width: 4,
+                          height: 4,
                           decoration: const BoxDecoration(
                             color: AppColors.primary,
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Text(
                           medicine.dosageForm.toUpperCase(),
                           style: GoogleFonts.inter(
-                            fontSize: 8.5,
+                            fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
-                            letterSpacing: 0.2,
                           ),
                         ),
                       ],
@@ -513,30 +511,31 @@ class _MedicineCard extends StatelessWidget {
                   ),
                 ),
 
-                // Top-Right Rx / OTC Badge
+                // Rx / OTC Badge (Top-Right)
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 5,
+                  right: 5,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 2),
                     decoration: BoxDecoration(
                       color: medicine.rxRequired
-                          ? AppColors.warningLight
-                          : AppColors.secondaryLight,
-                      borderRadius: BorderRadius.circular(6),
+                          ? const Color(0xFFFEF2F2)
+                          : const Color(0xFFECFDF5),
+                      borderRadius: BorderRadius.circular(5),
                       border: Border.all(
                         color: medicine.rxRequired
-                            ? AppColors.warning.withValues(alpha: 0.3)
-                            : AppColors.secondary.withValues(alpha: 0.3),
+                            ? const Color(0xFFFECACA)
+                            : const Color(0xFFA7F3D0),
                       ),
                     ),
                     child: Text(
                       medicine.rxRequired ? 'Rx' : 'OTC',
                       style: GoogleFonts.inter(
-                        fontSize: 8.5,
-                        fontWeight: FontWeight.w800,
-                        color: medicine.rxRequired ? AppColors.warning : AppColors.secondary,
-                        letterSpacing: 0.2,
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: medicine.rxRequired
+                            ? const Color(0xFFDC2626)
+                            : const Color(0xFF059669),
                       ),
                     ),
                   ),
@@ -545,122 +544,102 @@ class _MedicineCard extends StatelessWidget {
             ),
           ),
 
-          // Divider between image and content
-          const Divider(height: 1, color: AppColors.borderSubtle),
-
-          // 2. Product Details & Price
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Product Name (Inter Bold - Clean & Modern)
-                      Text(
-                        medicine.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                          height: 1.25,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-
-                      // Generic / Formulation / Manufacturer
-                      if (medicine.genericName != null && medicine.genericName!.isNotEmpty)
-                        Text(
-                          medicine.genericName!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            fontSize: 10.5,
-                            fontStyle: FontStyle.italic,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      Text(
-                        medicine.manufacturer,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
+          // 2. Compact Info Canvas (Zero Artificial Blank Gap)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Product Name
+                Text(
+                  medicine.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                    height: 1.15,
                   ),
+                ),
+                const SizedBox(height: 1.5),
 
-                  // Price & Add To Cart Button Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _formatCurrency(medicine.unitPrice),
-                              style: GoogleFonts.inter(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            Text(
-                              medicine.packSize,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(
-                                fontSize: 9.5,
-                                color: AppColors.textMuted,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Circular / Squircle Add Button
-                      InkWell(
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${medicine.name} added to cart',
-                                style: GoogleFonts.inter(fontSize: 12),
-                              ),
-                              duration: const Duration(seconds: 1),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        },
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.shopping_bag_outlined,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                    ],
+                // Generic / Manufacturer
+                Text(
+                  medicine.genericName ?? medicine.manufacturer,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 9.5,
+                    color: AppColors.textMuted,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 5),
+
+                // Price & Add To Cart Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _formatCurrency(medicine.unitPrice),
+                            style: GoogleFonts.inter(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          Text(
+                            medicine.packSize,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 8.5,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Compact Add to Cart Button
+                    InkWell(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${medicine.name} added to cart',
+                              style: GoogleFonts.inter(fontSize: 11.5),
+                            ),
+                            duration: const Duration(seconds: 1),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(6),
+                      child: Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.add_shopping_cart_rounded,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
@@ -672,7 +651,7 @@ class _MedicineCard extends StatelessWidget {
     return const Center(
       child: Icon(
         Icons.medication_rounded,
-        size: 36,
+        size: 32,
         color: Color(0xFFD6D3D1),
       ),
     );
