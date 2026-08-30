@@ -39,3 +39,4 @@ class AppColors {
   static const Color textMuted = Color(0xFFA8A29E); // Stone 400
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 }
+

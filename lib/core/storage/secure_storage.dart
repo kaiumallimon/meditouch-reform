@@ -31,12 +31,21 @@ class SecureStorageService {
   }
 
   Future<String?> getAccessToken() async {
-    return await _storage.read(key: _keyAccessToken);
+    try {
+      return await _storage.read(key: _keyAccessToken);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<String?> getRefreshToken() async {
-    return await _storage.read(key: _keyRefreshToken);
+    try {
+      return await _storage.read(key: _keyRefreshToken);
+    } catch (_) {
+      return null;
+    }
   }
+
 
   Future<void> saveUserProfile(Map<String, dynamic> userJson) async {
     await _storage.write(key: _keyUserProfile, value: jsonEncode(userJson));
@@ -56,3 +65,4 @@ class SecureStorageService {
     await _storage.deleteAll();
   }
 }
+

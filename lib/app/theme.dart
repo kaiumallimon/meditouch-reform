@@ -18,10 +18,10 @@ class AppTheme {
         primaryContainer: AppColors.primaryLight,
         secondary: AppColors.secondary,
         surface: AppColors.surface,
-        background: AppColors.background,
         error: AppColors.error,
         brightness: Brightness.light,
       ),
+
       textTheme: baseTextTheme.copyWith(
         displayLarge: baseTextTheme.displayLarge?.copyWith(
           color: AppColors.textPrimary,
@@ -115,7 +115,7 @@ class AppTheme {
           fontSize: 13,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -124,6 +124,7 @@ class AppTheme {
         ),
         margin: EdgeInsets.zero,
       ),
+
     );
   }
 }

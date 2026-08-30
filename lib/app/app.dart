@@ -18,3 +18,4 @@ class MediTouchApp extends ConsumerWidget {
     );
   }
 }
+

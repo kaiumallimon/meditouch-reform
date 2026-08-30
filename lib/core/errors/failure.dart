@@ -15,3 +15,4 @@ class Failure {
   @override
   int get hashCode => message.hashCode ^ code.hashCode;
 }
+

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,34 +16,80 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _scaleAnimation;
-  late final Animation<double> _fadeAnimation;
+    with TickerProviderStateMixin {
+  late final AnimationController _mainController;
+  late final AnimationController _pulseController;
+
+  late final Animation<double> _logoScaleAnimation;
+  late final Animation<double> _logoFadeAnimation;
+  late final Animation<double> _titleSlideAnimation;
+  late final Animation<double> _titleFadeAnimation;
+  late final Animation<double> _badgeFadeAnimation;
+  late final Animation<double> _progressAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+
+    _mainController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1800),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat(reverse: true);
+
+    _logoScaleAnimation = Tween<double>(begin: 0.75, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.55, curve: Curves.easeOutBack),
+      ),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.45, curve: Curves.easeIn),
+      ),
     );
 
-    _controller.forward();
+    _titleSlideAnimation = Tween<double>(begin: 20.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.35, 0.75, curve: Curves.easeIn),
+      ),
+    );
+
+    _badgeFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.6, 0.95, curve: Curves.easeIn),
+      ),
+    );
+
+    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeInOutCubic),
+      ),
+    );
+
+    _mainController.forward();
     _checkInitialAuth();
   }
 
   Future<void> _checkInitialAuth() async {
     // Artificial minimum splash delay for smooth visual transition
-    await Future.delayed(const Duration(milliseconds: 2200));
+    await Future.delayed(const Duration(milliseconds: 2400));
     if (!mounted) return;
 
     final storage = ref.read(secureStorageServiceProvider);
@@ -58,115 +105,319 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _mainController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFFAF8F5),
       body: Stack(
         children: [
-          // Subtle background decorative circles
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary.withValues(alpha: 0.06),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -80,
-            left: -80,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.secondary.withValues(alpha: 0.06),
-              ),
-            ),
+          // 1. Ambient Animated Glowing Background Orbs
+          AnimatedBuilder(
+            animation: _pulseController,
+            builder: (context, child) {
+              final pulse = _pulseController.value;
+              return Stack(
+                children: [
+                  // Top-Right Ambient Purple Orb
+                  Positioned(
+                    top: -120 + (pulse * 20),
+                    right: -100 + (pulse * 15),
+                    child: Container(
+                      width: 380,
+                      height: 380,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            AppColors.primary.withValues(alpha: 0.16 + (pulse * 0.06)),
+                            AppColors.primary.withValues(alpha: 0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Bottom-Left Ambient Emerald/Sky Orb
+                  Positioned(
+                    bottom: -100 - (pulse * 15),
+                    left: -80 - (pulse * 15),
+                    child: Container(
+                      width: 340,
+                      height: 340,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            AppColors.secondary.withValues(alpha: 0.14 + (pulse * 0.05)),
+                            AppColors.secondary.withValues(alpha: 0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Center Subtle Radial Glow
+                  Center(
+                    child: Container(
+                      width: 260 + (pulse * 30),
+                      height: 260 + (pulse * 30),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primary.withValues(alpha: 0.04 + (pulse * 0.02)),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
 
-          // Center Animated Logo & Branding
-          Center(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // MediTouch SVG Logo Card
-                    Container(
-                      padding: const EdgeInsets.all(20),
+          // 2. Main Content
+          SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 2),
+
+                  // Animated Glassmorphic Logo Card
+                  AnimatedBuilder(
+                    animation: _mainController,
+                    builder: (context, child) {
+                      return FadeTransition(
+                        opacity: _logoFadeAnimation,
+                        child: ScaleTransition(
+                          scale: _logoScaleAnimation,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 150,
+                      height: 110,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
+                        color: Colors.white.withValues(alpha: 0.92),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.primary.withValues(alpha: 0.12),
-                            blurRadius: 32,
-                            offset: const Offset(0, 12),
+                            blurRadius: 36,
+                            offset: const Offset(0, 14),
+                          ),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: SvgPicture.asset(
-                        AppAssets.logoSvg,
-                        width: 140,
-                        height: 90,
-                        fit: BoxFit.contain,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              AppAssets.logoSvg,
+                              width: 110,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                  ),
+                  const SizedBox(height: 28),
 
-                    // Brand Subtitle
-                    Text(
-                      'AI-Powered Healthcare & Pharmacy',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
+                  // Animated Brand Title & Tagline
+                  AnimatedBuilder(
+                    animation: _mainController,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(0, _titleSlideAnimation.value),
+                        child: FadeTransition(
+                          opacity: _titleFadeAnimation,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        const Text(
+                          'MediTouch',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'AI-Powered Healthcare & Pharmacy',
+                          style: TextStyle(
+                            fontSize: 13,
                             fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary.withValues(alpha: 0.9),
                             letterSpacing: 0.2,
                           ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Pill Badges (AI Triage • Telemedicine • E-Pharmacy)
+                  AnimatedBuilder(
+                    animation: _mainController,
+                    builder: (context, child) {
+                      return FadeTransition(
+                        opacity: _badgeFadeAnimation,
+                        child: child,
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildFeaturePill(
+                          icon: Icons.auto_awesome_rounded,
+                          label: 'AI Triage',
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        _buildFeaturePill(
+                          icon: Icons.videocam_rounded,
+                          label: 'Doctors',
+                          color: AppColors.secondary,
+                        ),
+                        const SizedBox(width: 8),
+                        _buildFeaturePill(
+                          icon: Icons.medication_rounded,
+                          label: 'Pharmacy',
+                          color: const Color(0xFF0284C7),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const Spacer(flex: 3),
+
+                  // 3. Glowing Progress Bar & Verification Footer
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 48),
+                    child: Column(
+                      children: [
+                        // Animated Gradient Progress Bar
+                        AnimatedBuilder(
+                          animation: _progressAnimation,
+                          builder: (context, child) {
+                            return Container(
+                              height: 4,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: AppColors.borderSubtle,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: FractionallySizedBox(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: _progressAnimation.value.clamp(0.05, 1.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        AppColors.primary,
+                                        Color(0xFF8B5CF6),
+                                        AppColors.secondary,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.primary.withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 18),
+
+                        // Security & Verification Footer
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.verified_user_rounded,
+                              size: 13,
+                              color: AppColors.secondary.withValues(alpha: 0.9),
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Verified Healthcare & Telemedicine Platform',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
 
-          // Bottom Loading Indicator & Version
-          Positioned(
-            bottom: 48,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.primary.withValues(alpha: 0.8),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Version 1.0.0',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textMuted,
-                        fontSize: 11,
-                      ),
-                ),
-              ],
+  Widget _buildFeaturePill({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.borderSubtle),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textSecondary,
             ),
           ),
         ],

@@ -31,3 +31,4 @@ class AppointmentsScreen extends StatelessWidget {
     );
   }
 }
+

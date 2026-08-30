@@ -37,3 +37,4 @@ class ServerException extends AppException {
   const ServerException([super.message = 'Internal server error occurred.'])
       : super(statusCode: 500);
 }
+

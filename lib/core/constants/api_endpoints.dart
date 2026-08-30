@@ -54,3 +54,4 @@ class ApiEndpoints {
   static const String bkashCreate = '/payments/bkash/create';
   static const String notifications = '/notifications';
 }
+

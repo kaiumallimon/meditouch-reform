@@ -6,3 +6,4 @@ class AppAssets {
   static const String logoImageSvg = 'assets/images/logo.svg';
   static const String logoPng = 'assets/images/logo.png';
 }
+
