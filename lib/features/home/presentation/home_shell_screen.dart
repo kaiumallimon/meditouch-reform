@@ -60,7 +60,32 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
             child: widget.child,
           ),
 
-          // 2. Pure Floating iOS 26 Glass Pill with Lucide Icons
+          // 2. Soft Ambient Bottom Fade Gradient
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: (bottomInset > 0 ? bottomInset + 88 : 100),
+            child: IgnorePointer(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.0),
+                      (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.50),
+                      (isDark ? AppColors.darkBackground : AppColors.background).withValues(alpha: 0.88),
+                      (isDark ? AppColors.darkBackground : AppColors.background),
+                    ],
+                    stops: const [0.0, 0.40, 0.78, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // 3. Pure Floating iOS 26 Glass Pill with Lucide Icons
           Positioned(
             left: 16,
             right: 16,
