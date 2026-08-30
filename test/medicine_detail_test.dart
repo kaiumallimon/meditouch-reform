@@ -162,6 +162,46 @@ void main() {
       expect(model.sections.length, equals(2));
       expect(model.sections.first.id, equals('indications'));
     });
+
+    test('MedicineDetailModel parses Tufnil with string prices and HTML monograph tags', () {
+      final json = {
+        'id': 'b2342342-ee3b-49a5-996b-4126f454d9a2',
+        'slug': 'tufnil-200-mg-tablet',
+        'medicine_name': 'Tufnil',
+        'generic_name': 'Tolfenamic acid',
+        'category_name': 'Tablet',
+        'manufacturer_name': 'Eskayef Bangladesh Ltd.',
+        'product_info': {
+          'strength': '200 mg',
+          'unit_prices': [
+            {'unit': "10's Strip", 'unit_size': 10, 'price': '100.00'},
+            {'unit': "60's Pack", 'unit_size': 60, 'price': '600.00'},
+            {'unit': "150's pack", 'unit_size': 150, 'price': '1500.00'},
+          ],
+        },
+        'medicine_details': {
+          'Indications': "<p class='text-gray-800 leading-relaxed'><strong>Tolfenamic acid</strong> is an NSAID of the fenamate class.</p><ul class='list-disc'><li>Acute treatment of migraine attacks</li><li>Mild to moderate pain</li></ul>",
+          'Dosage And Administration': "<h2>Acute Migraine Attack</h2><p>200 mg at onset.</p>",
+          'Pharmacology': "Inhibits COX-1 and COX-2 enzymes.",
+          'Side Effects': "Dyspepsia, nausea, abdominal pain.",
+          'Contraindications': "Active gastrointestinal bleeding.",
+          'Faq': "<p><strong>Q:</strong> What is Tolfenamic acid used for?</p><p><strong>A:</strong> It is used for acute migraine attacks.</p>",
+        },
+      };
+
+      final model = MedicineDetailModel.fromJson(json);
+      expect(model.slug, equals('tufnil-200-mg-tablet'));
+      expect(model.medicineName, equals('Tufnil'));
+      expect(model.genericName, equals('Tolfenamic acid'));
+      expect(model.manufacturerName, equals('Eskayef Bangladesh Ltd.'));
+      expect(model.unitPrices.length, equals(3));
+      expect(model.unitPrices[0].price, equals(100.00));
+      expect(model.unitPrices[1].price, equals(600.00));
+      expect(model.unitPrices[2].price, equals(1500.00));
+      expect(model.sections.length, equals(6));
+      expect(model.sections.first.content, contains('Tolfenamic acid is an NSAID of the fenamate class'));
+      expect(model.sections.first.content, contains('• Acute treatment of migraine attacks'));
+    });
   });
 
   group('Medicine Detail Screen Widget Tests', () {

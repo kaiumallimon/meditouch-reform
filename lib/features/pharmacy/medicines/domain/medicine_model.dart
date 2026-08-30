@@ -46,9 +46,21 @@ class MedicineModel {
         json['name']?.toString() ??
         '';
 
-    final priceVal = (json['unit_price'] as num?)?.toDouble() ?? 0.0;
+    final rawPrice = json['unit_price'] ?? json['price'];
+    final priceVal = rawPrice is num
+        ? rawPrice.toDouble()
+        : (rawPrice != null ? (double.tryParse(rawPrice.toString()) ?? 0.0) : 0.0);
 
-    final isRx = json['rx_required'] == true || json['requires_prescription'] == true;
+    final isRx = json['rx_required'] == true ||
+        json['requires_prescription'] == true ||
+        json['rx_required']?.toString().toLowerCase() == 'true' ||
+        json['requires_prescription']?.toString().toLowerCase() == 'true';
+
+    final inStockVal = json['in_stock'] is bool
+        ? json['in_stock'] as bool
+        : (json['is_available'] is bool
+            ? json['is_available'] as bool
+            : (json['in_stock']?.toString().toLowerCase() != 'false'));
 
     return MedicineModel(
       id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
@@ -68,7 +80,7 @@ class MedicineModel {
       packSize: json['pack_size']?.toString() ?? '1 Unit',
       image: json['medicine_image']?.toString() ?? json['image']?.toString(),
       rxRequired: isRx,
-      inStock: json['in_stock'] as bool? ?? true,
+      inStock: inStockVal,
       slug: json['slug']?.toString(),
       description: json['description']?.toString(),
     );

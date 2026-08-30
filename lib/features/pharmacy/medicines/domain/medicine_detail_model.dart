@@ -1,5 +1,48 @@
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
 
+double _parseDouble(dynamic val, [double defaultVal = 0.0]) {
+  if (val == null) return defaultVal;
+  if (val is num) return val.toDouble();
+  if (val is String) {
+    return double.tryParse(val.trim()) ?? defaultVal;
+  }
+  return defaultVal;
+}
+
+int _parseInt(dynamic val, [int defaultVal = 0]) {
+  if (val == null) return defaultVal;
+  if (val is num) return val.toInt();
+  if (val is String) {
+    return int.tryParse(val.trim()) ?? defaultVal;
+  }
+  return defaultVal;
+}
+
+String cleanMonographText(String rawContent) {
+  if (rawContent.trim().isEmpty) return '';
+  return rawContent
+      .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</p>', caseSensitive: false), '\n\n')
+      .replaceAll(RegExp(r'</div>', caseSensitive: false), '\n\n')
+      .replaceAll(RegExp(r'<h[1-6][^>]*>', caseSensitive: false), '\n\n')
+      .replaceAll(RegExp(r'</h[1-6]>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'<li[^>]*>', caseSensitive: false), '\n• ')
+      .replaceAll(RegExp(r'</li>', caseSensitive: false), '')
+      .replaceAll(RegExp(r'</?(?:ul|ol)[^>]*>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</?table[^>]*>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</?tr[^>]*>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</?t[dh][^>]*>', caseSensitive: false), '  ')
+      .replaceAll(RegExp(r'<[^>]+>'), '')
+      .replaceAll(RegExp(r'&nbsp;', caseSensitive: false), ' ')
+      .replaceAll(RegExp(r'&amp;', caseSensitive: false), '&')
+      .replaceAll(RegExp(r'&lt;', caseSensitive: false), '<')
+      .replaceAll(RegExp(r'&gt;', caseSensitive: false), '>')
+      .replaceAll(RegExp(r'&quot;', caseSensitive: false), '"')
+      .replaceAll(RegExp(r'&#39;', caseSensitive: false), "'")
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+      .trim();
+}
+
 class UnitPriceModel {
   final dynamic id;
   final String unit;
@@ -17,8 +60,8 @@ class UnitPriceModel {
     return UnitPriceModel(
       id: json['id'],
       unit: json['unit']?.toString() ?? 'Unit',
-      unitSize: (json['unit_size'] as num?)?.toInt() ?? 1,
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      unitSize: _parseInt(json['unit_size'], 1),
+      price: _parseDouble(json['price'], 0.0),
     );
   }
 }
@@ -35,12 +78,7 @@ class FaqItemModel {
   static List<FaqItemModel> parseFaqContent(String rawContent) {
     if (rawContent.trim().isEmpty) return [];
 
-    final normalized = rawContent
-        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
-        .replaceAll(RegExp(r'</p>', caseSensitive: false), '\n\n')
-        .replaceAll(RegExp(r'</div>', caseSensitive: false), '\n\n')
-        .replaceAll(RegExp(r'<[^>]+>'), '')
-        .trim();
+    final normalized = cleanMonographText(rawContent);
 
     final List<FaqItemModel> items = [];
     final chunks = normalized.split(
@@ -190,16 +228,32 @@ class MedicineDetailModel {
     final isRx = productInfo['rx_required'] == true ||
         productInfo['requires_prescription'] == true ||
         json['rx_required'] == true ||
-        json['requires_prescription'] == true;
+        json['requires_prescription'] == true ||
+        productInfo['rx_required']?.toString().toLowerCase() == 'true' ||
+        json['rx_required']?.toString().toLowerCase() == 'true';
 
-    final basePrice = (productInfo['unit_price'] as num?)?.toDouble() ??
-        (json['unit_price'] as num?)?.toDouble() ??
-        (unitPrices.isNotEmpty ? unitPrices.first.price : 0.0);
+    final basePrice = _parseDouble(
+      productInfo['unit_price'] ?? json['unit_price'],
+      unitPrices.isNotEmpty ? unitPrices.first.price : 0.0,
+    );
 
     final dosageForm = json['category_name']?.toString() ??
         productInfo['category_name']?.toString() ??
         productInfo['dosage_form']?.toString() ??
         'Tablet';
+
+    final inStockVal = productInfo['in_stock'] is bool
+        ? productInfo['in_stock'] as bool
+        : (productInfo['is_available'] is bool
+            ? productInfo['is_available'] as bool
+            : (json['in_stock'] is bool
+                ? json['in_stock'] as bool
+                : true));
+
+    final stockCountVal = _parseInt(
+      productInfo['stock_count'] ?? json['stock_count'],
+      100,
+    );
 
     final sections = _buildMonographSections(detailsMap);
 
@@ -218,8 +272,8 @@ class MedicineDetailModel {
       unitPrice: basePrice,
       packSize: productInfo['pack_size']?.toString() ?? json['pack_size']?.toString() ?? (unitPrices.isNotEmpty ? unitPrices.first.unit : '1 Unit'),
       rxRequired: isRx,
-      inStock: productInfo['in_stock'] as bool? ?? json['in_stock'] as bool? ?? true,
-      stockCount: (productInfo['stock_count'] as num?)?.toInt() ?? (json['stock_count'] as num?)?.toInt() ?? 100,
+      inStock: inStockVal,
+      stockCount: stockCountVal,
       unitPrices: unitPrices,
       medicineDetails: detailsMap,
       relatedMedicines: related,
@@ -247,15 +301,16 @@ class MedicineDetailModel {
     }
 
     void addSection(String id, String label, String tag, List<String> candidateKeys, {bool isFaq = false}) {
-      final content = getContentFor(candidateKeys);
-      if (content != null && content.isNotEmpty) {
+      final rawContent = getContentFor(candidateKeys);
+      if (rawContent != null && rawContent.isNotEmpty) {
+        final cleaned = cleanMonographText(rawContent);
         list.add(
           MonographSectionModel(
             id: id,
             label: label,
             tag: tag,
-            content: content,
-            faqItems: isFaq ? FaqItemModel.parseFaqContent(content) : null,
+            content: cleaned,
+            faqItems: isFaq ? FaqItemModel.parseFaqContent(rawContent) : null,
           ),
         );
       }
@@ -285,7 +340,7 @@ class MedicineDetailModel {
             id: key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '_'),
             label: key,
             tag: 'Monograph Info',
-            content: val.trim(),
+            content: cleanMonographText(val.trim()),
           ),
         );
       }
