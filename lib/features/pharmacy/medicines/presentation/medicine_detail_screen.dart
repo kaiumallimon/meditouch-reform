@@ -31,7 +31,6 @@ class MedicineDetailScreen extends ConsumerStatefulWidget {
 
 class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
   final ScrollController _scrollController = ScrollController();
-  final Map<String, GlobalKey> _sectionKeys = {};
 
   @override
   void initState() {
@@ -47,22 +46,6 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _scrollToSection(String sectionId) {
-    ref
-        .read(medicineDetailProvider(widget.slug).notifier)
-        .setActiveSection(sectionId);
-
-    final key = _sectionKeys[sectionId];
-    if (key != null && key.currentContext != null) {
-      Scrollable.ensureVisible(
-        key.currentContext!,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeInOutCubic,
-        alignment: 0.1,
-      );
-    }
   }
 
   String _formatCurrency(double amount) {
@@ -629,73 +612,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
     );
   }
 
-  // 2. Monograph Navigation Pills Carousel
-  Widget _buildMonographIndexBar(
-    MedicineDetailModel med,
-    MedicineDetailState state,
-    bool isDark,
-  ) {
-    return SizedBox(
-      height: 34,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: med.sections.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 6),
-        itemBuilder: (context, idx) {
-          final sec = med.sections[idx];
-          final isSelected = state.activeSectionId == sec.id;
 
-          return InkWell(
-            onTap: () => _scrollToSection(sec.id),
-            borderRadius: BorderRadius.circular(17),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? (isDark ? AppColors.primaryDark : AppColors.primary)
-                    : (isDark
-                        ? const Color(0xFF2C2C2E).withValues(alpha: 0.60)
-                        : Colors.white.withValues(alpha: 0.85)),
-                borderRadius: BorderRadius.circular(17),
-                border: Border.all(
-                  color: isSelected
-                      ? (isDark ? AppColors.primaryDark : AppColors.primary)
-                      : (isDark
-                          ? Colors.white.withValues(alpha: 0.08)
-                          : const Color(0xFFE5E5EA)),
-                  width: 0.8,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    _getSectionIcon(sec.id),
-                    size: 12,
-                    color: isSelected
-                        ? Colors.white
-                        : (isDark ? AppColors.darkTextMuted : const Color(0xFF636366)),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    sec.label,
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected
-                          ? Colors.white
-                          : (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   Widget _buildMonographHeader(bool isDark) {
     return Row(
@@ -724,10 +641,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
 
   // 3. Clinical Monograph Card (Supports standard text + FAQ Accordion)
   Widget _buildMonographCard(MonographSectionModel sec, bool isDark) {
-    final key = _sectionKeys.putIfAbsent(sec.id, () => GlobalKey());
-
     return Container(
-      key: key,
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
