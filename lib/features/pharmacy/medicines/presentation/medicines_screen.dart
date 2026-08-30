@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
+import 'package:meditouch/core/router/route_names.dart';
 
 class MedicinesScreen extends StatelessWidget {
   const MedicinesScreen({super.key});
@@ -7,6 +10,27 @@ class MedicinesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Pharmacy Catalog',
+          style: GoogleFonts.youngSerif(
+            fontSize: 18,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.receipt_long_outlined),
+            tooltip: 'Orders & Prescriptions',
+            onPressed: () => context.push(RouteNames.orders),
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_bag_outlined),
+            tooltip: 'Cart',
+            onPressed: () => context.push(RouteNames.cart),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -25,10 +49,8 @@ class MedicinesScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Pharmacy Catalog',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                'Available Categories',
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 12),
               Expanded(
@@ -36,16 +58,19 @@ class MedicinesScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.medication_liquid_rounded, size: 48, color: AppColors.textMuted),
+                      const Icon(Icons.medication_liquid_rounded, size: 48, color: AppColors.textMuted),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         'Medicines Catalog Loaded',
-                        style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                        style: GoogleFonts.youngSerif(
+                          fontSize: 15,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
+                      Text(
                         'Browse verified over-the-counter & prescription medicines.',
-                        style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                        style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -58,4 +83,3 @@ class MedicinesScreen extends StatelessWidget {
     );
   }
 }
-
