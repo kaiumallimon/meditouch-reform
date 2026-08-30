@@ -26,6 +26,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<IOS26AppBarAction> actions;
   final VoidCallback? onBack;
   final bool showBack;
+  final bool? centerTitle;
   final Color? backgroundColor;
 
   const IOS26AppBar({
@@ -35,6 +36,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions = const [],
     this.onBack,
     this.showBack = false,
+    this.centerTitle,
     this.backgroundColor,
   });
 
@@ -45,6 +47,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = backgroundColor ?? (isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7));
+    final shouldCenter = centerTitle ?? (showBack || leading != null);
 
     return Container(
       decoration: BoxDecoration(
@@ -64,37 +67,77 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 1. Optional Leading / Liquid Glass Back Button
-              if (showBack) ...[
-                _buildBackButton(context, isDark),
-                const SizedBox(width: 12),
-              ] else if (leading != null) ...[
-                leading!,
-                const SizedBox(width: 12),
-              ],
+          child: shouldCenter
+              ? Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Center Title
+                    Positioned.fill(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 56.0),
+                        child: Center(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.youngSerif(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
 
-              // 2. Title Floating Free
-              Expanded(
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.youngSerif(
-                    fontSize: 21,
-                    fontWeight: FontWeight.w400,
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                    letterSpacing: -0.3,
-                  ),
+                    // Left Leading / Back Button
+                    if (showBack)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: _buildBackButton(context, isDark),
+                      )
+                    else if (leading != null)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: leading!,
+                      ),
+
+                    // Right Action Capsule
+                    if (actions.isNotEmpty)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: _buildLiquidGlassActionCapsule(isDark),
+                      ),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (showBack) ...[
+                      _buildBackButton(context, isDark),
+                      const SizedBox(width: 12),
+                    ] else if (leading != null) ...[
+                      leading!,
+                      const SizedBox(width: 12),
+                    ],
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.youngSerif(
+                          fontSize: 21,
+                          fontWeight: FontWeight.w400,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                    ),
+                    if (actions.isNotEmpty) _buildLiquidGlassActionCapsule(isDark),
+                  ],
                 ),
-              ),
-
-              // 3. Liquid Glass Action Capsule (SwiftUI / iOS 26 Floating Island)
-              if (actions.isNotEmpty) _buildLiquidGlassActionCapsule(isDark),
-            ],
-          ),
         ),
       ),
     );
