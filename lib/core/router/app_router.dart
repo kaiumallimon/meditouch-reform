@@ -20,6 +20,25 @@ import 'package:meditouch/features/splash/presentation/splash_screen.dart';
 final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
+Page<dynamic> _buildSmoothShellPage(Widget child, GoRouterState state) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 240),
+    reverseTransitionDuration: const Duration(milliseconds: 240),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curvedAnimation = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+      );
+      return FadeTransition(
+        opacity: curvedAnimation,
+        child: child,
+      );
+    },
+  );
+}
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -45,7 +64,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const RegisterScreen(),
       ),
 
-      // Main Shell with Bottom Navigation
+      // Main Shell with Bottom Navigation (Smooth Transitions)
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         builder: (context, state, child) {
@@ -54,32 +73,37 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: RouteNames.home,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: HomeScreen(),
+            pageBuilder: (context, state) => _buildSmoothShellPage(
+              const HomeScreen(),
+              state,
             ),
           ),
           GoRoute(
             path: RouteNames.pharmacy,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: MedicinesScreen(),
+            pageBuilder: (context, state) => _buildSmoothShellPage(
+              const MedicinesScreen(),
+              state,
             ),
           ),
           GoRoute(
             path: RouteNames.doctors,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: DoctorsScreen(),
+            pageBuilder: (context, state) => _buildSmoothShellPage(
+              const DoctorsScreen(),
+              state,
             ),
           ),
           GoRoute(
             path: RouteNames.chatbot,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ChatbotScreen(),
+            pageBuilder: (context, state) => _buildSmoothShellPage(
+              const ChatbotScreen(),
+              state,
             ),
           ),
           GoRoute(
             path: RouteNames.settings,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: SettingsScreen(),
+            pageBuilder: (context, state) => _buildSmoothShellPage(
+              const SettingsScreen(),
+              state,
             ),
           ),
         ],

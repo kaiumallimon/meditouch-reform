@@ -59,7 +59,7 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
             child: widget.child,
           ),
 
-          // 2. Pure Floating iOS 26 Glass Pill (No docked background)
+          // 2. Pure Floating iOS 26 Glass Pill with Smooth Gliding Indicator
           Positioned(
             left: 16,
             right: 16,
@@ -98,7 +98,7 @@ class _IOS26FloatingNavBar extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
         child: Container(
           height: 62,
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: isDark
                 ? const Color(0xFF161618).withValues(alpha: 0.72)
@@ -118,69 +118,94 @@ class _IOS26FloatingNavBar extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: _IOS26NavItem(
-                  icon: Icons.home_outlined,
-                  selectedIcon: Icons.home_rounded,
-                  label: 'Home',
-                  isSelected: selectedIndex == 0,
-                  isDark: isDark,
-                  activeColor: activeColor,
-                  inactiveColor: inactiveColor,
-                  onTap: () => onItemTapped(0),
-                ),
-              ),
-              Expanded(
-                child: _IOS26NavItem(
-                  icon: Icons.medication_outlined,
-                  selectedIcon: Icons.medication_rounded,
-                  label: 'Pharmacy',
-                  isSelected: selectedIndex == 1,
-                  isDark: isDark,
-                  activeColor: activeColor,
-                  inactiveColor: inactiveColor,
-                  onTap: () => onItemTapped(1),
-                ),
-              ),
-              Expanded(
-                child: _IOS26NavItem(
-                  icon: Icons.health_and_safety_outlined,
-                  selectedIcon: Icons.health_and_safety_rounded,
-                  label: 'Doctors',
-                  isSelected: selectedIndex == 2,
-                  isDark: isDark,
-                  activeColor: activeColor,
-                  inactiveColor: inactiveColor,
-                  onTap: () => onItemTapped(2),
-                ),
-              ),
-              Expanded(
-                child: _IOS26NavItem(
-                  icon: Icons.auto_awesome_outlined,
-                  selectedIcon: Icons.auto_awesome_rounded,
-                  label: 'AI Chat',
-                  isSelected: selectedIndex == 3,
-                  isDark: isDark,
-                  activeColor: activeColor,
-                  inactiveColor: inactiveColor,
-                  onTap: () => onItemTapped(3),
-                ),
-              ),
-              Expanded(
-                child: _IOS26NavItem(
-                  icon: Icons.settings_outlined,
-                  selectedIcon: Icons.settings_rounded,
-                  label: 'Settings',
-                  isSelected: selectedIndex == 4,
-                  isDark: isDark,
-                  activeColor: activeColor,
-                  inactiveColor: inactiveColor,
-                  onTap: () => onItemTapped(4),
-                ),
-              ),
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final totalWidth = constraints.maxWidth;
+              final itemWidth = totalWidth / 5;
+
+              return Stack(
+                children: [
+                  // Smooth Gliding Frosted Glass Pill Capsule (Zero Drop Shadow)
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.fastEaseInToSlowEaseOut,
+                    left: selectedIndex * itemWidth,
+                    top: 0,
+                    bottom: 0,
+                    width: itemWidth,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.16)
+                            : Colors.white.withValues(alpha: 0.94),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+
+                  // Navigation Tabs Row with Smooth Micro-interactions
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _IOS26NavItem(
+                          icon: Icons.home_outlined,
+                          selectedIcon: Icons.home_rounded,
+                          label: 'Home',
+                          isSelected: selectedIndex == 0,
+                          activeColor: activeColor,
+                          inactiveColor: inactiveColor,
+                          onTap: () => onItemTapped(0),
+                        ),
+                      ),
+                      Expanded(
+                        child: _IOS26NavItem(
+                          icon: Icons.medication_outlined,
+                          selectedIcon: Icons.medication_rounded,
+                          label: 'Pharmacy',
+                          isSelected: selectedIndex == 1,
+                          activeColor: activeColor,
+                          inactiveColor: inactiveColor,
+                          onTap: () => onItemTapped(1),
+                        ),
+                      ),
+                      Expanded(
+                        child: _IOS26NavItem(
+                          icon: Icons.health_and_safety_outlined,
+                          selectedIcon: Icons.health_and_safety_rounded,
+                          label: 'Doctors',
+                          isSelected: selectedIndex == 2,
+                          activeColor: activeColor,
+                          inactiveColor: inactiveColor,
+                          onTap: () => onItemTapped(2),
+                        ),
+                      ),
+                      Expanded(
+                        child: _IOS26NavItem(
+                          icon: Icons.auto_awesome_outlined,
+                          selectedIcon: Icons.auto_awesome_rounded,
+                          label: 'AI Chat',
+                          isSelected: selectedIndex == 3,
+                          activeColor: activeColor,
+                          inactiveColor: inactiveColor,
+                          onTap: () => onItemTapped(3),
+                        ),
+                      ),
+                      Expanded(
+                        child: _IOS26NavItem(
+                          icon: Icons.settings_outlined,
+                          selectedIcon: Icons.settings_rounded,
+                          label: 'Settings',
+                          isSelected: selectedIndex == 4,
+                          activeColor: activeColor,
+                          inactiveColor: inactiveColor,
+                          onTap: () => onItemTapped(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -193,7 +218,6 @@ class _IOS26NavItem extends StatelessWidget {
   final IconData selectedIcon;
   final String label;
   final bool isSelected;
-  final bool isDark;
   final Color activeColor;
   final Color inactiveColor;
   final VoidCallback onTap;
@@ -203,7 +227,6 @@ class _IOS26NavItem extends StatelessWidget {
     required this.selectedIcon,
     required this.label,
     required this.isSelected,
-    required this.isDark,
     required this.activeColor,
     required this.inactiveColor,
     required this.onTap,
@@ -214,44 +237,38 @@ class _IOS26NavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOutCubic,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark
-                  ? Colors.white.withValues(alpha: 0.16)
-                  : Colors.white.withValues(alpha: 0.94))
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              isSelected ? selectedIcon : icon,
-              size: 20,
-              color: isSelected ? activeColor : inactiveColor,
+            AnimatedScale(
+              scale: isSelected ? 1.08 : 1.0,
+              duration: const Duration(milliseconds: 260),
+              curve: Curves.easeOutBack,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
+                child: Icon(
+                  isSelected ? selectedIcon : icon,
+                  key: ValueKey(isSelected),
+                  size: 20,
+                  color: isSelected ? activeColor : inactiveColor,
+                ),
+              ),
             ),
             const SizedBox(height: 2),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
               style: GoogleFonts.inter(
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected ? activeColor : inactiveColor,
+              ),
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
