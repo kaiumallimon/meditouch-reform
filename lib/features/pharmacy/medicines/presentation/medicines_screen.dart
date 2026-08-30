@@ -317,20 +317,25 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
                 const SizedBox(height: 8),
 
                 // 2 Medicines Per Row iOS 26 Grid
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.76,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
+                MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.76,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: state.medicines.length,
+                    itemBuilder: (context, index) {
+                      final medicine = state.medicines[index];
+                      return _IOS26MedicineCard(medicine: medicine, isDark: isDark);
+                    },
                   ),
-                  itemCount: state.medicines.length,
-                  itemBuilder: (context, index) {
-                    final medicine = state.medicines[index];
-                    return _IOS26MedicineCard(medicine: medicine, isDark: isDark);
-                  },
                 ),
                 const SizedBox(height: 18),
 
@@ -518,7 +523,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.76,
