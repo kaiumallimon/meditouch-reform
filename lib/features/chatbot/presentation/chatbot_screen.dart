@@ -16,7 +16,6 @@ class ChatbotScreen extends StatelessWidget {
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
       appBar: IOS26AppBar(
         title: 'AI Consultation',
-        subtitle: 'Online • Clinical Triage Agent',
         actions: [
           IOS26AppBarAction(
             icon: LucideIcons.messageSquarePlus,

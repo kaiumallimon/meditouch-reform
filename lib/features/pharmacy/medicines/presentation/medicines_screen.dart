@@ -58,11 +58,13 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
     final notifier = ref.read(pharmacyProvider.notifier);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
       appBar: IOS26AppBar(
         title: 'Pharmacy',
-        subtitle: 'Over 2,500+ genuine medicines',
         actions: [
           IOS26AppBarAction(
             icon: LucideIcons.fileText,
@@ -76,14 +78,13 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        bottom: false,
-        child: RefreshIndicator(
-          onRefresh: () => notifier.loadMedicines(),
-          child: ListView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            padding: const EdgeInsets.fromLTRB(14, 6, 14, 100),
+      body: RefreshIndicator(
+        onRefresh: () => notifier.loadMedicines(),
+        edgeOffset: topInset + 64,
+        child: ListView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          padding: EdgeInsets.fromLTRB(14, topInset + 72, 14, 100),
             children: [
               // 1. iOS 26 Search Bar
               Container(
@@ -339,7 +340,6 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 

@@ -22,7 +22,6 @@ class IOS26AppBarAction {
 
 class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final String? subtitle;
   final Widget? leading;
   final List<IOS26AppBarAction> actions;
   final VoidCallback? onBack;
@@ -32,7 +31,6 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
   const IOS26AppBar({
     super.key,
     required this.title,
-    this.subtitle,
     this.leading,
     this.actions = const [],
     this.onBack,
@@ -41,24 +39,35 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(subtitle != null ? 64.0 : 56.0);
+  Size get preferredSize => const Size.fromHeight(54.0);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultBg = isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7);
-    final effectiveBg = backgroundColor ?? defaultBg;
+    final bg = backgroundColor ?? (isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7));
 
     return Container(
-      color: effectiveBg,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            bg,
+            bg.withValues(alpha: 0.90),
+            bg.withValues(alpha: 0.50),
+            bg.withValues(alpha: 0.0),
+          ],
+          stops: const [0.0, 0.45, 0.80, 1.0],
+        ),
+      ),
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Optional Leading / Back Button
+              // 1. Optional Leading / Liquid Glass Back Button
               if (showBack) ...[
                 _buildBackButton(context, isDark),
                 const SizedBox(width: 12),
@@ -67,41 +76,22 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
                 const SizedBox(width: 12),
               ],
 
-              // Title and Subtitle
+              // 2. Title Floating Free
               Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.youngSerif(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w400,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 1),
-                      Text(
-                        subtitle!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-                        ),
-                      ),
-                    ],
-                  ],
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.youngSerif(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w400,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    letterSpacing: -0.3,
+                  ),
                 ),
               ),
 
-              // Liquid Glass Action Capsule (iOS 26)
+              // 3. Liquid Glass Action Capsule (SwiftUI / iOS 26 Floating Island)
               if (actions.isNotEmpty) _buildLiquidGlassActionCapsule(isDark),
             ],
           ),
@@ -117,33 +107,33 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
-            width: 36,
-            height: 36,
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.10)
-                  : Colors.white.withValues(alpha: 0.85),
+                  ? const Color(0xFF2C2C2E).withValues(alpha: 0.80)
+                  : Colors.white.withValues(alpha: 0.88),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isDark
-                    ? Colors.white.withValues(alpha: 0.14)
-                    : Colors.white.withValues(alpha: 0.9),
-                width: 0.8,
+                    ? Colors.white.withValues(alpha: 0.22)
+                    : Colors.white.withValues(alpha: 0.95),
+                width: 0.9,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
+                  color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: Center(
               child: Icon(
                 LucideIcons.chevronLeft,
-                size: 17,
+                size: 18,
                 color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
               ),
             ),
@@ -157,26 +147,26 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
         child: Container(
-          height: 38,
+          height: 40,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
             color: isDark
-                ? Colors.white.withValues(alpha: 0.10)
-                : Colors.white.withValues(alpha: 0.88),
+                ? const Color(0xFF2C2C2E).withValues(alpha: 0.82)
+                : Colors.white.withValues(alpha: 0.90),
             borderRadius: BorderRadius.circular(22),
             border: Border.all(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.15)
+                  ? Colors.white.withValues(alpha: 0.24)
                   : Colors.white.withValues(alpha: 0.95),
               width: 0.9,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
+                color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -190,10 +180,10 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
                   if (index > 0)
                     Container(
                       width: 0.8,
-                      height: 18,
+                      height: 20,
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.12)
+                          ? Colors.white.withValues(alpha: 0.15)
                           : const Color(0xFFE5E5EA),
                     ),
                   _buildActionItem(action, isDark),
@@ -213,8 +203,8 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
         onTap: action.onPressed,
         borderRadius: BorderRadius.circular(18),
         child: Container(
-          width: 34,
-          height: 34,
+          width: 36,
+          height: 36,
           alignment: Alignment.center,
           child: Stack(
             clipBehavior: Clip.none,
@@ -222,7 +212,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Icon(
                 action.icon,
-                size: 17,
+                size: 18,
                 color: action.isDestructive
                     ? const Color(0xFFFF453A)
                     : (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary),

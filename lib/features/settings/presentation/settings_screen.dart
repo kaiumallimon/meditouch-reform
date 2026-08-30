@@ -18,15 +18,17 @@ class SettingsScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
       appBar: const IOS26AppBar(
         title: 'Settings',
-        subtitle: 'System & Account Preferences',
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+      body: ListView(
+        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        padding: EdgeInsets.fromLTRB(16, topInset + 72, 16, 96),
           children: [
             // 1. iOS 26 Apple-ID Profile Island
             _buildGroupContainer(
@@ -329,7 +331,6 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ],
         ),
-      ),
     );
   }
 

@@ -13,11 +13,13 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
       appBar: IOS26AppBar(
         title: 'Personal Profile',
-        subtitle: 'Medical History & Identity',
         showBack: true,
         actions: [
           IOS26AppBarAction(
@@ -34,9 +36,9 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      body: ListView(
+        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        padding: EdgeInsets.fromLTRB(16, topInset + 72, 16, 32),
           children: [
             // Avatar & Name Card
             Center(
@@ -145,7 +147,6 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 16),
           ],
         ),
-      ),
     );
   }
 

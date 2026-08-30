@@ -15,7 +15,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: IOS26AppBar(
         leading: SvgPicture.asset(
@@ -25,7 +28,6 @@ class HomeScreen extends StatelessWidget {
           fit: BoxFit.contain,
         ),
         title: 'MediTouch',
-        subtitle: 'Clinical & Telemedicine Hub',
         actions: [
           IOS26AppBarAction(
             icon: LucideIcons.bell,
@@ -40,7 +42,8 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        padding: EdgeInsets.fromLTRB(16, topInset + 72, 16, 96),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -14,11 +14,13 @@ class DoctorsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
       appBar: IOS26AppBar(
         title: 'Doctors',
-        subtitle: 'BMDC Verified Practitioners',
         actions: [
           IOS26AppBarAction(
             icon: LucideIcons.calendar,
@@ -27,9 +29,8 @@ class DoctorsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+      body: Padding(
+        padding: EdgeInsets.fromLTRB(16, topInset + 72, 16, 96),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -113,7 +114,6 @@ class DoctorsScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }
