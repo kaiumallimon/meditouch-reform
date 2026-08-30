@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 
 class ChatbotScreen extends StatelessWidget {
@@ -7,6 +8,48 @@ class ChatbotScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'AI Clinical Assistant',
+              style: GoogleFonts.youngSerif(
+                fontSize: 17,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: AppColors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Online • Clinical Triage Agent',
+                  style: GoogleFonts.inter(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.secondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_comment_outlined),
+            tooltip: 'New Conversation',
+            onPressed: () {},
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
