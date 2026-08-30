@@ -41,15 +41,15 @@ void main() {
     await tester.tap(createAccountLink);
     await tester.pumpAndSettle();
 
-    // Verify RegisterScreen elements
-    expect(find.text('Create Account'), findsOneWidget);
+    // Verify RegisterScreen elements (Headline + Button = 2 'Create Account' widgets)
+    expect(find.text('Create Account'), findsNWidgets(2));
     expect(find.text('FULL NAME'), findsOneWidget);
     expect(find.text('PHONE NUMBER'), findsOneWidget);
     expect(find.text('PASSWORD'), findsOneWidget);
     expect(find.text('CONFIRM PASSWORD'), findsOneWidget);
 
     // Scroll if needed and tap "Sign In" link to return to LoginScreen
-    final signInLink = find.text('Sign In');
+    final signInLink = find.text('Sign In').last;
     await tester.ensureVisible(signInLink);
     await tester.tap(signInLink);
     await tester.pumpAndSettle();
