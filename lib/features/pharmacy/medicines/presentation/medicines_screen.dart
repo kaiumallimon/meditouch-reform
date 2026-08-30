@@ -66,7 +66,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
       extendBodyBehindAppBar: true,
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
       appBar: IOS26AppBar(
-        title: 'Pharmacy',
+        title: 'e-Pharmacy',
         actions: [
           IOS26AppBarAction(
             icon: LucideIcons.fileText,
