@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_assets.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/errors/app_exception.dart';
@@ -97,318 +98,450 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      body: Container(
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkBackground : AppColors.background,
-          gradient: isDark
-              ? const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF1E172F), // Soft deep primary tint
-                    AppColors.darkBackground, // #121214
-                  ],
-                  stops: [0.0, 0.45],
-                )
-              : const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFF3EEFE), // Soft primary purple tint
-                    AppColors.background, // #FAF8F5
-                  ],
-                  stops: [0.0, 0.45],
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 8),
+
+                // 1. Top Logo Emblem
+                Center(
+                  child: isDark
+                      ? Image.asset(
+                          AppAssets.logoDarkPng,
+                          width: 190,
+                          height: 90,
+                          fit: BoxFit.contain,
+                        )
+                      : SvgPicture.asset(
+                          AppAssets.logoSvg,
+                          width: 140,
+                          height: 70,
+                          fit: BoxFit.contain,
+                        ),
                 ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 12),
+                const SizedBox(height: 18),
 
-                  // Top Clean Vector Logo
-                  Center(
-                    child: isDark
-                        ? Image.asset(
-                            AppAssets.logoDarkPng,
-                            width: 200,
-                            height: 110,
-                            fit: BoxFit.contain,
-                          )
-                        : SvgPicture.asset(
-                            AppAssets.logoSvg,
-                            width: 140,
-                            height: 75,
-                            fit: BoxFit.contain,
-                          ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Typography Header (Young Serif + Inter)
-                  Center(
-                    child: Text(
-                      'Welcome back',
-                      style: GoogleFonts.youngSerif(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.5,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                      ),
+                // 2. Young Serif Header
+                Center(
+                  child: Text(
+                    'Welcome back',
+                    style: GoogleFonts.youngSerif(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -0.5,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Center(
-                    child: Text(
-                      'Sign in to access meditouch services',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
-                        height: 1.4,
-                      ),
+                ),
+                const SizedBox(height: 4),
+                Center(
+                  child: Text(
+                    'Sign in to access your health records & pharmacy',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 28),
+                ),
+                const SizedBox(height: 24),
 
-                  // Error Banner
-                  if (_errorMessage != null) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: AppColors.errorLight,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.error_outline, size: 16, color: AppColors.error),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              _errorMessage!,
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                color: AppColors.error,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
+                // 3. Error Alert Banner
+                if (_errorMessage != null) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF331517)
+                          : const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF7F1D1D)
+                            : const Color(0xFFFCA5A5),
+                        width: 0.8,
                       ),
                     ),
-                    const SizedBox(height: 18),
-                  ],
-
-                  // Form Container
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        // Identifier Field
-                        Text(
-                          'EMAIL OR PHONE NUMBER',
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.6,
-                            color: AppColors.textPrimary,
-                          ),
+                        const Icon(
+                          LucideIcons.circleAlert,
+                          size: 16,
+                          color: Color(0xFFFF453A),
                         ),
-                        const SizedBox(height: 6),
-                        TextFormField(
-                          controller: _identifierController,
-                          keyboardType: TextInputType.emailAddress,
-                          style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
-                          decoration: InputDecoration(
-                            hintText: 'e.g. 01712345678 or name@example.com',
-                            prefixIcon: const Icon(Icons.person_outline_rounded, size: 19),
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Please enter your email or phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 18),
-
-                        // Password Field
-                        Text(
-                          'PASSWORD',
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.6,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
-                          decoration: InputDecoration(
-                            hintText: 'Enter your password',
-                            prefixIcon: const Icon(Icons.lock_outline_rounded, size: 19),
-                            filled: true,
-                            fillColor: Colors.white,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                size: 19,
-                                color: AppColors.textMuted,
-                              ),
-                              onPressed: () {
-                                setState(() => _obscurePassword = !_obscurePassword);
-                              },
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _errorMessage!,
+                            style: GoogleFonts.inter(
+                              fontSize: 12.5,
+                              color: isDark
+                                  ? const Color(0xFFFF8B85)
+                                  : const Color(0xFFDC2626),
+                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Primary Sign In Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _handleLogin,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: _isLoading
-                                ? const CupertinoActivityIndicator(
-                                    color: Colors.white,
-                                    radius: 10,
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Sign In',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
-                                    ],
-                                  ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 18),
+                ],
 
-                  // Secondary / Guest Explore Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: OutlinedButton(
-                      onPressed: _isLoading ? null : _handleGuestExplore,
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: AppColors.border),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                // 4. Grouped Input Form Island
+                _buildSectionLabel('ACCOUNT CREDENTIALS', isDark),
+                const SizedBox(height: 6),
+                _buildGroupContainer(
+                  isDark: isDark,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Email / Phone Row
+                        _buildFormRow(
+                          icon: LucideIcons.user,
+                          iconBgColor: const Color(0xFF007AFF),
+                          isDark: isDark,
+                          child: TextFormField(
+                            controller: _identifierController,
+                            keyboardType: TextInputType.emailAddress,
+                            style: GoogleFonts.inter(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w500,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Email or phone number',
+                              hintStyle: GoogleFonts.inter(
+                                fontSize: 13.5,
+                                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your email or phone number';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
+
+                        _buildIndentedDivider(isDark),
+
+                        // Password Row
+                        _buildFormRow(
+                          icon: LucideIcons.lock,
+                          iconBgColor: const Color(0xFF5856D6),
+                          isDark: isDark,
+                          suffix: InkWell(
+                            onTap: () {
+                              setState(() => _obscurePassword = !_obscurePassword);
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                _obscurePassword
+                                    ? LucideIcons.eyeOff
+                                    : LucideIcons.eye,
+                                size: 17,
+                                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                              ),
+                            ),
+                          ),
+                          child: TextFormField(
+                            controller: _passwordController,
+                            obscureText: _obscurePassword,
+                            style: GoogleFonts.inter(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w500,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Password',
+                              hintStyle: GoogleFonts.inter(
+                                fontSize: 13.5,
+                                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 5. Primary Sign In Button
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (isDark ? AppColors.primaryDark : AppColors.primary)
+                            .withValues(alpha: isDark ? 0.35 : 0.22),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
                       ),
-                      child: Text(
-                        'Explore as Guest',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _handleLogin,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: _isLoading
+                        ? const CupertinoActivityIndicator(
+                            color: Colors.white,
+                            radius: 10,
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Sign In',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                LucideIcons.arrowRight,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // 6. Secondary Guest Explore Button
+                Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkSurface : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : const Color(0xFFE5E5EA),
+                      width: 0.8,
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _isLoading ? null : _handleGuestExplore,
+                      borderRadius: BorderRadius.circular(16),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              LucideIcons.sparkles,
+                              size: 15,
+                              color: isDark ? AppColors.primaryDark : AppColors.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Explore as Guest',
+                              style: GoogleFonts.inter(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 24),
 
-                  // Link to Register Screen
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account? ",
+                // 7. Link to Register Screen
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        context.push(RouteNames.register);
+                      },
+                      child: Text(
+                        'Create Account',
                         style: GoogleFonts.inter(
                           fontSize: 13,
-                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? AppColors.primaryDark : AppColors.primary,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          context.push(RouteNames.register);
-                        },
-                        child: Text(
-                          'Create Account',
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 28),
 
-                  const SizedBox(height: 24),
-
-
-                  // Footer Security Note
-                  Row(
+                // 8. Security Footer Branding
+                Center(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.shield_outlined,
-                        size: 14,
-                        color: AppColors.textMuted,
+                      Icon(
+                        LucideIcons.shieldCheck,
+                        size: 13,
+                        color: isDark ? const Color(0xFF48484A) : const Color(0xFFA1A1AA),
                       ),
                       const SizedBox(width: 5),
                       Flexible(
                         child: Text(
-                          'End-to-End Encrypted Healthcare Platform',
+                          'MediTouch • Secure & Encrypted Healthcare Platform',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
                             fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textMuted,
+                            color: isDark ? const Color(0xFF48484A) : const Color(0xFFA1A1AA),
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 12),
-                ],
-              ),
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  static Widget _buildFormRow({
+    required IconData icon,
+    required Color iconBgColor,
+    required Widget child,
+    required bool isDark,
+    Widget? suffix,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      child: Row(
+        children: [
+          Container(
+            width: 29,
+            height: 29,
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              borderRadius: BorderRadius.circular(7.5),
+            ),
+            child: Center(
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 15,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: child),
+          if (suffix != null) ...[
+            const SizedBox(width: 8),
+            suffix,
+          ],
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildGroupContainer({
+    required Widget child,
+    required bool isDark,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : const Color(0xFFE5E5EA),
+          width: 0.8,
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: child,
+      ),
+    );
+  }
+
+  static Widget _buildSectionLabel(String title, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Text(
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.7,
+          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildIndentedDivider(bool isDark) {
+    return Divider(
+      height: 0.5,
+      thickness: 0.5,
+      indent: 52,
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.07)
+          : const Color(0xFFE5E5EA),
     );
   }
 }
