@@ -26,15 +26,15 @@ class ChatbotScreen extends StatelessWidget {
                         child: const Icon(Icons.auto_awesome, color: AppColors.primary, size: 36),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'MediTouch AI Assistant',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.textPrimary),
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'Ask about medicine prices, dosages, or describe your symptoms for triage assistance.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),
@@ -81,4 +81,3 @@ class ChatbotScreen extends StatelessWidget {
     );
   }
 }
-

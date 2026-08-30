@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:meditouch/core/constants/app_assets.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
@@ -238,7 +239,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   ),
                   const SizedBox(height: 28),
 
-                  // Animated Brand Title & Tagline
+                  // Animated Brand Title & Tagline (Young Serif & Inter)
                   AnimatedBuilder(
                     animation: _mainController,
                     builder: (context, child) {
@@ -252,11 +253,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     },
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'MediTouch',
-                          style: TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w800,
+                          style: GoogleFonts.youngSerif(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w400,
                             letterSpacing: -0.5,
                             color: AppColors.textPrimary,
                           ),
@@ -264,11 +265,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         const SizedBox(height: 8),
                         Text(
                           'AI-Powered Healthcare & Pharmacy',
-                          style: TextStyle(
+                          style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textSecondary.withValues(alpha: 0.9),
-                            letterSpacing: 0.2,
+                            letterSpacing: 0.1,
                           ),
                         ),
                       ],
@@ -276,7 +277,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   ),
                   const SizedBox(height: 24),
 
-                  // Pill Badges (AI Triage • Telemedicine • E-Pharmacy)
+                  // Pill Badges (Inter)
                   AnimatedBuilder(
                     animation: _mainController,
                     builder: (context, child) {
@@ -355,7 +356,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         ),
                         const SizedBox(height: 18),
 
-                        // Security & Verification Footer
+                        // Security & Verification Footer (Inter & JetBrains Mono)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -367,7 +368,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             const SizedBox(width: 5),
                             Text(
                               'Verified Healthcare & Telemedicine Platform',
-                              style: TextStyle(
+                              style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.textMuted,
@@ -414,7 +415,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           const SizedBox(width: 4),
           Text(
             label,
-            style: const TextStyle(
+            style: GoogleFonts.inter(
               fontSize: 10.5,
               fontWeight: FontWeight.w600,
               color: AppColors.textSecondary,

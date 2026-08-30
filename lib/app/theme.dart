@@ -5,8 +5,13 @@ import 'package:meditouch/core/constants/app_colors.dart';
 class AppTheme {
   AppTheme._();
 
+  // Typography Tokens
+  static TextStyle get sans => GoogleFonts.inter();
+  static TextStyle get heading => GoogleFonts.youngSerif();
+  static TextStyle get mono => GoogleFonts.jetBrainsMono();
+
   static ThemeData get lightTheme {
-    final baseTextTheme = GoogleFonts.plusJakartaSansTextTheme();
+    final baseTextTheme = GoogleFonts.interTextTheme();
 
     return ThemeData(
       useMaterial3: true,
@@ -21,32 +26,93 @@ class AppTheme {
         error: AppColors.error,
         brightness: Brightness.light,
       ),
-
       textTheme: baseTextTheme.copyWith(
-        displayLarge: baseTextTheme.displayLarge?.copyWith(
+        // All Display Styles -> Young Serif
+        displayLarge: GoogleFonts.youngSerif(
+          fontSize: 32,
+          fontWeight: FontWeight.w400,
           color: AppColors.textPrimary,
-          fontWeight: FontWeight.bold,
+          letterSpacing: -0.5,
         ),
-        headlineMedium: baseTextTheme.headlineMedium?.copyWith(
+        displayMedium: GoogleFonts.youngSerif(
+          fontSize: 26,
+          fontWeight: FontWeight.w400,
           color: AppColors.textPrimary,
-          fontWeight: FontWeight.w700,
+          letterSpacing: -0.5,
         ),
-        titleLarge: baseTextTheme.titleLarge?.copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w600,
-        ),
-        titleMedium: baseTextTheme.titleMedium?.copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w600,
-        ),
-        bodyLarge: baseTextTheme.bodyLarge?.copyWith(
+        displaySmall: GoogleFonts.youngSerif(
+          fontSize: 22,
+          fontWeight: FontWeight.w400,
           color: AppColors.textPrimary,
         ),
-        bodyMedium: baseTextTheme.bodyMedium?.copyWith(
+
+        // All Headline Styles -> Young Serif
+        headlineLarge: GoogleFonts.youngSerif(
+          fontSize: 22,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        headlineMedium: GoogleFonts.youngSerif(
+          fontSize: 19,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        headlineSmall: GoogleFonts.youngSerif(
+          fontSize: 17,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+
+        // All Title Styles -> Young Serif
+        titleLarge: GoogleFonts.youngSerif(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        titleMedium: GoogleFonts.youngSerif(
+          fontSize: 14.5,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        titleSmall: GoogleFonts.youngSerif(
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+
+        // All Body Styles -> Inter
+        bodyLarge: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+          height: 1.45,
+        ),
+        bodyMedium: GoogleFonts.inter(
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
           color: AppColors.textSecondary,
+          height: 1.4,
         ),
-        labelLarge: baseTextTheme.labelLarge?.copyWith(
+        bodySmall: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textMuted,
+        ),
+
+        // Label Styles -> Inter & Monospace
+        labelLarge: GoogleFonts.inter(
+          fontSize: 13.5,
           fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
+        ),
+        labelMedium: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
+        labelSmall: GoogleFonts.jetBrainsMono(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.2,
         ),
       ),
       appBarTheme: AppBarTheme(
@@ -55,10 +121,10 @@ class AppTheme {
         scrolledUnderElevation: 1,
         centerTitle: false,
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
-        titleTextStyle: GoogleFonts.plusJakartaSans(
+        titleTextStyle: GoogleFonts.youngSerif(
           color: AppColors.textPrimary,
           fontSize: 18,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w400,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -70,8 +136,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
+          textStyle: GoogleFonts.inter(
+            fontSize: 13.5,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -84,8 +150,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
+          textStyle: GoogleFonts.inter(
+            fontSize: 13.5,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -110,7 +176,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        hintStyle: GoogleFonts.plusJakartaSans(
+        hintStyle: GoogleFonts.inter(
           color: AppColors.textMuted,
           fontSize: 13,
         ),
@@ -124,7 +190,6 @@ class AppTheme {
         ),
         margin: EdgeInsets.zero,
       ),
-
     );
   }
 }

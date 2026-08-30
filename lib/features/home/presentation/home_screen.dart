@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 
@@ -43,17 +44,17 @@ class HomeScreen extends StatelessWidget {
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.auto_awesome, color: Colors.white, size: 14),
-                            SizedBox(width: 4),
+                            const Icon(Icons.auto_awesome, color: Colors.white, size: 14),
+                            const SizedBox(width: 4),
                             Text(
                               'AI Clinical Assistant',
-                              style: TextStyle(
+                              style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -62,20 +63,21 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     'Need health guidance or medicine check?',
-                    style: TextStyle(
+                    style: GoogleFonts.youngSerif(
                       color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -0.3,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Ask our clinical triage assistant about symptoms, generic alternatives, or live inventory.',
-                    style: TextStyle(
+                    style: GoogleFonts.inter(
                       color: Colors.white.withValues(alpha: 0.85),
-                      fontSize: 12,
+                      fontSize: 12.5,
                       height: 1.4,
                     ),
                   ),
@@ -88,7 +90,10 @@ class HomeScreen extends StatelessWidget {
                       elevation: 0,
                     ),
                     icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16),
-                    label: const Text('Start AI Consultation'),
+                    label: Text(
+                      'Start AI Consultation',
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),
@@ -98,9 +103,7 @@ class HomeScreen extends StatelessWidget {
             // Quick Services Grid
             Text(
               'Healthcare Services',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 12),
             GridView.count(
@@ -199,16 +202,15 @@ class _ServiceCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                  style: GoogleFonts.youngSerif(
+                    fontSize: 14.5,
                     color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
                     color: AppColors.textMuted,
                   ),
@@ -221,4 +223,3 @@ class _ServiceCard extends StatelessWidget {
     );
   }
 }
-
