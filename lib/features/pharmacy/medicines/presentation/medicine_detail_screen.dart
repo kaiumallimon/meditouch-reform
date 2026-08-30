@@ -399,7 +399,9 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
                 const SizedBox(height: 6),
 
                 // Manufacturer
-                if (med.manufacturerName != null && med.manufacturerName!.isNotEmpty)
+                if (med.manufacturerName != null &&
+                    med.manufacturerName!.trim().isNotEmpty &&
+                    !RegExp(r'^\d+$').hasMatch(med.manufacturerName!.trim()))
                   Row(
                     children: [
                       Icon(
@@ -995,7 +997,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
 
                 // 2. Compact Info Details
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 4, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -1012,19 +1014,33 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
                           height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 5),
 
-                      // Generic / Manufacturer
-                      Text(
-                        alt.genericName ?? alt.manufacturer,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 9.5,
-                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-                        ),
+                      // Generic / Manufacturer / Brand
+                      Builder(
+                        builder: (context) {
+                          final hasGeneric = alt.genericName != null && alt.genericName!.trim().isNotEmpty;
+                          final hasMfg = alt.manufacturer.trim().isNotEmpty && !RegExp(r'^\d+$').hasMatch(alt.manufacturer.trim());
+                          final hasBrand = alt.brand.trim().isNotEmpty && !RegExp(r'^\d+$').hasMatch(alt.brand.trim());
+
+                          final subtitleText = hasGeneric
+                              ? alt.genericName!.trim()
+                              : (hasMfg
+                                  ? alt.manufacturer.trim()
+                                  : (hasBrand ? alt.brand.trim() : alt.dosageForm));
+
+                          return Text(
+                            subtitleText,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 9.5,
+                              color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                            ),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
 
                       // Price & Liquid Glass View Button Row
                       Row(
@@ -1414,7 +1430,9 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
           _buildSummaryRow('Form & Strength', '${med.dosageForm}${med.strength != null && med.strength!.isNotEmpty ? " • ${med.strength}" : ""}', isDark),
           _buildSummaryRow('Therapeutic Category', med.categoryName ?? med.dosageForm, isDark),
           _buildSummaryRow('Prescription Status', med.rxRequired ? 'Prescription Required (Rx)' : 'Over The Counter (OTC)', isDark),
-          if (med.manufacturerName != null && med.manufacturerName!.isNotEmpty)
+          if (med.manufacturerName != null &&
+              med.manufacturerName!.trim().isNotEmpty &&
+              !RegExp(r'^\d+$').hasMatch(med.manufacturerName!.trim()))
             _buildSummaryRow('Manufacturer', med.manufacturerName!, isDark),
 
           const SizedBox(height: 12),

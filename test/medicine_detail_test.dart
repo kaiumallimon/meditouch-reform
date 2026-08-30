@@ -238,6 +238,36 @@ void main() {
       expect(model.name, equals('Coralcin-DX'));
       expect(model.unitPrice, equals(450.0));
       expect(model.packSize, equals("30's pack"));
+      expect(model.manufacturer, equals('Renata Limited'));
+    });
+
+    test('MedicineDetailModel and MedicineModel resolve manufacturer_name and ignore numeric IDs', () {
+      final detailJson = {
+        'id': 'med_test_1',
+        'slug': '3w-clinic-vita-c',
+        'medicine_name': '3W Clinic DR.K Vita-C Whitening Cream 100g',
+        'brand': '3W Clinic',
+        'generic_name': '',
+        'product_info': {
+          'manufacturer': 537,
+          'unit_price': 950.00,
+          'dosage_form': 'Cream',
+        },
+      };
+
+      final detailModel = MedicineDetailModel.fromJson(detailJson);
+      expect(detailModel.manufacturerName, equals('3W Clinic'));
+
+      final medJson = {
+        'id': 'med_1',
+        'name': '3W Clinic DR.K Vita-C Whitening Cream 100g',
+        'brand': '3W Clinic',
+        'generic_name': '',
+        'manufacturer': 537,
+      };
+      final medModel = MedicineModel.fromJson(medJson);
+      expect(medModel.genericName, isNull);
+      expect(medModel.manufacturer, equals('3W Clinic'));
     });
   });
 

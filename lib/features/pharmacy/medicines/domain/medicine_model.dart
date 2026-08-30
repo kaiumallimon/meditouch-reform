@@ -77,20 +77,34 @@ class MedicineModel {
             ? json['is_available'] as bool
             : (json['in_stock']?.toString().toLowerCase() != 'false'));
 
+    final rawGeneric = json['generic_name']?.toString().trim();
+    final genericVal = (rawGeneric != null && rawGeneric.isNotEmpty) ? rawGeneric : null;
+
+    final rawMfgName = json['manufacturer_name']?.toString().trim();
+    final rawMfg = json['manufacturer']?.toString().trim();
+    final rawBrandVal = json['brand']?.toString().trim();
+
+    String mfgVal = '';
+    if (rawMfgName != null && rawMfgName.isNotEmpty && !RegExp(r'^\d+$').hasMatch(rawMfgName)) {
+      mfgVal = rawMfgName;
+    } else if (rawMfg != null && rawMfg.isNotEmpty && !RegExp(r'^\d+$').hasMatch(rawMfg)) {
+      mfgVal = rawMfg;
+    } else if (rawBrandVal != null && rawBrandVal.isNotEmpty && !RegExp(r'^\d+$').hasMatch(rawBrandVal)) {
+      mfgVal = rawBrandVal;
+    }
+
     return MedicineModel(
       id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
       name: rawName,
       brand: rawBrand,
-      genericName: json['generic_name']?.toString(),
+      genericName: genericVal,
       strength: json['strength']?.toString(),
       dosageForm: json['dosage_form']?.toString() ??
           json['category_name']?.toString() ??
           'Tablet',
       category: json['category']?.toString(),
       categoryName: json['category_name']?.toString(),
-      manufacturer: json['manufacturer_name']?.toString() ??
-          json['manufacturer']?.toString() ??
-          'Pharma',
+      manufacturer: mfgVal,
       unitPrice: priceVal,
       packSize: packSizeVal,
       image: json['medicine_image']?.toString() ?? json['image']?.toString(),

@@ -257,6 +257,25 @@ class MedicineDetailModel {
 
     final sections = _buildMonographSections(detailsMap);
 
+    final rawMfgName = json['manufacturer_name']?.toString().trim();
+    final productMfgName = productInfo['manufacturer_name']?.toString().trim();
+    final rawMfg = json['manufacturer']?.toString().trim();
+    final productMfg = productInfo['manufacturer']?.toString().trim();
+    final rawBrandVal = json['brand']?.toString().trim();
+
+    String? mfgVal;
+    if (rawMfgName != null && rawMfgName.isNotEmpty && !RegExp(r'^\d+$').hasMatch(rawMfgName)) {
+      mfgVal = rawMfgName;
+    } else if (productMfgName != null && productMfgName.isNotEmpty && !RegExp(r'^\d+$').hasMatch(productMfgName)) {
+      mfgVal = productMfgName;
+    } else if (rawMfg != null && rawMfg.isNotEmpty && !RegExp(r'^\d+$').hasMatch(rawMfg)) {
+      mfgVal = rawMfg;
+    } else if (productMfg != null && productMfg.isNotEmpty && !RegExp(r'^\d+$').hasMatch(productMfg)) {
+      mfgVal = productMfg;
+    } else if (rawBrandVal != null && rawBrandVal.isNotEmpty && !RegExp(r'^\d+$').hasMatch(rawBrandVal)) {
+      mfgVal = rawBrandVal;
+    }
+
     return MedicineDetailModel(
       id: json['id']?.toString() ?? json['_id']?.toString(),
       medicineId: json['medicine_id']?.toString(),
@@ -265,7 +284,7 @@ class MedicineDetailModel {
       genericName: rawGeneric,
       categoryName: json['category_name']?.toString() ?? productInfo['category_name']?.toString(),
       categorySlug: json['category_slug']?.toString() ?? productInfo['category_slug']?.toString(),
-      manufacturerName: json['manufacturer_name']?.toString() ?? productInfo['manufacturer_name']?.toString() ?? productInfo['manufacturer']?.toString(),
+      manufacturerName: mfgVal,
       strength: productInfo['strength']?.toString() ?? json['strength']?.toString(),
       dosageForm: dosageForm,
       image: productInfo['medicine_image']?.toString() ?? productInfo['image']?.toString() ?? json['medicine_image']?.toString(),

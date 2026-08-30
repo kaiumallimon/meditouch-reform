@@ -787,7 +787,7 @@ class _IOS26MedicineCard extends StatelessWidget {
 
             // 2. Compact Info Details
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 4, 10, 10),
+              padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -804,19 +804,33 @@ class _IOS26MedicineCard extends StatelessWidget {
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 5),
 
-                  // Generic / Manufacturer
-                  Text(
-                    medicine.genericName ?? medicine.manufacturer,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 9.5,
-                      color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-                    ),
+                  // Generic / Manufacturer / Brand
+                  Builder(
+                    builder: (context) {
+                      final hasGeneric = medicine.genericName != null && medicine.genericName!.trim().isNotEmpty;
+                      final hasMfg = medicine.manufacturer.trim().isNotEmpty && !RegExp(r'^\d+$').hasMatch(medicine.manufacturer.trim());
+                      final hasBrand = medicine.brand.trim().isNotEmpty && !RegExp(r'^\d+$').hasMatch(medicine.brand.trim());
+
+                      final subtitleText = hasGeneric
+                          ? medicine.genericName!.trim()
+                          : (hasMfg
+                              ? medicine.manufacturer.trim()
+                              : (hasBrand ? medicine.brand.trim() : medicine.dosageForm));
+
+                      return Text(
+                        subtitleText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 9.5,
+                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
 
                   // Price & Liquid Glass Add To Cart Button Row
                   Row(
