@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_assets.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
+import 'package:meditouch/core/widgets/ios26_app_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,33 +17,24 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: AppBar(
-        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
-        title: Row(
-          children: [
-            SvgPicture.asset(
-              AppAssets.logoSvg,
-              width: 28,
-              height: 28,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'MediTouch',
-              style: GoogleFonts.youngSerif(
-                fontSize: 19,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              ),
-            ),
-          ],
+      appBar: IOS26AppBar(
+        leading: SvgPicture.asset(
+          AppAssets.logoSvg,
+          width: 32,
+          height: 32,
+          fit: BoxFit.contain,
         ),
+        title: 'MediTouch',
+        subtitle: 'Clinical & Telemedicine Hub',
         actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.bell, size: 20),
+          IOS26AppBarAction(
+            icon: LucideIcons.bell,
+            tooltip: 'Notifications',
             onPressed: () => context.push(RouteNames.notifications),
           ),
-          IconButton(
-            icon: const Icon(LucideIcons.shoppingBag, size: 20),
+          IOS26AppBarAction(
+            icon: LucideIcons.shoppingBag,
+            tooltip: 'Cart',
             onPressed: () => context.push(RouteNames.cart),
           ),
         ],

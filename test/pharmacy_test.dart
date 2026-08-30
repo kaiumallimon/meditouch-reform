@@ -102,7 +102,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify AppBar and Search Bar
-    expect(find.text('MediTouch Pharmacy'), findsOneWidget);
+    expect(find.text('Pharmacy'), findsOneWidget);
     expect(find.text('Search medicines, generics, brands...'), findsOneWidget);
 
     // Verify Medicines Loaded (2 items in grid)

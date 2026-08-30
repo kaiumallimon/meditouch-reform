@@ -8,6 +8,7 @@ import 'package:meditouch/app/theme_provider.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/storage/secure_storage.dart';
+import 'package:meditouch/core/widgets/ios26_app_bar.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -19,16 +20,9 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
-      appBar: AppBar(
-        backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
-        elevation: 0,
-        title: Text(
-          'Settings',
-          style: GoogleFonts.youngSerif(
-            fontSize: 20,
-            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-          ),
-        ),
+      appBar: const IOS26AppBar(
+        title: 'Settings',
+        subtitle: 'System & Account Preferences',
       ),
       body: SafeArea(
         child: ListView(
@@ -75,13 +69,16 @@ class SettingsScreen extends ConsumerWidget {
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                    'My Profile',
-                                    style: GoogleFonts.youngSerif(
-                                      fontSize: 16.5,
-                                      color: isDark
-                                          ? AppColors.darkTextPrimary
-                                          : AppColors.textPrimary,
+                                  Flexible(
+                                    child: Text(
+                                      'My Profile',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.youngSerif(
+                                        fontSize: 16,
+                                        color: isDark
+                                            ? AppColors.darkTextPrimary
+                                            : AppColors.textPrimary,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 6),

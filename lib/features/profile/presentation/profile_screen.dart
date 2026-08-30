@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 
+import 'package:meditouch/core/widgets/ios26_app_bar.dart';
+
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -12,16 +14,25 @@ class ProfileScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: AppBar(
-        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
-        title: Text(
-          'Personal Profile',
-          style: GoogleFonts.youngSerif(
-            fontSize: 18,
-            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
+      appBar: IOS26AppBar(
+        title: 'Personal Profile',
+        subtitle: 'Medical History & Identity',
+        showBack: true,
+        actions: [
+          IOS26AppBarAction(
+            icon: LucideIcons.pencil,
+            tooltip: 'Edit Profile',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Profile edit mode is enabled'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
           ),
-        ),
+        ],
       ),
       body: SafeArea(
         child: ListView(

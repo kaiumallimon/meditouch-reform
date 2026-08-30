@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 
+import 'package:meditouch/core/widgets/ios26_app_bar.dart';
+
 class ChatbotScreen extends StatelessWidget {
   const ChatbotScreen({super.key});
 
@@ -11,45 +13,13 @@ class ChatbotScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: AppBar(
-        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'AI Clinical Assistant',
-              style: GoogleFonts.youngSerif(
-                fontSize: 17,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              ),
-            ),
-            Row(
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.secondaryDark : AppColors.secondary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Online • Clinical Triage Agent',
-                  style: GoogleFonts.inter(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.secondaryDark : AppColors.secondary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
+      appBar: IOS26AppBar(
+        title: 'AI Consultation',
+        subtitle: 'Online • Clinical Triage Agent',
         actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.messageSquarePlus, size: 20),
+          IOS26AppBarAction(
+            icon: LucideIcons.messageSquarePlus,
             tooltip: 'New Conversation',
             onPressed: () {},
           ),
