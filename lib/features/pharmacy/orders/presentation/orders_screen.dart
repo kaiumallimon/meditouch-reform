@@ -1,6 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
 import 'package:meditouch/features/pharmacy/orders/domain/order_model.dart';
@@ -9,21 +14,28 @@ import 'package:meditouch/features/pharmacy/orders/presentation/providers/orders
 class OrdersScreen extends ConsumerWidget {
   const OrdersScreen({super.key});
 
+  String _formatCurrency(double amount) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    return '৳ ${formatter.format(amount)}';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ordersState = ref.watch(ordersListProvider);
     final selectedFilter = ref.watch(selectedOrderStatusFilterProvider);
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final topInset = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      extendBodyBehindAppBar: true,
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
       appBar: IOS26AppBar(
         title: 'Order History',
         showBack: true,
+        onBack: () => context.pop(),
         actions: [
           IOS26AppBarAction(
-            icon: Icons.refresh,
+            icon: LucideIcons.refreshCw,
             tooltip: 'Refresh',
             onPressed: () => ref.read(ordersListProvider.notifier).loadOrders(),
           ),
@@ -31,22 +43,34 @@ class OrdersScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          SizedBox(height: topInset + 54),
           // Filter Tabs
           _buildFilterTabs(ref, selectedFilter, isDark),
 
           // Orders List
           Expanded(
             child: ordersState.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(
+                child: CupertinoActivityIndicator(
+                  radius: 14,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
+                ),
+              ),
               error: (err, _) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                      const Icon(LucideIcons.circleAlert, size: 40, color: Color(0xFFFF453A)),
                       const SizedBox(height: 12),
-                      Text('Failed to load orders', style: theme.textTheme.titleMedium),
+                      Text(
+                        'Failed to Load Orders',
+                        style: GoogleFonts.youngSerif(
+                          fontSize: 18,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: () => ref.read(ordersListProvider.notifier).loadOrders(),
@@ -58,16 +82,17 @@ class OrdersScreen extends ConsumerWidget {
               ),
               data: (orders) {
                 if (orders.isEmpty) {
-                  return _buildEmptyOrders(context, theme, isDark);
+                  return _buildEmptyOrders(context, isDark);
                 }
                 return RefreshIndicator(
                   onRefresh: () => ref.read(ordersListProvider.notifier).loadOrders(),
                   child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                    padding: const EdgeInsets.fromLTRB(14, 6, 14, 40),
                     itemCount: orders.length,
                     itemBuilder: (context, index) {
                       final order = orders[index];
-                      return _buildOrderCard(context, ref, order, theme, isDark);
+                      return _buildOrderCard(context, ref, order, isDark);
                     },
                   ),
                 );
@@ -83,10 +108,10 @@ class OrdersScreen extends ConsumerWidget {
     const filters = ['ALL', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
     return Container(
-      height: 48,
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      height: 42,
+      margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
@@ -94,31 +119,42 @@ class OrdersScreen extends ConsumerWidget {
           final filter = filters[idx];
           final isSelected = selectedFilter == filter;
 
-          return ChoiceChip(
-            label: Text(
-              filter,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                color: isSelected ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF475569)),
+          return GestureDetector(
+            onTap: () => ref.read(selectedOrderStatusFilterProvider.notifier).state = filter,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? (isDark ? AppColors.primaryDark : AppColors.primary)
+                    : (isDark ? const Color(0xFF1C1C1E) : Colors.white),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isSelected
+                      ? Colors.transparent
+                      : (isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE5E5EA)),
+                  width: 0.8,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  filter,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark ? AppColors.darkTextSecondary : AppColors.textSecondary),
+                  ),
+                ),
               ),
             ),
-            selected: isSelected,
-            selectedColor: const Color(0xFF5B15FC),
-            backgroundColor: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            onSelected: (val) {
-              if (val) {
-                ref.read(selectedOrderStatusFilterProvider.notifier).state = filter;
-              }
-            },
           );
         },
       ),
     );
   }
 
-  Widget _buildEmptyOrders(BuildContext context, ThemeData theme, bool isDark) {
+  Widget _buildEmptyOrders(BuildContext context, bool isDark) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -126,37 +162,77 @@ class OrdersScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEEF2FF),
+                color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+                border: Border.all(
+                  color: isDark ? Colors.white.withValues(alpha: 0.10) : const Color(0xFFE5E5EA),
+                  width: 0.9,
+                ),
               ),
-              child: const Icon(
-                Icons.receipt_long_outlined,
-                size: 64,
-                color: Color(0xFF5B15FC),
+              child: Center(
+                child: Icon(
+                  LucideIcons.receipt,
+                  size: 36,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
+                ),
               ),
             ),
             const SizedBox(height: 20),
             Text(
               'No Orders Placed Yet',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: GoogleFonts.youngSerif(
+                fontSize: 20,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               'Your past and active pharmacy orders will appear here for live status tracking.',
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall,
+              style: GoogleFonts.inter(
+                fontSize: 12.5,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () => context.go(RouteNames.pharmacy),
-              icon: const Icon(Icons.medication, size: 18),
-              label: const Text('Browse Medicines'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF5B15FC),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.go(RouteNames.pharmacy),
+                borderRadius: BorderRadius.circular(24),
+                child: Container(
+                  height: 46,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    gradient: isDark
+                        ? const LinearGradient(
+                            colors: [Color(0xFFA855F7), Color(0xFF9333EA)],
+                          )
+                        : const LinearGradient(
+                            colors: [Color(0xFF6B28FD), Color(0xFF5B15FC)],
+                          ),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(LucideIcons.pill, size: 14, color: Colors.white),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Browse Medicines',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -169,7 +245,6 @@ class OrdersScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     OrderModel order,
-    ThemeData theme,
     bool isDark,
   ) {
     Color statusBg;
@@ -178,41 +253,49 @@ class OrdersScreen extends ConsumerWidget {
 
     switch (order.status) {
       case OrderStatusEnum.delivered:
-        statusBg = isDark ? const Color(0xFF064E3B) : const Color(0xFFDCFCE7);
-        statusText = isDark ? const Color(0xFF34D399) : const Color(0xFF16A34A);
-        statusBorder = isDark ? const Color(0xFF047857) : const Color(0xFF86EFAC);
+        statusBg = isDark ? const Color(0xFF0F291E) : const Color(0xFFDCFCE7);
+        statusText = isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
+        statusBorder = isDark ? const Color(0xFF166534) : const Color(0xFF86EFAC);
         break;
       case OrderStatusEnum.shipped:
-        statusBg = isDark ? const Color(0xFF3B0764) : const Color(0xFFF3E8FF);
-        statusText = isDark ? const Color(0xFFC084FC) : const Color(0xFF9333EA);
-        statusBorder = isDark ? const Color(0xFF6B21A8) : const Color(0xFFD8B4FE);
+        statusBg = isDark ? const Color(0xFF2C1338) : const Color(0xFFF3E8FF);
+        statusText = isDark ? const Color(0xFFD8B4FE) : const Color(0xFF9333EA);
+        statusBorder = isDark ? const Color(0xFF581C87) : const Color(0xFFD8B4FE);
         break;
       case OrderStatusEnum.processing:
-        statusBg = isDark ? const Color(0xFF451A03) : const Color(0xFFFEF3C7);
-        statusText = isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
+        statusBg = isDark ? const Color(0xFF332009) : const Color(0xFFFEF3C7);
+        statusText = isDark ? const Color(0xFFFCD34D) : const Color(0xFFD97706);
         statusBorder = isDark ? const Color(0xFF78350F) : const Color(0xFFFDE68A);
         break;
       case OrderStatusEnum.cancelled:
-        statusBg = isDark ? const Color(0xFF450A0A) : const Color(0xFFFEE2E2);
-        statusText = isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626);
+        statusBg = isDark ? const Color(0xFF3B1214) : const Color(0xFFFEE2E2);
+        statusText = isDark ? const Color(0xFFFCA5A5) : const Color(0xFFDC2626);
         statusBorder = isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECACA);
         break;
       case OrderStatusEnum.confirmed:
-        statusBg = isDark ? const Color(0xFF1E3A8A) : const Color(0xFFDBEAFE);
-        statusText = isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
-        statusBorder = isDark ? const Color(0xFF1D4ED8) : const Color(0xFF93C5FD);
+        statusBg = isDark ? const Color(0xFF132238) : const Color(0xFFDBEAFE);
+        statusText = isDark ? const Color(0xFF93C5FD) : const Color(0xFF2563EB);
+        statusBorder = isDark ? const Color(0xFF1E40AF) : const Color(0xFF93C5FD);
         break;
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          color: isDark ? Colors.white.withValues(alpha: 0.09) : const Color(0xFFE5E5EA),
+          width: 0.8,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,12 +308,19 @@ class OrdersScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Order #',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    'Order #${order.orderNumber}',
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.5,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    ),
                   ),
                   Text(
                     order.createdAt.toLocal().toString().split('.')[0],
-                    style: TextStyle(fontSize: 10, color: theme.textTheme.bodySmall?.color),
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                    ),
                   ),
                 ],
               ),
@@ -239,40 +329,53 @@ class OrdersScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: statusBg,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: statusBorder),
+                  border: Border.all(color: statusBorder, width: 0.8),
                 ),
                 child: Text(
                   order.status.displayName,
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     color: statusText,
-                    letterSpacing: 0.5,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ),
             ],
           ),
-          const Divider(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Divider(
+              height: 1,
+              color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE5E5EA),
+            ),
+          ),
 
           // Items summary
           ...order.items.map(
             (it) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              padding: const EdgeInsets.symmetric(vertical: 2.5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Text(
-                      '•  (x)',
-                      style: const TextStyle(fontSize: 12),
+                      '• ${it.name} (x${it.quantity})',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
-                    '৳',
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    _formatCurrency(it.totalPrice),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    ),
                   ),
                 ],
               ),
@@ -285,13 +388,20 @@ class OrdersScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Total Amount', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               Text(
-                '৳',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Color(0xFF5B15FC),
+                'Total Amount',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                ),
+              ),
+              Text(
+                _formatCurrency(order.totalAmount),
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14.5,
+                  color: isDark ? AppColors.primaryDark : AppColors.primary,
                 ),
               ),
             ],
@@ -301,12 +411,19 @@ class OrdersScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
-              const SizedBox(width: 4),
+              Icon(
+                LucideIcons.mapPin,
+                size: 13,
+                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+              ),
+              const SizedBox(width: 5),
               Expanded(
                 child: Text(
-                  ', ',
-                  style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color),
+                  '${order.deliveryAddress.streetAddress}, ${order.deliveryAddress.district}',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -321,11 +438,18 @@ class OrdersScreen extends ConsumerWidget {
             children: [
               if (order.canBeCancelled)
                 OutlinedButton.icon(
-                  onPressed: () => _showCancelDialog(context, ref, order),
-                  icon: const Icon(Icons.cancel_outlined, size: 14, color: Colors.red),
-                  label: const Text('Cancel Order', style: TextStyle(color: Colors.red, fontSize: 11)),
+                  onPressed: () => _showCancelDialog(context, ref, order, isDark),
+                  icon: const Icon(LucideIcons.xCircle, size: 13, color: Color(0xFFFF453A)),
+                  label: Text(
+                    'Cancel Order',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFFF453A),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.red.shade200),
+                    side: const BorderSide(color: Color(0xFF7F1D1D), width: 0.8),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   ),
@@ -335,15 +459,30 @@ class OrdersScreen extends ConsumerWidget {
                   order.status == OrderStatusEnum.shipped
                       ? 'In transit (Cannot cancel)'
                       : 'Delivered successfully',
-                  style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color, fontStyle: FontStyle.italic),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                    fontStyle: FontStyle.italic,
+                  ),
                 )
               else
                 const SizedBox.shrink(),
 
               // View Details Sheet Button
-              TextButton(
-                onPressed: () => _showOrderDetailsSheet(context, order, theme, isDark),
-                child: const Text('View Timeline', style: TextStyle(fontSize: 12, color: Color(0xFF5B15FC))),
+              TextButton.icon(
+                onPressed: () => _showOrderDetailsSheet(context, order, isDark),
+                icon: const Icon(LucideIcons.history, size: 13),
+                label: Text(
+                  'View Timeline',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppColors.primaryDark : AppColors.primary,
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
+                ),
               ),
             ],
           ),
@@ -352,18 +491,24 @@ class OrdersScreen extends ConsumerWidget {
     );
   }
 
-  void _showCancelDialog(BuildContext context, WidgetRef ref, OrderModel order) {
+  void _showCancelDialog(BuildContext context, WidgetRef ref, OrderModel order, bool isDark) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Cancel Order #?'),
-        content: const Text(
+        backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Cancel Order #${order.orderNumber}?',
+          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
           'Are you sure you want to cancel this order? All reserved medications will be restored back to pharmacy inventory.',
+          style: GoogleFonts.inter(fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Keep Order'),
+            child: Text('Keep Order', style: GoogleFonts.inter(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () async {
@@ -378,22 +523,26 @@ class OrdersScreen extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to cancel: '), backgroundColor: Colors.red),
+                    SnackBar(content: Text('Failed to cancel: $e'), backgroundColor: Colors.red),
                   );
                 }
               }
             },
-            child: const Text('Confirm Cancel', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Confirm Cancel',
+              style: GoogleFonts.inter(color: const Color(0xFFFF453A), fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _showOrderDetailsSheet(BuildContext context, OrderModel order, ThemeData theme, bool isDark) {
+  void _showOrderDetailsSheet(BuildContext context, OrderModel order, bool isDark) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -407,18 +556,21 @@ class OrdersScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Order #',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  'Order #${order.orderNumber}',
+                  style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, size: 20),
+                  icon: const Icon(LucideIcons.x, size: 20),
                   onPressed: () => Navigator.pop(ctx),
                 ),
               ],
             ),
             const SizedBox(height: 12),
 
-            const Text('Tracking Timeline', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            Text(
+              'Tracking Timeline',
+              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
 
             if (order.trackingHistory.isNotEmpty)
@@ -428,24 +580,40 @@ class OrdersScreen extends ConsumerWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 3.0),
-                        child: Icon(Icons.radio_button_checked, size: 14, color: Color(0xFF5B15FC)),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Icon(
+                          LucideIcons.checkCircle2,
+                          size: 14,
+                          color: isDark ? AppColors.primaryDark : AppColors.primary,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(tr.status.displayName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                            Text(
+                              tr.status.displayName,
+                              style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12),
+                            ),
                             if (tr.note.isNotEmpty)
-                              Text(tr.note, style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color)),
+                              Text(
+                                tr.note,
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                ),
+                              ),
                           ],
                         ),
                       ),
                       Text(
                         tr.timestamp.toLocal().toString().split(' ')[1].substring(0, 5),
-                        style: TextStyle(fontSize: 10, color: theme.textTheme.bodySmall?.color),
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                        ),
                       ),
                     ],
                   ),
@@ -454,7 +622,13 @@ class OrdersScreen extends ConsumerWidget {
             else
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Order confirmed. Preparation in progress.', style: TextStyle(fontSize: 12, color: theme.textTheme.bodySmall?.color)),
+                child: Text(
+                  'Order confirmed. Preparation in progress.',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                  ),
+                ),
               ),
           ],
         ),

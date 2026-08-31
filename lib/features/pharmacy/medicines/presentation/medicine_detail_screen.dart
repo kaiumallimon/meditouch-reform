@@ -74,6 +74,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final state = ref.watch(medicineDetailProvider(widget.slug));
+    final cartCount = ref.watch(cartItemCountProvider);
     final notifier = ref.read(medicineDetailProvider(widget.slug).notifier);
     final med = state.medicine;
 
@@ -93,6 +94,7 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
           IOS26AppBarAction(
             icon: LucideIcons.shoppingBag,
             tooltip: 'Cart',
+            badgeCount: cartCount,
             onPressed: () => context.push(RouteNames.cart),
           ),
         ],
