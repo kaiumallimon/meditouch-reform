@@ -37,21 +37,35 @@ class CartRepository {
   }
 
   Future<CartSummaryModel> getCart() async {
+    final local = await _loadLocalItems();
     try {
       final response = await _apiClient.get(ApiEndpoints.cart);
       if (response.data != null && response.data['data'] != null) {
         final summary = CartSummaryModel.fromJson(response.data['data'] as Map<String, dynamic>);
-        await _saveLocalItems(summary.items);
-        return summary;
+        final mergedItems = summary.items.map((srvItem) {
+          if (srvItem.image != null && srvItem.image!.isNotEmpty) return srvItem;
+          final localMatch = local.firstWhere(
+            (l) => l.medicineId == srvItem.medicineId,
+            orElse: () => srvItem,
+          );
+          if (localMatch.image != null && localMatch.image!.isNotEmpty) {
+            return srvItem.copyWith(image: localMatch.image);
+          }
+          return srvItem;
+        }).toList();
+
+        final mergedSummary = CartSummaryModel.fromItems(mergedItems, deliveryFee: 85.0);
+        await _saveLocalItems(mergedItems);
+        return mergedSummary;
       }
     } catch (_) {
       // Fallback to local storage
     }
-    final local = await _loadLocalItems();
     return CartSummaryModel.fromItems(local, deliveryFee: 85.0);
   }
 
   Future<CartSummaryModel> updateItem(String medicineId, int quantity, {CartItemModel? seedItem}) async {
+    final local = await _loadLocalItems();
     try {
       final response = await _apiClient.post(
         ApiEndpoints.cartItems,
@@ -59,14 +73,29 @@ class CartRepository {
       );
       if (response.data != null && response.data['data'] != null) {
         final summary = CartSummaryModel.fromJson(response.data['data'] as Map<String, dynamic>);
-        await _saveLocalItems(summary.items);
-        return summary;
+        final mergedItems = summary.items.map((srvItem) {
+          if (srvItem.image != null && srvItem.image!.isNotEmpty) return srvItem;
+          if (srvItem.medicineId == medicineId && seedItem?.image != null && seedItem!.image!.isNotEmpty) {
+            return srvItem.copyWith(image: seedItem.image);
+          }
+          final localMatch = local.firstWhere(
+            (l) => l.medicineId == srvItem.medicineId,
+            orElse: () => srvItem,
+          );
+          if (localMatch.image != null && localMatch.image!.isNotEmpty) {
+            return srvItem.copyWith(image: localMatch.image);
+          }
+          return srvItem;
+        }).toList();
+
+        final mergedSummary = CartSummaryModel.fromItems(mergedItems, deliveryFee: 85.0);
+        await _saveLocalItems(mergedItems);
+        return mergedSummary;
       }
     } catch (_) {
       // Local fallback
     }
 
-    final local = await _loadLocalItems();
     final idx = local.indexWhere((it) => it.medicineId == medicineId);
     List<CartItemModel> updated = List.from(local);
 

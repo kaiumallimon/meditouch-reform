@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:meditouch/core/constants/api_endpoints.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
@@ -18,6 +20,20 @@ class CartScreen extends ConsumerWidget {
   String _formatCurrency(double amount) {
     final formatter = NumberFormat('#,##0.00', 'en_US');
     return '৳ ${formatter.format(amount)}';
+  }
+
+  String _resolveImageUrl(String url) {
+    var cleaned = url.trim();
+    if (cleaned.isEmpty) return cleaned;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      cleaned = cleaned.replaceAll('http://localhost:8000', 'http://10.0.2.2:8000');
+      cleaned = cleaned.replaceAll('http://127.0.0.1:8000', 'http://10.0.2.2:8000');
+    }
+    if (cleaned.startsWith('/')) {
+      final host = ApiEndpoints.baseUrl.replaceAll('/api/v1', '');
+      cleaned = '$host$cleaned';
+    }
+    return cleaned;
   }
 
   @override
@@ -386,14 +402,20 @@ class CartScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(16),
                 child: item.image != null && item.image!.trim().isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl: item.image!.trim(),
+                        imageUrl: _resolveImageUrl(item.image!),
                         fit: BoxFit.cover,
                         width: 68,
                         height: 68,
-                        placeholder: (_, __) => Center(
-                          child: CupertinoActivityIndicator(
-                            radius: 8,
-                            color: isDark ? AppColors.primaryDark : AppColors.primary,
+                        httpHeaders: const {
+                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                        },
+                        placeholder: (_, __) => Container(
+                          color: Colors.grey.shade50,
+                          child: Center(
+                            child: CupertinoActivityIndicator(
+                              radius: 8,
+                              color: isDark ? AppColors.primaryDark : AppColors.primary,
+                            ),
                           ),
                         ),
                         errorWidget: (_, __, ___) => _buildItemFallbackIcon(isDark),
