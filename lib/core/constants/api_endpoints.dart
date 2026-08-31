@@ -35,8 +35,17 @@ class ApiEndpoints {
   static const String medicines = '/pharmacy/medicines';
   static const String medicineDetail = '/pharmacy/medicines/';
   static const String categories = '/pharmacy/categories';
-  static const String cart = '/pharmacy/cart';
-  static const String orders = '/pharmacy/orders';
+  static const String cart = '/orders/cart';
+  static const String cartItems = '/orders/cart/items';
+  static const String checkout = '/orders/checkout';
+  static const String myOrders = '/orders/my-orders';
+  static String cancelOrder(String orderId) => '/orders/$orderId/cancel';
+  static String orderDetails(String orderId) => '/orders/$orderId';
+
+  // User Profile & Addresses
+  static const String userProfile = '/users/profile';
+  static const String userAddresses = '/users/addresses';
+  static String deleteUserAddress(String id) => '/users/addresses/$id';
 
   // Doctors & Consultations
   static const String doctors = '/doctors';

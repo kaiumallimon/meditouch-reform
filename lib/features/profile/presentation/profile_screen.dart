@@ -369,7 +369,7 @@ class ProfileScreen extends ConsumerWidget {
                     _buildStatPill(
                       icon: LucideIcons.droplet,
                       iconColor: const Color(0xFFFF3B30),
-                      label: 'Blood: ${user!.bloodGroup}',
+                      label: 'Blood: ${user.bloodGroup}',
                       isDark: isDark,
                     ),
                   if (hasBlood && hasAddress) const SizedBox(width: 8),
@@ -377,7 +377,7 @@ class ProfileScreen extends ConsumerWidget {
                     _buildStatPill(
                       icon: LucideIcons.mapPin,
                       iconColor: const Color(0xFF30B0C7),
-                      label: user!.defaultAddress!,
+                      label: user.defaultAddress!,
                       isDark: isDark,
                     ),
                 ],
@@ -491,7 +491,6 @@ class _IOSProfileFieldTile extends StatelessWidget {
   final String label;
   final String value;
   final bool isDark;
-  final VoidCallback? onTap;
 
   const _IOSProfileFieldTile({
     required this.icon,
@@ -499,18 +498,13 @@ class _IOSProfileFieldTile extends StatelessWidget {
     required this.label,
     required this.value,
     required this.isDark,
-    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
             children: [
               // Squircle Icon Badge
               Container(
@@ -560,8 +554,6 @@ class _IOSProfileFieldTile extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
+        );
   }
 }

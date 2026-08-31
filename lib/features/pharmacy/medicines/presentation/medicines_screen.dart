@@ -10,6 +10,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
+import 'package:meditouch/features/pharmacy/cart/presentation/providers/cart_provider.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/providers/pharmacy_provider.dart';
 
@@ -625,7 +626,7 @@ class _MedicinesScreenState extends ConsumerState<MedicinesScreen> {
   }
 }
 
-class _IOS26MedicineCard extends StatelessWidget {
+class _IOS26MedicineCard extends ConsumerWidget {
   final MedicineModel medicine;
   final bool isDark;
 
@@ -637,7 +638,7 @@ class _IOS26MedicineCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
@@ -866,14 +867,21 @@ class _IOS26MedicineCard extends StatelessWidget {
                       // iOS 26 Liquid Glass Add to Cart Button
                       InkWell(
                         onTap: () {
+                          ref.read(cartProvider.notifier).addItem(medicine);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
                                 '${medicine.name} added to cart',
                                 style: GoogleFonts.inter(fontSize: 11.5),
                               ),
-                              duration: const Duration(seconds: 1),
+                              duration: const Duration(seconds: 2),
                               behavior: SnackBarBehavior.floating,
+                              action: SnackBarAction(
+                                label: 'View Cart',
+                                textColor: const Color(0xFF818CF8),
+                                onPressed: () => context.push(RouteNames.cart),
+                              ),
                             ),
                           );
                         },

@@ -11,6 +11,7 @@ import 'package:meditouch/features/home/presentation/home_screen.dart';
 import 'package:meditouch/features/home/presentation/home_shell_screen.dart';
 import 'package:meditouch/features/notifications/presentation/notifications_screen.dart';
 import 'package:meditouch/features/pharmacy/cart/presentation/cart_screen.dart';
+import 'package:meditouch/features/pharmacy/cart/presentation/checkout_screen.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/medicine_detail_screen.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/medicines_screen.dart';
@@ -135,6 +136,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.cart,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.checkout,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const CheckoutScreen(),
       ),
       GoRoute(
         path: RouteNames.orders,

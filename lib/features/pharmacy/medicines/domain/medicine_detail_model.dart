@@ -172,6 +172,8 @@ class MedicineDetailModel {
   final List<MedicineModel> relatedMedicines;
   final List<MonographSectionModel> sections;
 
+  String get brand => medicineName;
+
   const MedicineDetailModel({
     this.id,
     this.medicineId,

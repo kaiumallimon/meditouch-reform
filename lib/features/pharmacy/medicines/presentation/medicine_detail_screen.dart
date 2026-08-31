@@ -11,6 +11,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
+import 'package:meditouch/features/pharmacy/cart/presentation/providers/cart_provider.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_detail_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/domain/medicine_model.dart';
 import 'package:meditouch/features/pharmacy/medicines/presentation/providers/medicine_detail_provider.dart';
@@ -1241,6 +1242,29 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
+                      final medicineModel = MedicineModel(
+                        id: med.medicineId ?? med.slug,
+                        name: med.medicineName,
+                        brand: med.brand,
+                        genericName: med.genericName,
+                        strength: med.strength,
+                        dosageForm: med.dosageForm,
+                        unitPrice: state.activePrice,
+                        packSize: med.packSize,
+                        rxRequired: med.rxRequired,
+                        inStock: med.inStock,
+                        stockCount: med.stockCount,
+                        image: med.image,
+                        slug: med.slug,
+                        manufacturer: med.manufacturerName ?? 'Pharma',
+                      );
+
+                      ref.read(cartProvider.notifier).addItem(
+                            medicineModel,
+                            quantity: state.quantity,
+                          );
+
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -1249,6 +1273,11 @@ class _MedicineDetailScreenState extends ConsumerState<MedicineDetailScreen> {
                           ),
                           duration: const Duration(seconds: 2),
                           behavior: SnackBarBehavior.floating,
+                          action: SnackBarAction(
+                            label: 'View Cart',
+                            textColor: const Color(0xFF818CF8),
+                            onPressed: () => context.push(RouteNames.cart),
+                          ),
                         ),
                       );
                     },

@@ -13,8 +13,13 @@ class MedicineModel {
   final String? image;
   final bool rxRequired;
   final bool inStock;
+  final int stockCount;
   final String? slug;
   final String? description;
+
+  String get displayName => name;
+  bool get requiresPrescription => rxRequired;
+  String? get medicineImage => image;
 
   const MedicineModel({
     required this.id,
@@ -31,6 +36,7 @@ class MedicineModel {
     this.image,
     this.rxRequired = false,
     this.inStock = true,
+    this.stockCount = 100,
     this.slug,
     this.description,
   });
@@ -110,6 +116,7 @@ class MedicineModel {
       image: json['medicine_image']?.toString() ?? json['image']?.toString(),
       rxRequired: isRx,
       inStock: inStockVal,
+      stockCount: (json['stock_count'] as num?)?.toInt() ?? (inStockVal ? 100 : 0),
       slug: json['slug']?.toString(),
       description: json['description']?.toString(),
     );
