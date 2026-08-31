@@ -28,12 +28,12 @@ void main() {
         requiresPrescription: true,
       );
 
-      final summary = CartSummaryModel.fromItems([item1, item2], deliveryFee: 60.0);
+      final summary = CartSummaryModel.fromItems([item1, item2], deliveryFee: 85.0);
 
       expect(summary.itemsCount, 12);
       expect(summary.subtotal, 95.0);
-      expect(summary.deliveryFee, 60.0);
-      expect(summary.estimatedTotal, 155.0);
+      expect(summary.deliveryFee, 85.0);
+      expect(summary.estimatedTotal, 180.0);
       expect(summary.hasPrescriptionItems, isTrue);
     });
 

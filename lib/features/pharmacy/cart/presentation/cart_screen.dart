@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -152,34 +151,14 @@ class CartScreen extends ConsumerWidget {
                             end: Alignment.bottomRight,
                           ),
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.28),
-                      width: 0.9,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: (isDark ? const Color(0xFF9333EA) : const Color(0xFF5B15FC))
-                            .withValues(alpha: 0.35),
-                        blurRadius: 14,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.22),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          LucideIcons.pill,
-                          size: 13,
-                          color: Colors.white,
-                        ),
+                      const Icon(
+                        LucideIcons.pill,
+                        size: 15,
+                        color: Colors.white,
                       ),
                       const SizedBox(width: 10),
                       Text(
@@ -211,7 +190,7 @@ class CartScreen extends ConsumerWidget {
   ) {
     return ListView(
       physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      padding: EdgeInsets.fromLTRB(14, topInset + 64, 14, 130),
+      padding: EdgeInsets.fromLTRB(14, topInset + 64, 14, 120),
       children: [
         // Prescription Warning Card if needed
         if (cart.hasPrescriptionItems)
@@ -314,7 +293,7 @@ class CartScreen extends ConsumerWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Express Delivery within 2-4 hours across Dhaka. Standard flat rate ৳60 applied.',
+                  'Express Delivery within 12-48 hours across Dhaka. Standard flat rate ৳85 applied.',
                   style: GoogleFonts.inter(
                     fontSize: 11.5,
                     color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
@@ -396,12 +375,18 @@ class CartScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : const Color(0xFFE5E5EA),
+                  width: 0.6,
+                ),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: item.image != null && item.image!.isNotEmpty
+                child: item.image != null && item.image!.trim().isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl: item.image!,
+                        imageUrl: item.image!.trim(),
                         fit: BoxFit.contain,
                         placeholder: (_, __) => Center(
                           child: CupertinoActivityIndicator(
@@ -668,16 +653,14 @@ class CartScreen extends ConsumerWidget {
     );
   }
 
-  // 5. Floating Bottom Glass Dock with Checkout Button
+  // 5. Clean Fixed Bottom Dock with Compact Checkout Button (No Shadow, No Circle)
   Widget _buildFloatingCheckoutDock(BuildContext context, CartSummaryModel cart, bool isDark) {
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding + 10),
+      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPadding > 0 ? bottomPadding + 8 : 16),
       decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF161618).withValues(alpha: 0.88)
-            : const Color(0xFFF6F6F8).withValues(alpha: 0.92),
+        color: isDark ? AppColors.darkSurface : Colors.white,
         border: Border(
           top: BorderSide(
             color: isDark
@@ -687,112 +670,81 @@ class CartScreen extends ConsumerWidget {
           ),
         ),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Row(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Total Price
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Total Price
-              Expanded(
-                flex: 4,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'TOTAL PAYABLE',
-                      style: GoogleFonts.inter(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.4,
-                        color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _formatCurrency(cart.estimatedTotal),
-                      style: GoogleFonts.inter(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
+              Text(
+                'TOTAL PAYABLE',
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.4,
+                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
                 ),
               ),
-
-              // Gradient Proceed to Checkout Button
-              Expanded(
-                flex: 6,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => context.push(RouteNames.checkout),
-                    borderRadius: BorderRadius.circular(24),
-                    child: Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        gradient: isDark
-                            ? const LinearGradient(
-                                colors: [Color(0xFFA855F7), Color(0xFF9333EA)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              )
-                            : const LinearGradient(
-                                colors: [Color(0xFF6B28FD), Color(0xFF5B15FC)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.28),
-                          width: 0.9,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isDark ? const Color(0xFF9333EA) : const Color(0xFF5B15FC))
-                                .withValues(alpha: 0.35),
-                            blurRadius: 14,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Checkout',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.22),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              LucideIcons.arrowRight,
-                              size: 13,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+              const SizedBox(height: 2),
+              Text(
+                _formatCurrency(cart.estimatedTotal),
+                style: GoogleFonts.inter(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                 ),
               ),
             ],
           ),
-        ),
+
+          // Compact Checkout Button (No Shadow, No Circle, Reduced Width)
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => context.push(RouteNames.checkout),
+              borderRadius: BorderRadius.circular(22),
+              child: Container(
+                height: 44,
+                padding: const EdgeInsets.symmetric(horizontal: 22),
+                decoration: BoxDecoration(
+                  gradient: isDark
+                      ? const LinearGradient(
+                          colors: [Color(0xFFA855F7), Color(0xFF9333EA)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : const LinearGradient(
+                          colors: [Color(0xFF6B28FD), Color(0xFF5B15FC)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Checkout',
+                      style: GoogleFonts.inter(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(
+                      LucideIcons.arrowRight,
+                      size: 15,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

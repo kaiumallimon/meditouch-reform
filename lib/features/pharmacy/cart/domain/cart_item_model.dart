@@ -38,7 +38,11 @@ class CartItemModel {
       requiresPrescription: json['requires_prescription'] as bool? ?? false,
       inStock: json['in_stock'] as bool? ?? true,
       stockCount: (json['stock_count'] as num?)?.toInt() ?? 100,
-      image: json['image'] as String? ?? json['medicine_image'] as String?,
+      image: json['image'] as String? ??
+          json['medicine_image'] as String? ??
+          (json['medicine_images'] is List && (json['medicine_images'] as List).isNotEmpty
+              ? (json['medicine_images'] as List).first.toString()
+              : null),
     );
   }
 
@@ -101,12 +105,12 @@ class CartSummaryModel {
     this.items = const [],
     this.itemsCount = 0,
     this.subtotal = 0.0,
-    this.deliveryFee = 60.0,
-    this.estimatedTotal = 60.0,
+    this.deliveryFee = 85.0,
+    this.estimatedTotal = 85.0,
     this.hasPrescriptionItems = false,
   });
 
-  factory CartSummaryModel.fromItems(List<CartItemModel> items, {double deliveryFee = 60.0}) {
+  factory CartSummaryModel.fromItems(List<CartItemModel> items, {double deliveryFee = 85.0}) {
     final sub = items.fold<double>(0.0, (sum, it) => sum + (it.unitPrice * it.quantity));
     final fee = items.isEmpty ? 0.0 : deliveryFee;
     final hasRx = items.any((it) => it.requiresPrescription);
@@ -123,12 +127,17 @@ class CartSummaryModel {
   factory CartSummaryModel.fromJson(Map<String, dynamic> json) {
     final rawList = json['items'] as List<dynamic>? ?? [];
     final items = rawList.map((e) => CartItemModel.fromJson(e as Map<String, dynamic>)).toList();
+    final subtotalVal = (json['subtotal'] as num?)?.toDouble() ??
+        items.fold<double>(0.0, (sum, it) => sum + (it.unitPrice * it.quantity));
+    final feeVal = (json['delivery_fee'] as num?)?.toDouble() ?? 85.0;
+    final totalVal = (json['estimated_total'] as num?)?.toDouble() ?? (subtotalVal + feeVal);
+
     return CartSummaryModel(
       items: items,
       itemsCount: (json['items_count'] as num?)?.toInt() ?? items.length,
-      subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0.0,
-      deliveryFee: (json['delivery_fee'] as num?)?.toDouble() ?? 60.0,
-      estimatedTotal: (json['estimated_total'] as num?)?.toDouble() ?? 0.0,
+      subtotal: subtotalVal,
+      deliveryFee: feeVal,
+      estimatedTotal: totalVal,
       hasPrescriptionItems: json['has_prescription_items'] as bool? ?? false,
     );
   }
