@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_assets.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
@@ -98,6 +97,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
@@ -120,43 +120,39 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // 1. Top Emblem & Header
+                // 1. App Logo (No Background Container)
                 Center(
                   child: isDark
                       ? Image.asset(
                           AppAssets.logoDarkPng,
-                          width: 170,
-                          height: 80,
+                          width: 155,
+                          height: 70,
                           fit: BoxFit.contain,
                         )
                       : SvgPicture.asset(
                           AppAssets.logoSvg,
-                          width: 130,
-                          height: 65,
+                          width: 125,
+                          height: 55,
                           fit: BoxFit.contain,
                         ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
 
                 Center(
                   child: Text(
-                    'Get Started',
-                    style: GoogleFonts.youngSerif(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: -0.5,
+                    'Join MediTouch',
+                    style: textTheme.headlineMedium?.copyWith(
                       color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      letterSpacing: -0.4,
                     ),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Center(
                   child: Text(
-                    'Create your unified health & medicine account',
+                    'Create your account for personalized healthcare & medicines',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
+                    style: textTheme.bodyMedium?.copyWith(
                       color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                     ),
                   ),
@@ -190,7 +186,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         Expanded(
                           child: Text(
                             _errorMessage!,
-                            style: GoogleFonts.inter(
+                            style: textTheme.bodyMedium?.copyWith(
                               fontSize: 12.5,
                               color: isDark
                                   ? const Color(0xFFFF8B85)
@@ -205,14 +201,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: 18),
                 ],
 
-                // 3. Form
+                // 3. Grouped Forms
                 Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Section 1: Personal Information
-                      _buildSectionLabel('PERSONAL INFORMATION', isDark),
+                      _buildSectionLabel('PERSONAL INFORMATION', isDark, textTheme),
                       const SizedBox(height: 6),
                       _buildGroupContainer(
                         isDark: isDark,
@@ -221,32 +217,38 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             // Full Name
                             _buildFormRow(
                               icon: LucideIcons.user,
-                              iconBgColor: const Color(0xFF007AFF),
+                              iconBgColor: isDark
+                                  ? const Color(0xFF0A84FF).withValues(alpha: 0.15)
+                                  : const Color(0xFF007AFF).withValues(alpha: 0.10),
+                              iconColor: isDark ? const Color(0xFF0A84FF) : const Color(0xFF007AFF),
                               isDark: isDark,
                               child: TextFormField(
                                 controller: _nameController,
                                 keyboardType: TextInputType.name,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13.5,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14.5,
                                   fontWeight: FontWeight.w500,
                                   color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: 'Full name (e.g. John Doe)',
-                                  hintStyle: GoogleFonts.inter(
-                                    fontSize: 13.5,
-                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  hintStyle: textTheme.bodyMedium?.copyWith(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark ? const Color(0xFF636366) : const Color(0xFF8E8E93),
                                   ),
                                   border: InputBorder.none,
-                                  contentPadding: EdgeInsets.zero,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedErrorBorder: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
                                   isDense: true,
+                                  errorStyle: const TextStyle(fontSize: 0, height: 0),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter your full name';
-                                  }
-                                  if (value.trim().length < 2) {
-                                    return 'Name must be at least 2 characters';
+                                    return ' ';
                                   }
                                   return null;
                                 },
@@ -258,32 +260,38 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             // Phone Number
                             _buildFormRow(
                               icon: LucideIcons.phone,
-                              iconBgColor: const Color(0xFF34C759),
+                              iconBgColor: isDark
+                                  ? const Color(0xFF30D158).withValues(alpha: 0.15)
+                                  : const Color(0xFF34C759).withValues(alpha: 0.10),
+                              iconColor: isDark ? const Color(0xFF30D158) : const Color(0xFF34C759),
                               isDark: isDark,
                               child: TextFormField(
                                 controller: _phoneController,
                                 keyboardType: TextInputType.phone,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13.5,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14.5,
                                   fontWeight: FontWeight.w500,
                                   color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: 'Phone number (e.g. 01712345678)',
-                                  hintStyle: GoogleFonts.inter(
-                                    fontSize: 13.5,
-                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  hintStyle: textTheme.bodyMedium?.copyWith(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark ? const Color(0xFF636366) : const Color(0xFF8E8E93),
                                   ),
                                   border: InputBorder.none,
-                                  contentPadding: EdgeInsets.zero,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedErrorBorder: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
                                   isDense: true,
+                                  errorStyle: const TextStyle(fontSize: 0, height: 0),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter your phone number';
-                                  }
-                                  if (value.trim().length < 10) {
-                                    return 'Please enter a valid phone number';
+                                    return ' ';
                                   }
                                   return null;
                                 },
@@ -295,25 +303,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             // Email Address (Optional)
                             _buildFormRow(
                               icon: LucideIcons.mail,
-                              iconBgColor: const Color(0xFFFF9500),
+                              iconBgColor: isDark
+                                  ? const Color(0xFFFF9F0A).withValues(alpha: 0.15)
+                                  : const Color(0xFFFF9500).withValues(alpha: 0.10),
+                              iconColor: isDark ? const Color(0xFFFF9F0A) : const Color(0xFFFF9500),
                               isDark: isDark,
                               child: TextFormField(
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13.5,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14.5,
                                   fontWeight: FontWeight.w500,
                                   color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: 'Email address (optional)',
-                                  hintStyle: GoogleFonts.inter(
-                                    fontSize: 13.5,
-                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  hintStyle: textTheme.bodyMedium?.copyWith(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark ? const Color(0xFF636366) : const Color(0xFF8E8E93),
                                   ),
                                   border: InputBorder.none,
-                                  contentPadding: EdgeInsets.zero,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedErrorBorder: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
                                   isDense: true,
+                                  errorStyle: const TextStyle(fontSize: 0, height: 0),
                                 ),
                               ),
                             ),
@@ -323,7 +340,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       const SizedBox(height: 20),
 
                       // Section 2: Security & Credentials
-                      _buildSectionLabel('SECURITY & CREDENTIALS', isDark),
+                      _buildSectionLabel('SECURITY & CREDENTIALS', isDark, textTheme),
                       const SizedBox(height: 6),
                       _buildGroupContainer(
                         isDark: isDark,
@@ -332,48 +349,54 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             // Password
                             _buildFormRow(
                               icon: LucideIcons.lock,
-                              iconBgColor: const Color(0xFF5856D6),
+                              iconBgColor: isDark
+                                  ? const Color(0xFFBF5AF2).withValues(alpha: 0.15)
+                                  : const Color(0xFF5856D6).withValues(alpha: 0.10),
+                              iconColor: isDark ? const Color(0xFFBF5AF2) : const Color(0xFF5856D6),
                               isDark: isDark,
                               suffix: InkWell(
                                 onTap: () {
                                   setState(() => _obscurePassword = !_obscurePassword);
                                 },
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(4),
+                                  padding: const EdgeInsets.all(6),
                                   child: Icon(
                                     _obscurePassword
                                         ? LucideIcons.eyeOff
                                         : LucideIcons.eye,
-                                    size: 17,
-                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                    size: 18,
+                                    color: isDark ? const Color(0xFF8E8E93) : const Color(0xFF8E8E93),
                                   ),
                                 ),
                               ),
                               child: TextFormField(
                                 controller: _passwordController,
                                 obscureText: _obscurePassword,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13.5,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14.5,
                                   fontWeight: FontWeight.w500,
                                   color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: 'Password (min 6 characters)',
-                                  hintStyle: GoogleFonts.inter(
-                                    fontSize: 13.5,
-                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  hintStyle: textTheme.bodyMedium?.copyWith(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark ? const Color(0xFF636366) : const Color(0xFF8E8E93),
                                   ),
                                   border: InputBorder.none,
-                                  contentPadding: EdgeInsets.zero,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedErrorBorder: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
                                   isDense: true,
+                                  errorStyle: const TextStyle(fontSize: 0, height: 0),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please create a password';
-                                  }
-                                  if (value.length < 6) {
-                                    return 'Password must be at least 6 characters';
+                                    return ' ';
                                   }
                                   return null;
                                 },
@@ -385,45 +408,54 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             // Confirm Password
                             _buildFormRow(
                               icon: LucideIcons.shieldCheck,
-                              iconBgColor: const Color(0xFFAF52DE),
+                              iconBgColor: isDark
+                                  ? const Color(0xFFBF5AF2).withValues(alpha: 0.15)
+                                  : const Color(0xFFAF52DE).withValues(alpha: 0.10),
+                              iconColor: isDark ? const Color(0xFFBF5AF2) : const Color(0xFFAF52DE),
                               isDark: isDark,
                               suffix: InkWell(
                                 onTap: () {
                                   setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
                                 },
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(4),
+                                  padding: const EdgeInsets.all(6),
                                   child: Icon(
                                     _obscureConfirmPassword
                                         ? LucideIcons.eyeOff
                                         : LucideIcons.eye,
-                                    size: 17,
-                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                    size: 18,
+                                    color: isDark ? const Color(0xFF8E8E93) : const Color(0xFF8E8E93),
                                   ),
                                 ),
                               ),
                               child: TextFormField(
                                 controller: _confirmPasswordController,
                                 obscureText: _obscureConfirmPassword,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13.5,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14.5,
                                   fontWeight: FontWeight.w500,
                                   color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: 'Confirm password',
-                                  hintStyle: GoogleFonts.inter(
-                                    fontSize: 13.5,
-                                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  hintStyle: textTheme.bodyMedium?.copyWith(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark ? const Color(0xFF636366) : const Color(0xFF8E8E93),
                                   ),
                                   border: InputBorder.none,
-                                  contentPadding: EdgeInsets.zero,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedErrorBorder: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
                                   isDense: true,
+                                  errorStyle: const TextStyle(fontSize: 0, height: 0),
                                 ),
                                 validator: (value) {
                                   if (value != _passwordController.text) {
-                                    return 'Passwords do not match';
+                                    return ' ';
                                   }
                                   return null;
                                 },
@@ -437,17 +469,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const SizedBox(height: 26),
 
-                // 4. Primary Create Account Button
+                // 4. Primary Create Account Pill Button
                 Container(
-                  height: 50,
+                  height: 52,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(50),
                     boxShadow: [
                       BoxShadow(
                         color: (isDark ? AppColors.primaryDark : AppColors.primary)
-                            .withValues(alpha: isDark ? 0.35 : 0.22),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
+                            .withValues(alpha: isDark ? 0.35 : 0.25),
+                        blurRadius: 18,
+                        offset: const Offset(0, 5),
                       ),
                     ],
                   ),
@@ -456,9 +488,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      shape: const StadiumBorder(),
                       elevation: 0,
                     ),
                     child: _isLoading
@@ -471,10 +501,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             children: [
                               Text(
                                 'Create Account',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14.5,
+                                style: textTheme.labelLarge?.copyWith(
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
+                                  letterSpacing: -0.1,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -496,8 +527,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontSize: 13.5,
                         color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                       ),
                     ),
@@ -511,8 +542,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       },
                       child: Text(
                         'Sign In',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w700,
                           color: isDark ? AppColors.primaryDark : AppColors.primary,
                         ),
@@ -539,7 +570,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           'MediTouch • Secure & Encrypted Healthcare Platform',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: textTheme.bodySmall?.copyWith(
                             fontSize: 11,
                             color: isDark ? const Color(0xFF48484A) : const Color(0xFFA1A1AA),
                           ),
@@ -560,33 +591,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   static Widget _buildFormRow({
     required IconData icon,
     required Color iconBgColor,
+    required Color iconColor,
     required Widget child,
     required bool isDark,
     Widget? suffix,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
       child: Row(
         children: [
           Container(
-            width: 29,
-            height: 29,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               color: iconBgColor,
-              borderRadius: BorderRadius.circular(7.5),
+              borderRadius: BorderRadius.circular(8.5),
             ),
             child: Center(
               child: Icon(
                 icon,
-                color: Colors.white,
-                size: 15,
+                color: iconColor,
+                size: 16,
               ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(child: child),
           if (suffix != null) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
             suffix,
           ],
         ],
@@ -625,12 +657,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  static Widget _buildSectionLabel(String title, bool isDark) {
+  static Widget _buildSectionLabel(String title, bool isDark, TextTheme textTheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Text(
         title,
-        style: GoogleFonts.inter(
+        style: textTheme.labelSmall?.copyWith(
           fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.7,
@@ -644,11 +676,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return Divider(
       height: 0.5,
       thickness: 0.5,
-      indent: 52,
+      indent: 58,
       color: isDark
           ? Colors.white.withValues(alpha: 0.07)
           : const Color(0xFFE5E5EA),
     );
   }
 }
+
 
