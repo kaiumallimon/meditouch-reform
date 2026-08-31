@@ -20,15 +20,20 @@ class SettingsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final userAsync = ref.watch(currentUserProvider);
     final user = userAsync.valueOrNull;
+    final isGuest = user == null || user.isGuest;
 
     final topInset = MediaQuery.paddingOf(context).top;
 
-    final profileName = (user?.name != null && user!.name.isNotEmpty) ? user.name : 'My Profile';
-    final profileSubtitle = (user?.email != null && user!.email!.isNotEmpty)
-        ? user.email!
-        : (user?.phone != null && user!.phone!.isNotEmpty
-            ? user.phone!
-            : 'Personal details, address & medical history');
+    final profileName = isGuest
+        ? 'Guest User'
+        : ((user.name.isNotEmpty) ? user.name : 'My Profile');
+    final profileSubtitle = isGuest
+        ? 'Sign in to access health records & pharmacy'
+        : ((user.email != null && user.email!.isNotEmpty)
+            ? user.email!
+            : (user.phone != null && user.phone!.isNotEmpty
+                ? user.phone!
+                : 'Personal details, address & medical history'));
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -305,46 +310,82 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 26),
 
-            // 5. iOS 26 Destructive Action Island (Sign Out)
-            _buildGroupContainer(
-              isDark: isDark,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () async {
-                    final storage = ref.read(secureStorageServiceProvider);
-                    await storage.clearAll();
-                    if (context.mounted) {
-                      context.go(RouteNames.login);
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(22),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          LucideIcons.logOut,
-                          color: Color(0xFFFF453A),
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Sign Out',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFFFF453A),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+            // 5. iOS 26 Action Island (Sign Out if logged in, Sign In if guest)
+            if (isGuest) ...[
+              _buildGroupContainer(
+                isDark: isDark,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => context.push(RouteNames.login),
+                    borderRadius: BorderRadius.circular(22),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            LucideIcons.logIn,
+                            color: isDark ? AppColors.primaryDark : AppColors.primary,
+                            size: 18,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 8),
+                          Text(
+                            'Sign In / Create Account',
+                            style: GoogleFonts.inter(
+                              color: isDark ? AppColors.primaryDark : AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ] else ...[
+              _buildGroupContainer(
+                isDark: isDark,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () async {
+                      final storage = ref.read(secureStorageServiceProvider);
+                      await storage.clearAll();
+                      if (context.mounted) {
+                        context.go(RouteNames.login);
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(22),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            LucideIcons.logOut,
+                            color: Color(0xFFFF453A),
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Sign Out',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFFFF453A),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
 
             // iOS 26 Footer Branding
             Center(
