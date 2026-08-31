@@ -36,6 +36,7 @@ class CartNotifier extends StateNotifier<AsyncValue<CartSummaryModel>> {
   Future<void> addItem(MedicineModel medicine, {int quantity = 1}) async {
     final medId = medicine.id.isNotEmpty ? medicine.id : (medicine.slug ?? 'med_${medicine.name.hashCode}');
     final currentCart = state.valueOrNull ?? const CartSummaryModel();
+    final medImg = medicine.medicineImage ?? medicine.image;
     final existing = currentCart.items.firstWhere(
       (it) => it.medicineId == medId || (medicine.slug != null && it.medicineId == medicine.slug),
       orElse: () => CartItemModel(
@@ -49,15 +50,20 @@ class CartNotifier extends StateNotifier<AsyncValue<CartSummaryModel>> {
         requiresPrescription: medicine.requiresPrescription,
         inStock: medicine.inStock,
         stockCount: medicine.stockCount,
-        image: medicine.medicineImage,
+        image: medImg,
       ),
     );
 
     final newQty = existing.quantity + quantity;
+    final finalImg = (medImg != null && medImg.isNotEmpty) ? medImg : existing.image;
+
     await updateQuantity(
       existing.medicineId,
       newQty,
-      seedItem: existing.copyWith(quantity: newQty),
+      seedItem: existing.copyWith(
+        quantity: newQty,
+        image: finalImg,
+      ),
     );
   }
 

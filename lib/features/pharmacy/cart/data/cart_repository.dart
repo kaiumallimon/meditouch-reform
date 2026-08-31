@@ -48,7 +48,7 @@ class CartRepository {
       // Fallback to local storage
     }
     final local = await _loadLocalItems();
-    return CartSummaryModel.fromItems(local);
+    return CartSummaryModel.fromItems(local, deliveryFee: 85.0);
   }
 
   Future<CartSummaryModel> updateItem(String medicineId, int quantity, {CartItemModel? seedItem}) async {
@@ -74,14 +74,26 @@ class CartRepository {
       if (idx != -1) updated.removeAt(idx);
     } else {
       if (idx != -1) {
-        updated[idx] = updated[idx].copyWith(quantity: quantity);
+        final current = updated[idx];
+        updated[idx] = current.copyWith(
+          quantity: quantity,
+          image: (seedItem?.image != null && seedItem!.image!.isNotEmpty)
+              ? seedItem.image
+              : current.image,
+          name: seedItem?.name ?? current.name,
+          brand: seedItem?.brand ?? current.brand,
+          strength: seedItem?.strength ?? current.strength,
+          unitPrice: (seedItem != null && seedItem.unitPrice > 0)
+              ? seedItem.unitPrice
+              : current.unitPrice,
+        );
       } else if (seedItem != null) {
         updated.add(seedItem.copyWith(quantity: quantity));
       }
     }
 
     await _saveLocalItems(updated);
-    return CartSummaryModel.fromItems(updated);
+    return CartSummaryModel.fromItems(updated, deliveryFee: 85.0);
   }
 
   Future<CartSummaryModel> removeItem(String medicineId) async {
@@ -92,7 +104,7 @@ class CartRepository {
     final local = await _loadLocalItems();
     final updated = local.where((it) => it.medicineId != medicineId).toList();
     await _saveLocalItems(updated);
-    return CartSummaryModel.fromItems(updated);
+    return CartSummaryModel.fromItems(updated, deliveryFee: 85.0);
   }
 
   Future<CartSummaryModel> clearCart() async {
@@ -100,7 +112,7 @@ class CartRepository {
       await _apiClient.delete(ApiEndpoints.cart);
     } catch (_) {}
     await _saveLocalItems([]);
-    return const CartSummaryModel();
+    return const CartSummaryModel(items: [], deliveryFee: 85.0, estimatedTotal: 0.0);
   }
 
   Future<OrderModel> checkout({

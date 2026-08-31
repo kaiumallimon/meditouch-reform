@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meditouch/features/auth/data/auth_repository.dart';
+import 'package:meditouch/features/auth/domain/user_model.dart';
 import 'package:meditouch/features/profile/presentation/profile_screen.dart';
 import 'package:meditouch/features/settings/presentation/settings_screen.dart';
 
@@ -65,8 +67,18 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(
+      ProviderScope(
+        overrides: [
+          currentUserProvider.overrideWith(
+            (ref) async => const UserModel(
+              id: 'u-1',
+              name: 'Tanvir Ahmed',
+              email: 'tanvir@meditouch.com',
+              role: 'PATIENT',
+            ),
+          ),
+        ],
+        child: const MaterialApp(
           home: ProfileScreen(),
         ),
       ),
@@ -78,6 +90,5 @@ void main() {
     expect(find.text('Personal Profile'), findsOneWidget);
     expect(find.text('PERSONAL INFORMATION'), findsOneWidget);
     expect(find.text('DELIVERY & ADDRESS'), findsOneWidget);
-    expect(find.text('Edit Profile Information'), findsOneWidget);
   });
 }

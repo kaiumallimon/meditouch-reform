@@ -94,6 +94,8 @@ class CartItemModel {
 }
 
 class CartSummaryModel {
+  static const double standardDeliveryFee = 85.0;
+
   final List<CartItemModel> items;
   final int itemsCount;
   final double subtotal;
@@ -129,8 +131,11 @@ class CartSummaryModel {
     final items = rawList.map((e) => CartItemModel.fromJson(e as Map<String, dynamic>)).toList();
     final subtotalVal = (json['subtotal'] as num?)?.toDouble() ??
         items.fold<double>(0.0, (sum, it) => sum + (it.unitPrice * it.quantity));
-    final feeVal = (json['delivery_fee'] as num?)?.toDouble() ?? 85.0;
-    final totalVal = (json['estimated_total'] as num?)?.toDouble() ?? (subtotalVal + feeVal);
+    final rawFee = (json['delivery_fee'] as num?)?.toDouble();
+    final feeVal = (rawFee != null && rawFee != 60.0 && rawFee > 0.0)
+        ? rawFee
+        : (items.isEmpty ? 0.0 : 85.0);
+    final totalVal = subtotalVal + feeVal;
 
     return CartSummaryModel(
       items: items,

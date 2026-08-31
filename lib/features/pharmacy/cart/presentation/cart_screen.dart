@@ -387,7 +387,9 @@ class CartScreen extends ConsumerWidget {
                 child: item.image != null && item.image!.trim().isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: item.image!.trim(),
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
+                        width: 68,
+                        height: 68,
                         placeholder: (_, __) => Center(
                           child: CupertinoActivityIndicator(
                             radius: 8,
