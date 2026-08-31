@@ -1,11 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
-import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
 import 'package:meditouch/features/auth/data/auth_repository.dart';
 import 'package:meditouch/features/auth/domain/user_model.dart';
@@ -19,7 +16,6 @@ class ProfileScreen extends ConsumerWidget {
     final topInset = MediaQuery.paddingOf(context).top;
     final userAsync = ref.watch(currentUserProvider);
     final user = userAsync.valueOrNull;
-    final isGuest = user == null || user.isGuest;
 
     final name = (user?.name != null && user!.name.isNotEmpty) ? user.name : 'Patient User';
     final email = (user?.email != null && user!.email!.isNotEmpty) ? user.email! : 'Not provided';
@@ -35,247 +31,151 @@ class ProfileScreen extends ConsumerWidget {
       appBar: IOS26AppBar(
         title: 'Personal Profile',
         showBack: true,
-        actions: isGuest
-            ? [
-                IOS26AppBarAction(
-                  icon: LucideIcons.logIn,
-                  tooltip: 'Sign In',
-                  onPressed: () => context.push(RouteNames.login),
+        actions: [
+          IOS26AppBarAction(
+            icon: LucideIcons.pencil,
+            tooltip: 'Edit Profile',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Profile edit mode is enabled'),
+                  behavior: SnackBarBehavior.floating,
                 ),
-              ]
-            : [
-                IOS26AppBarAction(
-                  icon: LucideIcons.pencil,
-                  tooltip: 'Edit Profile',
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Profile edit mode is enabled'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                ),
-              ],
+              );
+            },
+          ),
+        ],
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         padding: EdgeInsets.fromLTRB(16, topInset + 72, 16, 40),
         children: [
-          if (isGuest) ...[
-            // Guest Hero Card
-            _buildGuestHeroCard(context, isDark),
-            const SizedBox(height: 24),
+          // 1. Hero Profile Island Card
+          _buildHeroProfileCard(context, user, isDark),
+          const SizedBox(height: 24),
 
-            // Profile Data Locked Notice
-            _buildSectionLabel('PROFILE DATA', isDark),
-            const SizedBox(height: 6),
-            _buildGroupContainer(
-              isDark: isDark,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 54,
-                      height: 54,
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.06)
-                            : const Color(0xFFF2F2F7),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          LucideIcons.lock,
-                          size: 24,
-                          color: isDark ? AppColors.primaryDark : AppColors.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Sign In to Show Profile Data',
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Your personal details, contact numbers, default delivery address, and medical records are private. Sign in to view and edit your profile.',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      height: 48,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isDark ? AppColors.primaryDark : AppColors.primary)
-                                .withValues(alpha: isDark ? 0.30 : 0.20),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: ElevatedButton.icon(
-                        onPressed: () => context.push(RouteNames.login),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
-                          foregroundColor: Colors.white,
-                          shape: const StadiumBorder(),
-                          elevation: 0,
-                        ),
-                        icon: const Icon(LucideIcons.logIn, size: 16),
-                        label: Text(
-                          'Sign In / Create Account',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+          // 2. Personal Information Section
+          _buildSectionLabel('PERSONAL INFORMATION', isDark),
+          const SizedBox(height: 6),
+          _buildGroupContainer(
+            isDark: isDark,
+            child: Column(
+              children: [
+                _IOSProfileFieldTile(
+                  icon: LucideIcons.user,
+                  iconBgColor: const Color(0xFF007AFF),
+                  label: 'Full Name',
+                  value: name,
+                  isDark: isDark,
+                ),
+                _buildIndentedDivider(isDark),
+                _IOSProfileFieldTile(
+                  icon: LucideIcons.phone,
+                  iconBgColor: const Color(0xFF34C759),
+                  label: 'Phone Number',
+                  value: phone,
+                  isDark: isDark,
+                ),
+                _buildIndentedDivider(isDark),
+                _IOSProfileFieldTile(
+                  icon: LucideIcons.mail,
+                  iconBgColor: const Color(0xFF5856D6),
+                  label: 'Email',
+                  value: email,
+                  isDark: isDark,
+                ),
+                _buildIndentedDivider(isDark),
+                _IOSProfileFieldTile(
+                  icon: LucideIcons.users,
+                  iconBgColor: const Color(0xFFFF9500),
+                  label: 'Gender',
+                  value: gender,
+                  isDark: isDark,
+                ),
+                _buildIndentedDivider(isDark),
+                _IOSProfileFieldTile(
+                  icon: LucideIcons.droplet,
+                  iconBgColor: const Color(0xFFFF3B30),
+                  label: 'Blood Group',
+                  value: bloodGroup,
+                  isDark: isDark,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // 3. Delivery & Address Section
+          _buildSectionLabel('DELIVERY & ADDRESS', isDark),
+          const SizedBox(height: 6),
+          _buildGroupContainer(
+            isDark: isDark,
+            child: Column(
+              children: [
+                _IOSProfileFieldTile(
+                  icon: LucideIcons.mapPin,
+                  iconBgColor: const Color(0xFF30B0C7),
+                  label: 'Default Address',
+                  value: address,
+                  isDark: isDark,
+                ),
+                _buildIndentedDivider(isDark),
+                _IOSProfileFieldTile(
+                  icon: LucideIcons.mailbox,
+                  iconBgColor: const Color(0xFFAF52DE),
+                  label: 'Postal Code',
+                  value: postalCode,
+                  isDark: isDark,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 28),
+
+          // 4. Edit Profile Button
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: (isDark ? AppColors.primaryDark : AppColors.primary)
+                      .withValues(alpha: isDark ? 0.35 : 0.22),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Profile edit mode is enabled'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
+              ),
+              icon: const Icon(LucideIcons.pencil, size: 16),
+              label: Text(
+                'Edit Profile Information',
+                style: GoogleFonts.inter(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-          ] else ...[
-            // 1. Hero Profile Island Card
-            _buildHeroProfileCard(context, user, isDark),
-            const SizedBox(height: 24),
-
-            // 2. Personal Information Section
-            _buildSectionLabel('PERSONAL INFORMATION', isDark),
-            const SizedBox(height: 6),
-            _buildGroupContainer(
-              isDark: isDark,
-              child: Column(
-                children: [
-                  _IOSProfileFieldTile(
-                    icon: LucideIcons.user,
-                    iconBgColor: const Color(0xFF007AFF),
-                    label: 'Full Name',
-                    value: name,
-                    isDark: isDark,
-                  ),
-                  _buildIndentedDivider(isDark),
-                  _IOSProfileFieldTile(
-                    icon: LucideIcons.phone,
-                    iconBgColor: const Color(0xFF34C759),
-                    label: 'Phone Number',
-                    value: phone,
-                    isDark: isDark,
-                  ),
-                  _buildIndentedDivider(isDark),
-                  _IOSProfileFieldTile(
-                    icon: LucideIcons.mail,
-                    iconBgColor: const Color(0xFF5856D6),
-                    label: 'Email',
-                    value: email,
-                    isDark: isDark,
-                  ),
-                  _buildIndentedDivider(isDark),
-                  _IOSProfileFieldTile(
-                    icon: LucideIcons.users,
-                    iconBgColor: const Color(0xFFFF9500),
-                    label: 'Gender',
-                    value: gender,
-                    isDark: isDark,
-                  ),
-                  _buildIndentedDivider(isDark),
-                  _IOSProfileFieldTile(
-                    icon: LucideIcons.droplet,
-                    iconBgColor: const Color(0xFFFF3B30),
-                    label: 'Blood Group',
-                    value: bloodGroup,
-                    isDark: isDark,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // 3. Delivery & Address Section
-            _buildSectionLabel('DELIVERY & ADDRESS', isDark),
-            const SizedBox(height: 6),
-            _buildGroupContainer(
-              isDark: isDark,
-              child: Column(
-                children: [
-                  _IOSProfileFieldTile(
-                    icon: LucideIcons.mapPin,
-                    iconBgColor: const Color(0xFF30B0C7),
-                    label: 'Default Address',
-                    value: address,
-                    isDark: isDark,
-                  ),
-                  _buildIndentedDivider(isDark),
-                  _IOSProfileFieldTile(
-                    icon: LucideIcons.mailbox,
-                    iconBgColor: const Color(0xFFAF52DE),
-                    label: 'Postal Code',
-                    value: postalCode,
-                    isDark: isDark,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 28),
-
-            // 4. Edit Profile Button
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: (isDark ? AppColors.primaryDark : AppColors.primary)
-                        .withValues(alpha: isDark ? 0.35 : 0.22),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Profile edit mode is enabled'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isDark ? AppColors.primaryDark : AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: const StadiumBorder(),
-                  elevation: 0,
-                ),
-                icon: const Icon(LucideIcons.pencil, size: 16),
-                label: Text(
-                  'Edit Profile Information',
-                  style: GoogleFonts.inter(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
           const SizedBox(height: 20),
 
-          // Security Footer Branding
+          // 5. Security Footer Branding
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -302,85 +202,6 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGuestHeroCard(BuildContext context, bool isDark) {
-    return _buildGroupContainer(
-      isDark: isDark,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : const Color(0xFFE5E5EA),
-              ),
-              child: Center(
-                child: Icon(
-                  LucideIcons.user,
-                  color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-                  size: 34,
-                ),
-              ),
-            ),
-            const SizedBox(height: 14),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Guest User',
-                  style: GoogleFonts.youngSerif(
-                    fontSize: 20,
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF2C2411)
-                        : const Color(0xFFFEF3C7),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF78350F)
-                          : const Color(0xFFFDE68A),
-                      width: 0.7,
-                    ),
-                  ),
-                  child: Text(
-                    'GUEST',
-                    style: GoogleFonts.inter(
-                      fontSize: 8.5,
-                      fontWeight: FontWeight.w800,
-                      color: isDark
-                          ? const Color(0xFFFF9F0A)
-                          : const Color(0xFFD97706),
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Sign in to access your personal health records',
-              style: GoogleFonts.inter(
-                fontSize: 12.5,
-                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

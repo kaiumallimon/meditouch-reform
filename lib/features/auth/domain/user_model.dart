@@ -38,12 +38,6 @@ class UserModel {
     );
   }
 
-  bool get isGuest =>
-      email == 'guest@meditouch.health' ||
-      role.toUpperCase() == 'GUEST' ||
-      id.startsWith('guest_') ||
-      name.toLowerCase().contains('guest');
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,
