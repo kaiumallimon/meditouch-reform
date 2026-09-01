@@ -26,8 +26,14 @@ class CartScreen extends ConsumerWidget {
     var cleaned = url.trim();
     if (cleaned.isEmpty) return cleaned;
     if (defaultTargetPlatform == TargetPlatform.android) {
-      cleaned = cleaned.replaceAll('http://localhost:8000', 'http://10.0.2.2:8000');
-      cleaned = cleaned.replaceAll('http://127.0.0.1:8000', 'http://10.0.2.2:8000');
+      cleaned = cleaned.replaceAll(
+        'http://localhost:8000',
+        'http://10.0.2.2:8000',
+      );
+      cleaned = cleaned.replaceAll(
+        'http://127.0.0.1:8000',
+        'http://10.0.2.2:8000',
+      );
     }
     if (cleaned.startsWith('/')) {
       final host = ApiEndpoints.baseUrl.replaceAll('/api/v1', '');
@@ -44,13 +50,18 @@ class CartScreen extends ConsumerWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF2F2F7),
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : const Color(0xFFF2F2F7),
       appBar: IOS26AppBar(
         title: 'Pharmacy Cart',
         showBack: true,
         onBack: () => context.pop(),
         actions: [
-          if (cartState.maybeWhen(data: (cart) => cart.items.isNotEmpty, orElse: () => false))
+          if (cartState.maybeWhen(
+            data: (cart) => cart.items.isNotEmpty,
+            orElse: () => false,
+          ))
             IOS26AppBarAction(
               icon: LucideIcons.trash2,
               tooltip: 'Clear Cart',
@@ -66,7 +77,8 @@ class CartScreen extends ConsumerWidget {
             color: isDark ? AppColors.primaryDark : AppColors.primary,
           ),
         ),
-        error: (err, _) => _buildErrorState(context, ref, err.toString(), isDark),
+        error: (err, _) =>
+            _buildErrorState(context, ref, err.toString(), isDark),
         data: (cart) {
           if (cart.items.isEmpty) {
             return _buildEmptyCart(context, isDark);
@@ -129,7 +141,9 @@ class CartScreen extends ConsumerWidget {
               style: GoogleFonts.youngSerif(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -139,7 +153,9 @@ class CartScreen extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 12.5,
-                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
                 height: 1.45,
               ),
             ),
@@ -205,7 +221,9 @@ class CartScreen extends ConsumerWidget {
     double topInset,
   ) {
     return ListView(
-      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       padding: EdgeInsets.fromLTRB(14, topInset + 64, 14, 120),
       children: [
         // Prescription Warning Card if needed
@@ -219,7 +237,9 @@ class CartScreen extends ConsumerWidget {
                   : const Color(0xFFFEF2F2),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: isDark ? const Color(0xFF5C2025) : const Color(0xFFFECACA),
+                color: isDark
+                    ? const Color(0xFF5C2025)
+                    : const Color(0xFFFECACA),
                 width: 0.8,
               ),
             ),
@@ -228,7 +248,9 @@ class CartScreen extends ConsumerWidget {
                 Icon(
                   LucideIcons.circleAlert,
                   size: 18,
-                  color: isDark ? const Color(0xFFFF6961) : const Color(0xFFDC2626),
+                  color: isDark
+                      ? const Color(0xFFFF6961)
+                      : const Color(0xFFDC2626),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -237,7 +259,9 @@ class CartScreen extends ConsumerWidget {
                     style: GoogleFonts.inter(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w500,
-                      color: isDark ? const Color(0xFFFF6961) : const Color(0xFFDC2626),
+                      color: isDark
+                          ? const Color(0xFFFF6961)
+                          : const Color(0xFFDC2626),
                     ),
                   ),
                 ),
@@ -256,14 +280,18 @@ class CartScreen extends ConsumerWidget {
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
               Text(
                 '${cart.items.length} product(s)',
                 style: GoogleFonts.inter(
                   fontSize: 11,
-                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                  color: isDark
+                      ? AppColors.darkTextMuted
+                      : const Color(0xFF8E8E93),
                 ),
               ),
             ],
@@ -272,7 +300,9 @@ class CartScreen extends ConsumerWidget {
         const SizedBox(height: 6),
 
         // Cart Items List
-        ...cart.items.map((item) => _buildCartItemCard(context, ref, item, isDark)),
+        ...cart.items.map(
+          (item) => _buildCartItemCard(context, ref, item, isDark),
+        ),
 
         const SizedBox(height: 14),
 
@@ -280,9 +310,7 @@ class CartScreen extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: isDark
-                ? const Color(0xFF1C1C1E)
-                : Colors.white,
+            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isDark
@@ -297,7 +325,8 @@ class CartScreen extends ConsumerWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: (isDark ? AppColors.primaryDark : AppColors.primary).withValues(alpha: 0.12),
+                  color: (isDark ? AppColors.primaryDark : AppColors.primary)
+                      .withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -312,7 +341,9 @@ class CartScreen extends ConsumerWidget {
                   'Express Delivery within 12-48 hours across Dhaka. Standard flat rate ৳85 applied.',
                   style: GoogleFonts.inter(
                     fontSize: 11.5,
-                    color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -401,24 +432,27 @@ class CartScreen extends ConsumerWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: item.image != null && item.image!.trim().isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: _resolveImageUrl(item.image!),
+                    ? Image.network(
+                        _resolveImageUrl(item.image!),
                         fit: BoxFit.cover,
                         width: 68,
                         height: 68,
-                        httpHeaders: const {
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                        },
-                        placeholder: (_, __) => Container(
-                          color: Colors.grey.shade50,
-                          child: Center(
-                            child: CupertinoActivityIndicator(
-                              radius: 8,
-                              color: isDark ? AppColors.primaryDark : AppColors.primary,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: Colors.grey.shade50,
+                            child: Center(
+                              child: CupertinoActivityIndicator(
+                                radius: 8,
+                                color: isDark
+                                    ? AppColors.primaryDark
+                                    : AppColors.primary,
+                              ),
                             ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => _buildItemFallbackIcon(isDark),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildItemFallbackIcon(isDark),
                       )
                     : _buildItemFallbackIcon(isDark),
               ),
@@ -445,7 +479,9 @@ class CartScreen extends ConsumerWidget {
                               style: GoogleFonts.inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.textPrimary,
                               ),
                             ),
                             if (item.strength.isNotEmpty)
@@ -453,21 +489,27 @@ class CartScreen extends ConsumerWidget {
                                 item.strength,
                                 style: GoogleFonts.inter(
                                   fontSize: 10,
-                                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                                  color: isDark
+                                      ? AppColors.darkTextMuted
+                                      : const Color(0xFF8E8E93),
                                 ),
                               ),
                           ],
                         ),
                       ),
                       InkWell(
-                        onTap: () => ref.read(cartProvider.notifier).removeItem(item.medicineId),
+                        onTap: () => ref
+                            .read(cartProvider.notifier)
+                            .removeItem(item.medicineId),
                         borderRadius: BorderRadius.circular(12),
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Icon(
                             LucideIcons.x,
                             size: 16,
-                            color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                            color: isDark
+                                ? AppColors.darkTextMuted
+                                : const Color(0xFF8E8E93),
                           ),
                         ),
                       ),
@@ -486,7 +528,9 @@ class CartScreen extends ConsumerWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.textPrimary,
                         ),
                       ),
 
@@ -510,7 +554,9 @@ class CartScreen extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             InkWell(
-                              onTap: () => ref.read(cartProvider.notifier).decrement(item.medicineId),
+                              onTap: () => ref
+                                  .read(cartProvider.notifier)
+                                  .decrement(item.medicineId),
                               borderRadius: BorderRadius.circular(14),
                               child: Container(
                                 width: 26,
@@ -524,23 +570,31 @@ class CartScreen extends ConsumerWidget {
                                 child: Icon(
                                   LucideIcons.minus,
                                   size: 12,
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
                               child: Text(
                                 '${item.quantity}',
                                 style: GoogleFonts.inter(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
                                 ),
                               ),
                             ),
                             InkWell(
-                              onTap: () => ref.read(cartProvider.notifier).increment(item.medicineId),
+                              onTap: () => ref
+                                  .read(cartProvider.notifier)
+                                  .increment(item.medicineId),
                               borderRadius: BorderRadius.circular(14),
                               child: Container(
                                 width: 26,
@@ -554,7 +608,9 @@ class CartScreen extends ConsumerWidget {
                                 child: Icon(
                                   LucideIcons.plus,
                                   size: 12,
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
                                 ),
                               ),
                             ),
@@ -609,22 +665,34 @@ class CartScreen extends ConsumerWidget {
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
 
-          _buildSummaryRow('Items Subtotal', _formatCurrency(cart.subtotal), isDark),
+          _buildSummaryRow(
+            'Items Subtotal',
+            _formatCurrency(cart.subtotal),
+            isDark,
+          ),
           const SizedBox(height: 8),
-          _buildSummaryRow('Delivery Fee', _formatCurrency(cart.deliveryFee), isDark),
+          _buildSummaryRow(
+            'Delivery Fee',
+            _formatCurrency(cart.deliveryFee),
+            isDark,
+          ),
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Divider(
               height: 1,
-              color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE5E5EA),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : const Color(0xFFE5E5EA),
             ),
           ),
 
@@ -636,7 +704,9 @@ class CartScreen extends ConsumerWidget {
                 style: GoogleFonts.inter(
                   fontSize: 14.5,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
               Text(
@@ -662,7 +732,9 @@ class CartScreen extends ConsumerWidget {
           label,
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
           ),
         ),
         Text(
@@ -678,11 +750,20 @@ class CartScreen extends ConsumerWidget {
   }
 
   // 5. Clean Fixed Bottom Dock with Compact Checkout Button (No Shadow, No Circle)
-  Widget _buildFloatingCheckoutDock(BuildContext context, CartSummaryModel cart, bool isDark) {
+  Widget _buildFloatingCheckoutDock(
+    BuildContext context,
+    CartSummaryModel cart,
+    bool isDark,
+  ) {
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPadding > 0 ? bottomPadding + 8 : 16),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        12,
+        20,
+        bottomPadding > 0 ? bottomPadding + 8 : 16,
+      ),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkSurface : Colors.white,
         border: Border(
@@ -708,7 +789,9 @@ class CartScreen extends ConsumerWidget {
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.4,
-                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                  color: isDark
+                      ? AppColors.darkTextMuted
+                      : const Color(0xFF8E8E93),
                 ),
               ),
               const SizedBox(height: 2),
@@ -717,7 +800,9 @@ class CartScreen extends ConsumerWidget {
                 style: GoogleFonts.inter(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
             ],
@@ -783,20 +868,31 @@ class CartScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error, bool isDark) {
+  Widget _buildErrorState(
+    BuildContext context,
+    WidgetRef ref,
+    String error,
+    bool isDark,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.circleAlert, size: 40, color: Color(0xFFFF453A)),
+            const Icon(
+              LucideIcons.circleAlert,
+              size: 40,
+              color: Color(0xFFFF453A),
+            ),
             const SizedBox(height: 12),
             Text(
               'Unable to Load Cart',
               style: GoogleFonts.youngSerif(
                 fontSize: 18,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
@@ -836,10 +932,7 @@ class CartScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.inter(color: Colors.grey),
-            ),
+            child: Text('Cancel', style: GoogleFonts.inter(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {

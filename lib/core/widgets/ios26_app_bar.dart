@@ -146,9 +146,9 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildBackButton(BuildContext context, bool isDark) {
     return InkWell(
       onTap: onBack ?? () => Navigator.of(context).maybePop(),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(100),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(100),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
@@ -158,7 +158,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
               color: isDark
                   ? const Color(0xFF2C2C2E).withValues(alpha: 0.80)
                   : Colors.white.withValues(alpha: 0.88),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(100),
               border: Border.all(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.22)
@@ -188,7 +188,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _buildLiquidGlassActionCapsule(bool isDark) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(100),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
         child: Container(
@@ -198,7 +198,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
             color: isDark
                 ? const Color(0xFF2C2C2E).withValues(alpha: 0.82)
                 : Colors.white.withValues(alpha: 0.90),
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(100),
             border: Border.all(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.24)
@@ -244,7 +244,7 @@ class IOS26AppBar extends StatelessWidget implements PreferredSizeWidget {
       message: action.tooltip ?? '',
       child: InkWell(
         onTap: action.onPressed,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(100),
         child: Container(
           width: 36,
           height: 36,
