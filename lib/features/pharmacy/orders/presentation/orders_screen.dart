@@ -11,7 +11,6 @@ import 'package:meditouch/core/constants/api_endpoints.dart';
 import 'package:meditouch/core/constants/app_colors.dart';
 import 'package:meditouch/core/router/route_names.dart';
 import 'package:meditouch/core/widgets/ios26_app_bar.dart';
-import 'package:meditouch/features/pharmacy/cart/domain/cart_item_model.dart';
 import 'package:meditouch/features/pharmacy/orders/domain/order_model.dart';
 import 'package:meditouch/features/pharmacy/orders/presentation/providers/orders_provider.dart';
 
