@@ -49,7 +49,11 @@ class ApiEndpoints {
 
   // Doctors & Consultations
   static const String doctors = '/doctors';
-  static const String doctorTimeslots = '/doctors/timeslots';
+  static const String doctorSpecialties = '/doctors/specialties';
+  static const String featuredDoctors = '/doctors/featured';
+  static String doctorDetails(String id) => '/doctors/$id';
+  static String doctorAvailableTimeslots(String id) => '/doctors/$id/timeslots';
+  static const String doctorTimeslots = '/doctors/me/timeslots';
   static const String appointments = '/appointments';
   static const String consultations = '/consultations';
 
