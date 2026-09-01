@@ -332,7 +332,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                   ),
                                   const SizedBox(height: 3),
                                   Text(
-                                    '\${addr.streetAddress}, \${addr.upazilaOrThana}, \${addr.district}',
+                                    '${addr.streetAddress}, ${addr.upazilaOrThana}, ${addr.district}',
                                     style: GoogleFonts.inter(
                                       fontSize: 11.5,
                                       color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
@@ -580,7 +580,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Order Summary (\${cart.items.length} items)',
+                'Order Summary (${cart.items.length} items)',
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -592,39 +592,44 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           const SizedBox(height: 12),
           ...cart.items.map(
             (it) => Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 10.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '\${it.name} (x\${it.quantity})',
+                          '${it.name} (x${it.quantity})',
                           style: GoogleFonts.inter(
-                            fontSize: 12.5,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                             color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                            height: 1.25,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (it.strength.isNotEmpty)
-                          Text(
-                            it.strength,
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              it.strength,
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                              ),
                             ),
                           ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: 16),
                   Text(
                     _formatCurrency(it.totalPrice),
                     style: GoogleFonts.inter(
-                      fontSize: 12.5,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                     ),
@@ -1029,7 +1034,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Order failed: \${e.toString().replaceAll("Exception: ", "")}'),
+          content: Text('Order failed: ${e.toString().replaceAll("Exception: ", "")}'),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 4),
         ),
@@ -1082,7 +1087,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Order #\${order.orderNumber}',
+              'Order #${order.orderNumber}',
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
