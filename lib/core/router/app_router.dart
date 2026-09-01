@@ -6,6 +6,7 @@ import 'package:meditouch/features/appointments/presentation/appointments_screen
 import 'package:meditouch/features/auth/presentation/login_screen.dart';
 import 'package:meditouch/features/auth/presentation/register_screen.dart';
 import 'package:meditouch/features/chatbot/presentation/chatbot_screen.dart';
+import 'package:meditouch/features/doctors/presentation/doctor_detail_screen.dart';
 import 'package:meditouch/features/doctors/presentation/doctors_screen.dart';
 import 'package:meditouch/features/home/presentation/home_screen.dart';
 import 'package:meditouch/features/home/presentation/home_shell_screen.dart';
@@ -130,6 +131,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             slug: slug,
             initialMedicine: initialMedicine,
           );
+        },
+      ),
+      GoRoute(
+        path: RouteNames.doctorDetail,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) {
+          final doctorId = state.pathParameters['id'] ?? '';
+          return DoctorDetailScreen(doctorId: doctorId);
         },
       ),
       GoRoute(
